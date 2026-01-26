@@ -195,17 +195,13 @@ export async function printLabel(): Promise<void> {
                         padding: 0;
                         background-color: white;
                         overflow: hidden;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
                     }
                     .print-container {
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
+                        width: 210mm;
+                        height: 297mm;
+                        display: block;
                         background-color: white;
-                        transform: scale(1.5);
-                        transform-origin: center center;
+                        position: relative;
                     }
                     @media print {
                         html, body {
@@ -213,6 +209,12 @@ export async function printLabel(): Promise<void> {
                             height: 297mm;
                             print-color-adjust: exact;
                             -webkit-print-color-adjust: exact;
+                        }
+                        #formtec-3629-preview {
+                            width: 210mm !important;
+                            height: 297mm !important;
+                            outline: none !important;
+                            box-shadow: none !important;
                         }
                     }
                 </style>

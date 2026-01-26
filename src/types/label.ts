@@ -162,7 +162,7 @@ export const FORMTEC_3629_COORDS = {
             { label: "value", height: 16.5 },
             { label: "제목", height: 7.5 },
             { label: "value", height: 110.0 },
-            { label: "department", height: 7.5 },
+            { label: "부서명", height: 7.5 },
             { label: "value", height: 34.0 }, // 35 -> 34 (내부 높이 합계 255mm로 조정)
         ],
     },

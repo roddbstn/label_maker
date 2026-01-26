@@ -275,7 +275,7 @@ function LabelBox({
                 top: mmToPx(topY, scale),
                 width: mmToPx(width, scale),
                 height: mmToPx(height, scale),
-                border: `${mmToPx(0.5, scale)}px solid black`, // mm 기반으로 정확하게 일치시킴
+                border: "none",
                 boxSizing: 'border-box'
             }}
         >
@@ -466,7 +466,7 @@ function EdgeClassLabel({
                 top: mmToPx(topY, scale),
                 width: mmToPx(labelWidth, scale),
                 height: mmToPx(labelHeight, scale),
-                border: `${mmToPx(0.5, scale)}px solid black`, // LabelBox와 동일하게 외곽선 적용
+                border: `${mmToPx(0.5, scale)}px solid black`, // EdgeClassLabel 외곽선 유지
                 boxSizing: 'border-box'
             }}
         >
