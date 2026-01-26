@@ -124,6 +124,9 @@ export async function printLabel(): Promise<void> {
     }
 
     try {
+        const canvas = await capturePreview();
+        if (!canvas) return;
+
         // 인쇄용 새 창 생성
         const printWindow = window.open("", "_blank");
         if (!printWindow) {
@@ -131,47 +134,7 @@ export async function printLabel(): Promise<void> {
             return;
         }
 
-        // 프리뷰 HTML 복제 및 모든 스타일 인라인 적용
-        const previewClone = previewElement.cloneNode(true) as HTMLElement;
-
-        // 재귀적으로 모든 요소에 computed style 적용
-        function applyComputedStyles(source: Element, target: Element) {
-            const computedStyle = window.getComputedStyle(source);
-            const targetElement = target as HTMLElement;
-
-            // 중요한 CSS 속성들을 인라인으로 적용
-            const importantProperties = [
-                'display', 'flex-direction', 'justify-content', 'align-items',
-                'width', 'height', 'min-width', 'min-height', 'max-width', 'max-height',
-                'margin', 'padding', 'border', 'border-radius',
-                'background', 'background-color',
-                'color', 'font-family', 'font-size', 'font-weight', 'line-height',
-                'text-align', 'vertical-align', 'white-space', 'letter-spacing',
-                'writing-mode', 'text-orientation',
-                'position', 'top', 'right', 'bottom', 'left',
-                'overflow', 'box-sizing', 'transform', 'transform-origin',
-                'border-top', 'border-right', 'border-bottom', 'border-left',
-                'flex', 'flex-grow', 'flex-shrink', 'flex-basis', 'gap'
-            ];
-
-            importantProperties.forEach(prop => {
-                const value = computedStyle.getPropertyValue(prop);
-                if (value && value !== 'none' && value !== 'normal' && value !== 'auto') {
-                    targetElement.style.setProperty(prop, value);
-                }
-            });
-
-            // 자식 요소들에도 재귀적으로 적용
-            const sourceChildren = source.children;
-            const targetChildren = target.children;
-            for (let i = 0; i < sourceChildren.length; i++) {
-                if (targetChildren[i]) {
-                    applyComputedStyles(sourceChildren[i], targetChildren[i]);
-                }
-            }
-        }
-
-        applyComputedStyles(previewElement, previewClone);
+        const imgData = canvas.toDataURL("image/png");
 
         printWindow.document.write(`
             <!DOCTYPE html>
@@ -196,44 +159,37 @@ export async function printLabel(): Promise<void> {
                         background-color: white;
                         overflow: hidden;
                     }
-                    .print-container {
+                    .print-image {
                         width: 210mm;
                         height: 297mm;
                         display: block;
-                        background-color: white;
-                        position: relative;
+                        object-fit: contain;
                     }
                     @media print {
                         html, body {
                             width: 210mm;
                             height: 297mm;
-                            print-color-adjust: exact;
-                            -webkit-print-color-adjust: exact;
-                        }
-                        #formtec-3629-preview {
-                            width: 210mm !important;
-                            height: 297mm !important;
-                            outline: none !important;
-                            box-shadow: none !important;
                         }
                     }
                 </style>
             </head>
             <body>
-                <div class="print-container">
-                    ${previewClone.outerHTML}
-                </div>
+                <img src="${imgData}" class="print-image" />
+                <script>
+                    window.onload = function() {
+                        setTimeout(() => {
+                            window.focus();
+                            window.print();
+                            // 인쇄 후 창 닫기 (사용자 필요에 따라 선택)
+                            // window.onafterprint = () => window.close();
+                        }, 500);
+                    };
+                </script>
             </body>
             </html>
         `);
 
         printWindow.document.close();
-
-        // 렌더링 완료 후 인쇄
-        setTimeout(() => {
-            printWindow.focus();
-            printWindow.print();
-        }, 300);
     } catch (error) {
         console.error("인쇄 준비 중 오류:", error);
         alert("인쇄 준비 중 오류가 발생했습니다.");
