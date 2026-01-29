@@ -125,7 +125,7 @@ export default function Home() {
                             <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-50/20 rounded-full -ml-24 -mb-24 opacity-40"></div>
 
                             <div className="relative z-10 w-full">
-                                <div className="mx-auto w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-slate-100 transition-transform duration-500 group-hover:scale-110">
+                                <div className="mx-auto w-12 h-12 bg-[#222222] rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-slate-100 transition-transform duration-500 group-hover:scale-110">
                                     <span className="text-xl">⚡</span>
                                 </div>
 
@@ -163,7 +163,7 @@ export default function Home() {
                                     </div>
                                     <button
                                         type="submit"
-                                        className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-slate-900 text-white text-sm font-black rounded-xl hover:bg-slate-800 transition-all shadow-lg shadow-slate-100 active:scale-[0.98] tracking-wide"
+                                        className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#222222] text-white text-sm font-black rounded-xl hover:bg-[#333333] transition-all shadow-lg shadow-slate-100 active:scale-[0.98] tracking-wide"
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4 opacity-70">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
@@ -183,7 +183,7 @@ export default function Home() {
                             <div className="absolute top-0 left-0 w-48 h-48 bg-slate-50 rounded-full -ml-24 -mt-24 opacity-40"></div>
 
                             <div className="relative z-10 w-full">
-                                <div className="mx-auto w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-slate-100">
+                                <div className="mx-auto w-12 h-12 bg-[#222222] rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-slate-100">
                                     <span className="text-xl">💬</span>
                                 </div>
 
@@ -212,7 +212,7 @@ export default function Home() {
                                     />
                                     <button
                                         type="submit"
-                                        className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gray-900 text-white text-sm font-black rounded-xl hover:bg-gray-800 transition-all active:scale-[0.98] shadow-lg shadow-slate-100"
+                                        className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#222222] text-white text-sm font-black rounded-xl hover:bg-[#333333] transition-all active:scale-[0.98] shadow-lg shadow-slate-100"
                                     >
                                         의견 보내기
                                     </button>
