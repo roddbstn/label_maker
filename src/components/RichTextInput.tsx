@@ -85,31 +85,51 @@ export default function RichTextInput({
         if (isSelectionInEditor) {
             const rect = range.getBoundingClientRect();
 
-            // 폰트 크기 감지
-            let detectedFontSize: number | undefined;
-            const node = selection.anchorNode;
-            const parentElement = node?.nodeType === 3 ? node.parentElement : node as HTMLElement;
-
-            if (parentElement) {
-                const findPtInStyle = (el: HTMLElement): number | undefined => {
+            // 폰트 크기 감지 및 혼합 여부 확인
+            const getFontSizeAtNode = (node: Node | null): number | undefined => {
+                let el = node?.nodeType === 3 ? node.parentElement : node as HTMLElement;
+                while (el && editor?.contains(el)) {
                     const style = el.getAttribute('style');
                     if (style) {
                         const match = style.match(/font-size:\s*(\d+(\.\d+)?)pt/i);
                         if (match) return parseFloat(match[1]);
                     }
-                    return el.parentElement && editor?.contains(el.parentElement)
-                        ? findPtInStyle(el.parentElement)
-                        : undefined;
-                };
-                detectedFontSize = findPtInStyle(parentElement);
+                    el = el.parentElement;
+                }
+                return undefined;
+            };
 
-                if (detectedFontSize === undefined) {
-                    const style = window.getComputedStyle(parentElement);
-                    detectedFontSize = Math.round(parseFloat(style.fontSize) * 0.75);
+            const startFontSize = getFontSizeAtNode(range.startContainer) || 12;
+            const endFontSize = getFontSizeAtNode(range.endContainer) || 12;
+
+            let finalFontSize: number | undefined = startFontSize;
+
+            // 시작과 끝이 다르면 무조건 혼합(-1)
+            if (startFontSize !== endFontSize) {
+                finalFontSize = -1;
+            } else {
+                // 내부 요소들도 확인 (TreeWalker 사용)
+                const walker = document.createTreeWalker(
+                    range.commonAncestorContainer,
+                    NodeFilter.SHOW_ELEMENT,
+                    {
+                        acceptNode: (n) => {
+                            if (!range.intersectsNode(n)) return NodeFilter.FILTER_REJECT;
+                            const fs = getFontSizeAtNode(n);
+                            if (fs !== undefined && fs !== startFontSize) return NodeFilter.FILTER_ACCEPT;
+                            return NodeFilter.FILTER_SKIP;
+                        }
+                    }
+                );
+
+                if (walker.nextNode()) {
+                    finalFontSize = -1;
                 }
             }
 
-            onSelectionChange(true, rect, detectedFontSize);
+            // 12pt인 경우는 시스템상 기본이므로 undefined(Auto)로 취급할 수도 있으나, 
+            // 여기서는 detected 수치를 그대로 넘기고 UI에서 처리
+            onSelectionChange(true, rect, finalFontSize);
         } else {
             // 다른 에디터나 다른 곳을 선택한 경우
             onSelectionChange(false, null);
@@ -162,6 +182,9 @@ export default function RichTextInput({
           color: #9ca3af;
           pointer-events: none;
         }
+        .input-field :global(span) {
+          font-size: inherit !important;
+        }
       `}</style>
         </div>
     );
@@ -186,6 +209,7 @@ export function applyTextStyle(
     } else if (command === "fontSize") {
         const selection = window.getSelection();
         if (selection && selection.rangeCount > 0 && !selection.isCollapsed && editorElement.contains(selection.anchorNode)) {
+            const range = selection.getRangeAt(0);
             const fontSize = value || "0";
 
             // value가 "0"이면 폰트 크기 태그 제거 (기본으로 복구)
@@ -194,16 +218,36 @@ export function applyTextStyle(
             } else {
                 // fontSize 명령 실행 (pt 단위로 직접 주입하기 위해 임시 태그 사용)
                 document.execCommand("fontSize", false, "7");
-                const fontElements = editorElement.querySelectorAll('font[size="7"]');
-                fontElements.forEach(font => {
-                    const span = document.createElement('span');
-                    span.style.fontSize = `${fontSize}pt`;
-                    span.setAttribute('data-size', fontSize === "36" ? "medium" : fontSize === "24" ? "small" : "custom");
-                    while (font.firstChild) {
-                        span.appendChild(font.firstChild);
+                const fontElements = Array.from(editorElement.querySelectorAll('font[size="7"]'));
+
+                if (fontElements.length > 0) {
+                    const firstFont = fontElements[0];
+                    const lastFont = fontElements[fontElements.length - 1];
+
+                    fontElements.forEach(font => {
+                        const span = document.createElement('span');
+                        span.style.fontSize = `${fontSize}pt`;
+                        span.setAttribute('data-size', fontSize === "36" ? "medium" : fontSize === "24" ? "small" : "custom");
+                        while (font.firstChild) {
+                            span.appendChild(font.firstChild);
+                        }
+                        font.parentNode?.replaceChild(span, font);
+                    });
+
+                    // 선택 영역 복구: 변경된 요소들을 다시 선택
+                    const newRange = document.createRange();
+                    newRange.setStartBefore(editorElement.contains(firstFont) ? firstFont : editorElement);
+                    newRange.setEndAfter(editorElement.contains(lastFont) ? lastFont : editorElement);
+
+                    // DOM에서 제거된 요소를 참조할 수 없으므로, 다시 querySelector로 찾아서 범위 설정
+                    const spans = editorElement.querySelectorAll(`span[data-size="${fontSize === "36" ? "medium" : fontSize === "24" ? "small" : "custom"}"]`);
+                    if (spans.length > 0) {
+                        newRange.setStartBefore(spans[0]);
+                        newRange.setEndAfter(spans[spans.length - 1]);
+                        selection.removeAllRanges();
+                        selection.addRange(newRange);
                     }
-                    font.parentNode?.replaceChild(span, font);
-                });
+                }
             }
 
             // 에디터의 input 이벤트를 강제로 발생시켜 상태 업데이트

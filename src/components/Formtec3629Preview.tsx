@@ -25,28 +25,31 @@ function htmlToPlainText(html: string): string {
 /**
  * HTML을 미리보기용으로 정규화 및 스케일 조정
  * - pt 단위 스타일 추출 및 스케일 적용
- * - 36pt(중간), 24pt(작게)를 상대적 크기로 변환하기 위한 데이터 속성 유지
+ * - 36pt(중간), 24pt(작게)를 상대적 크기로 변환
  */
-function normalizeHtmlForPreview(html: string, scale: number, autoFontSize: number): string {
+function normalizeHtmlForPreview(
+    html: string,
+    scale: number,
+    autoFontSize: number,
+    mediumScale: number = 0.8,
+    smallScale: number = 0.6
+): string {
     if (!html) return "";
 
     let processedHtml = html;
 
-    // 36pt -> -5mm 효과
-    // 24pt -> -10mm 효과
-    const offsetMedium = 5; // mm
-    const offsetSmall = 10; // mm
-
+    // 36pt -> 중간 배율 (0.8x)
+    // 24pt -> 작게 배율 (0.6x)
     processedHtml = processedHtml.replace(/font-size:\s*(\d+(\.\d+)?)pt/gi, (match, p1) => {
         const pt = parseFloat(p1);
         let finalPx: number;
 
         if (pt === 36) {
-            // 중간: Auto - 5mm
-            finalPx = Math.max(8, autoFontSize - mmToPx(offsetMedium, scale));
+            // 중간 (0.8배)
+            finalPx = Math.max(8, autoFontSize * mediumScale);
         } else if (pt === 24) {
-            // 작게: Auto - 10mm
-            finalPx = Math.max(6, autoFontSize - mmToPx(offsetSmall, scale));
+            // 작게 (0.6배)
+            finalPx = Math.max(6, autoFontSize * smallScale);
         } else {
             // 기타 커스텀 pt
             const ptToMm = 0.3528;
@@ -117,6 +120,8 @@ interface AutoFitTextProps {
     isBold?: boolean;
     lineHeight?: number;
     scale: number;
+    mediumScale?: number;
+    smallScale?: number;
 }
 
 /**
@@ -137,12 +142,14 @@ function AutoFitText({
     isBold = false,
     lineHeight,
     scale,
+    mediumScale = 0.8,
+    smallScale = 0.6,
 }: AutoFitTextProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [fontSize, setFontSize] = useState(baseSize);
 
     const displayText = text || fallback;
-    const normalizedHtml = isHtml ? normalizeHtmlForPreview(text, scale, fontSize) : "";
+    const normalizedHtml = isHtml ? normalizeHtmlForPreview(text, scale, fontSize, mediumScale, smallScale) : "";
 
     // pt 단위를 미리보기 픽셀(px)로 변환 로직
     // 1pt = 0.3528mm. 여기에 이미 계산된 scale을 곱해줌.
@@ -241,7 +248,7 @@ function AutoFitText({
                 <div
                     data-text
                     style={textStyle}
-                    dangerouslySetInnerHTML={{ __html: normalizeHtmlForPreview(text, scale, fontSize) }}
+                    dangerouslySetInnerHTML={{ __html: normalizeHtmlForPreview(text, scale, fontSize, mediumScale, smallScale) }}
                 />
             </div>
         );

@@ -9,7 +9,7 @@ import { useState } from "react";
 
 // 폰트 크기 옵션 (단계별 선택)
 const FONT_SIZE_OPTIONS = [
-    { label: "12 (Auto)", value: 0 },
+    { label: "Auto", value: 0 },
     { label: "중간", value: 36 }, // -5mm 효과를 위한 내부 값
     { label: "작게", value: 24 }, // -10mm 효과를 위한 내부 값
 ];
@@ -91,8 +91,11 @@ export default function LabelForm() {
         const selection = window.getSelection();
         const editor = inputId ? document.getElementById(inputId) : null;
 
-        if (size !== 0 && selection && selection.rangeCount > 0 && !selection.isCollapsed && editor?.contains(selection.anchorNode)) {
-            // 선택된 텍스트가 있는 경우: 부분 글자 크기 적용
+        if (selection && selection.rangeCount > 0 && !selection.isCollapsed && editor?.contains(selection.anchorNode)) {
+            // 선택된 텍스트가 있는 경우: 부분 글자 크기 적용 (size 0 포함)
+            // UI에 즉시 반영하기 위해 상태 먼저 업데이트
+            setSelectionFontSizes(prev => ({ ...prev, [field.replace('FontSize', '')]: size }));
+
             import("./RichTextInput").then(({ applyTextStyle }) => {
                 applyTextStyle(editor, "fontSize", size.toString());
             });
@@ -257,17 +260,19 @@ export default function LabelForm() {
                                 <select
                                     value={selectedFields['title'] && selectionFontSizes['title'] !== undefined ? selectionFontSizes['title'] : (labelData.titleFontSize || 0)}
                                     onChange={(e) => setFieldFontSize('titleFontSize', Number(e.target.value), 'title')}
-                                    onMouseDown={(e) => e.preventDefault()}
-                                    className={`text-xs bg-transparent focus:outline-none cursor-pointer border-none outline-none appearance-none pl-2 ${selectedFields['title'] ? 'text-black font-bold' : 'text-gray-400 font-normal'}`}
+                                    className={`text-xs bg-transparent focus:outline-none cursor-pointer border-none outline-none appearance-none pl-2 pr-6 h-full w-full ${selectedFields['title'] ? 'text-black font-bold' : 'text-gray-400 font-normal'}`}
                                 >
+                                    {selectedFields['title'] && selectionFontSizes['title'] === -1 && (
+                                        <option value="-1"></option>
+                                    )}
                                     {FONT_SIZE_OPTIONS.map(opt => (
                                         <option key={opt.value} value={opt.value} className="text-gray-700 text-sm">{opt.label}</option>
                                     ))}
-                                    {selectedFields['title'] && selectionFontSizes['title'] !== undefined && !FONT_SIZE_OPTIONS.some(opt => opt.value === selectionFontSizes['title']) && (
+                                    {selectedFields['title'] && selectionFontSizes['title'] !== undefined && selectionFontSizes['title'] > 0 && selectionFontSizes['title'] !== 12 && !FONT_SIZE_OPTIONS.some(opt => opt.value === selectionFontSizes['title']) && (
                                         <option value={selectionFontSizes['title']}>{selectionFontSizes['title']} (커스텀)</option>
                                     )}
                                 </select>
-                                <span className={`text-[10px] pointer-events-none ${selectedFields['title'] ? 'text-black font-bold' : 'text-gray-400'}`}>▼</span>
+                                <span className={`text-[10px] absolute right-1 pointer-events-none ${selectedFields['title'] ? 'text-black font-bold' : 'text-gray-400'}`}>▼</span>
                             </div>
                         </div>
                     </div>
@@ -303,17 +308,19 @@ export default function LabelForm() {
                                 <select
                                     value={selectedFields['productionYear'] && selectionFontSizes['productionYear'] !== undefined ? selectionFontSizes['productionYear'] : (labelData.productionYearFontSize || 0)}
                                     onChange={(e) => setFieldFontSize('productionYearFontSize', Number(e.target.value), 'productionYear')}
-                                    onMouseDown={(e) => e.preventDefault()}
-                                    className={`text-xs bg-transparent focus:outline-none cursor-pointer border-none outline-none appearance-none pl-2 ${selectedFields['productionYear'] ? 'text-black font-bold' : 'text-gray-400 font-normal'}`}
+                                    className={`text-xs bg-transparent focus:outline-none cursor-pointer border-none outline-none appearance-none pl-2 pr-6 h-full w-full ${selectedFields['productionYear'] ? 'text-black font-bold' : 'text-gray-400 font-normal'}`}
                                 >
+                                    {selectedFields['productionYear'] && selectionFontSizes['productionYear'] === -1 && (
+                                        <option value="-1"></option>
+                                    )}
                                     {FONT_SIZE_OPTIONS.map(opt => (
                                         <option key={opt.value} value={opt.value} className="text-gray-700 text-sm">{opt.label}</option>
                                     ))}
-                                    {selectedFields['productionYear'] && selectionFontSizes['productionYear'] !== undefined && !FONT_SIZE_OPTIONS.some(opt => opt.value === selectionFontSizes['productionYear']) && (
+                                    {selectedFields['productionYear'] && selectionFontSizes['productionYear'] !== undefined && selectionFontSizes['productionYear'] > 0 && selectionFontSizes['productionYear'] !== 12 && !FONT_SIZE_OPTIONS.some(opt => opt.value === selectionFontSizes['productionYear']) && (
                                         <option value={selectionFontSizes['productionYear']}>{selectionFontSizes['productionYear']} (커스텀)</option>
                                     )}
                                 </select>
-                                <span className={`text-[10px] pointer-events-none ${selectedFields['productionYear'] ? 'text-black font-bold' : 'text-gray-400'}`}>▼</span>
+                                <span className={`text-[10px] absolute right-1 pointer-events-none ${selectedFields['productionYear'] ? 'text-black font-bold' : 'text-gray-400'}`}>▼</span>
                             </div>
                         </div>
                     </div>
@@ -352,17 +359,19 @@ export default function LabelForm() {
                                 <select
                                     value={selectedFields['departmentName'] && selectionFontSizes['departmentName'] !== undefined ? selectionFontSizes['departmentName'] : (labelData.departmentNameFontSize || 0)}
                                     onChange={(e) => setFieldFontSize('departmentNameFontSize', Number(e.target.value), 'departmentName')}
-                                    onMouseDown={(e) => e.preventDefault()}
-                                    className={`text-xs bg-transparent focus:outline-none cursor-pointer border-none outline-none appearance-none pl-2 ${selectedFields['departmentName'] ? 'text-black font-bold' : 'text-gray-400 font-normal'}`}
+                                    className={`text-xs bg-transparent focus:outline-none cursor-pointer border-none outline-none appearance-none pl-2 pr-6 h-full w-full ${selectedFields['departmentName'] ? 'text-black font-bold' : 'text-gray-400 font-normal'}`}
                                 >
+                                    {selectedFields['departmentName'] && selectionFontSizes['departmentName'] === -1 && (
+                                        <option value="-1"></option>
+                                    )}
                                     {FONT_SIZE_OPTIONS.map(opt => (
                                         <option key={opt.value} value={opt.value} className="text-gray-700 text-sm">{opt.label}</option>
                                     ))}
-                                    {selectedFields['departmentName'] && selectionFontSizes['departmentName'] !== undefined && !FONT_SIZE_OPTIONS.some(opt => opt.value === selectionFontSizes['departmentName']) && (
+                                    {selectedFields['departmentName'] && selectionFontSizes['departmentName'] !== undefined && selectionFontSizes['departmentName'] > 0 && selectionFontSizes['departmentName'] !== 12 && !FONT_SIZE_OPTIONS.some(opt => opt.value === selectionFontSizes['departmentName']) && (
                                         <option value={selectionFontSizes['departmentName']}>{selectionFontSizes['departmentName']} (커스텀)</option>
                                     )}
                                 </select>
-                                <span className={`text-[10px] pointer-events-none ${selectedFields['departmentName'] ? 'text-black font-bold' : 'text-gray-400'}`}>▼</span>
+                                <span className={`text-[10px] absolute right-1 pointer-events-none ${selectedFields['departmentName'] ? 'text-black font-bold' : 'text-gray-400'}`}>▼</span>
                             </div>
                         </div>
                     </div>
