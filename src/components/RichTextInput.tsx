@@ -99,24 +99,45 @@ export default function RichTextInput({
                 return undefined;
             };
 
-            const startFontSize = getFontSizeAtNode(range.startContainer) || 12;
-            const endFontSize = getFontSizeAtNode(range.endContainer) || 12;
+            const getFontSize = (node: Node | null, offset?: number): number => {
+                if (!node) return 0;
+
+                let target: Node = node;
+                // 만약 node가 엘리먼트고 offset이 지정되어 있다면 선택된 자식을 참조
+                if (node.nodeType === 1 && offset !== undefined) {
+                    const children = (node as HTMLElement).childNodes;
+                    if (offset < children.length) {
+                        target = children[offset];
+                    } else if (offset > 0) {
+                        target = children[offset - 1];
+                    }
+                }
+
+                return getFontSizeAtNode(target) || 0;
+            };
+
+            const startFontSize = getFontSize(range.startContainer, range.startOffset);
+            const endFontSize = getFontSize(range.endContainer, range.endOffset);
 
             let finalFontSize: number | undefined = startFontSize;
 
-            // 시작과 끝이 다르면 무조건 혼합(-1)
+            // 시작과 끝이 다르면 일단 혼합 가능성 높음
             if (startFontSize !== endFontSize) {
                 finalFontSize = -1;
             } else {
                 // 내부 요소들도 확인 (TreeWalker 사용)
+                // 단순히 모든 요소를 보는 게 아니라, 텍스트가 들어있는 요소들만 비교
                 const walker = document.createTreeWalker(
                     range.commonAncestorContainer,
-                    NodeFilter.SHOW_ELEMENT,
+                    NodeFilter.SHOW_TEXT, // 텍스트 노드 기준으로 탐색
                     {
                         acceptNode: (n) => {
                             if (!range.intersectsNode(n)) return NodeFilter.FILTER_REJECT;
-                            const fs = getFontSizeAtNode(n);
-                            if (fs !== undefined && fs !== startFontSize) return NodeFilter.FILTER_ACCEPT;
+                            // 공백만 있는 노드는 무시
+                            if (!n.textContent?.trim()) return NodeFilter.FILTER_SKIP;
+
+                            const fs = getFontSizeAtNode(n) || 0;
+                            if (fs !== startFontSize) return NodeFilter.FILTER_ACCEPT;
                             return NodeFilter.FILTER_SKIP;
                         }
                     }
@@ -127,8 +148,7 @@ export default function RichTextInput({
                 }
             }
 
-            // 12pt인 경우는 시스템상 기본이므로 undefined(Auto)로 취급할 수도 있으나, 
-            // 여기서는 detected 수치를 그대로 넘기고 UI에서 처리
+            // 0인 경우는 Auto로 UI에서 처리됨
             onSelectionChange(true, rect, finalFontSize);
         } else {
             // 다른 에디터나 다른 곳을 선택한 경우
