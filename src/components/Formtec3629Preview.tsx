@@ -428,14 +428,14 @@ function SideClassLabel({
                                 justifyContent: 'space-between',
                                 width: '100%',
                                 lineHeight: 1.1,
-                                fontSize: mmToPx(3.2, scale), // 크기 통일
+                                fontSize: mmToPx(3.8, scale), // 3.8mm로 통일
                                 fontWeight: 'normal',
                             }}>
                                 <span>제</span>
                                 <span>목</span>
                             </div>
                             <div style={{
-                                fontSize: mmToPx(3.2, scale), // 크기 통일
+                                fontSize: mmToPx(3.8, scale), // 3.8mm로 통일
                                 lineHeight: 1.1,
                                 fontWeight: 'normal',
                                 whiteSpace: 'nowrap',
