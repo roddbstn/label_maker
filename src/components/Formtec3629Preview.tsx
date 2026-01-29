@@ -746,8 +746,9 @@ function EdgeClassLabel({
                                     justifyContent: row.label === "제목" ? "space-between" : "center",
                                     whiteSpace: displayText.includes('\n') ? "pre-line" : "nowrap",
                                     width: row.label === "제목" ? `calc(100% - ${mmToPx(4, scale)}px)` : "100%",
-                                    lineHeight: 1.2,
+                                    lineHeight: 1,
                                     textAlign: 'center',
+                                    paddingBottom: isLabel ? mmToPx(0.4, scale) : 0, // 라벨 텍스트를 위로 살짝 올림
                                 }}>
                                     {row.label === "제목" ? (
                                         <>
