@@ -363,7 +363,7 @@ function SideClassLabel({
                         { text: retentionPeriod || "", isLabel: false }
                     ].map((item, i) => {
                         const cellHeightPx = mmToPx(12.5, scale);
-                        const fontSizePx = mmToPx(3.2, scale);
+                        const fontSizePx = mmToPx(4.0, scale); // 3.2mm에서 4.0mm로 상향
 
                         return (
                             <div
