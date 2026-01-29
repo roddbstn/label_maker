@@ -116,21 +116,21 @@ export default function Home() {
                 </section>
 
                 {/* 정식 버전 알림받기 CTA */}
-                <section id="waitlist-section" className="mt-20 bg-gradient-to-br from-primary-600 to-blue-800 rounded-3xl p-8 sm:p-16 text-center text-white shadow-2xl shadow-primary-200 relative overflow-hidden">
+                <section id="waitlist-section" className="mt-20 max-w-4xl mx-auto bg-gradient-to-br from-primary-600 to-blue-800 rounded-[2.5rem] p-8 sm:p-12 text-left text-white shadow-2xl shadow-primary-200 relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
                     <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-400/10 rounded-full -ml-32 -mb-32 blur-3xl"></div>
 
-                    <div className="max-w-2xl mx-auto relative z-10">
+                    <div className="relative z-10">
                         <div className="inline-block px-4 py-1.5 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold tracking-widest mb-6 border border-white/30">
                             BETA VERSION
                         </div>
-                        <h3 className="text-2xl sm:text-4xl font-bold mb-6 leading-tight">🚀 정식 버전 출시 알림을<br className="hidden sm:block" /> 가장 먼저 받아보세요</h3>
-                        <p className="text-blue-100/90 text-lg mb-10 font-medium">
+                        <h3 className="text-2xl sm:text-4xl font-bold mb-6 leading-tight max-w-2xl">🚀 정식 버전 출시 알림을<br className="hidden sm:block" /> 가장 먼저 받아보세요</h3>
+                        <p className="text-blue-100/90 text-lg mb-10 font-medium max-w-2xl">
                             베타 서비스 종료 후 더 강력해진 자동화 기능과<br /> 다양한 양식으로 돌아올 정식 버전의 소식을 알려드립니다.
                         </p>
 
                         <form
-                            className="bg-white/10 backdrop-blur-xl border border-white/20 p-2 rounded-2xl flex flex-col sm:flex-row gap-3 shadow-2xl"
+                            className="bg-white/10 backdrop-blur-xl border border-white/20 p-2 rounded-2xl flex flex-col sm:flex-row gap-3 shadow-2xl max-w-2xl"
                             onSubmit={(e) => {
                                 e.preventDefault();
                                 alert('감사합니다! 정식 버전 출시 소식을 이메일로 보내드리겠습니다.');
@@ -150,7 +150,7 @@ export default function Home() {
                             </button>
                         </form>
 
-                        <p className="mt-6 text-[11px] text-blue-100/60 flex items-center justify-center gap-1.5 font-medium">
+                        <p className="mt-6 text-[11px] text-blue-100/60 flex items-center justify-start gap-1.5 font-medium ml-1">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
                             </svg>
@@ -159,8 +159,8 @@ export default function Home() {
                     </div>
                 </section>
 
-                {/* 피드백 섹션 (단순화된 흰색 박스 디자인) */}
-                <section className="mt-12 max-w-3xl mx-auto">
+                {/* 피드백 섹션 (흰색 박스 디자인) */}
+                <section className="mt-8 max-w-4xl mx-auto">
                     <div className="bg-white rounded-[2.5rem] p-8 sm:p-12 shadow-xl shadow-slate-200/60 border border-slate-100 relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-primary-50 rounded-full -mr-16 -mt-16 opacity-50"></div>
                         <div className="relative z-10">
