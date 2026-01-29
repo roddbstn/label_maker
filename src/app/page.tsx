@@ -128,67 +128,73 @@ export default function Home() {
                         <p className="text-blue-100/90 text-lg mb-10 font-medium">
                             베타 서비스 종료 후 더 강력해진 자동화 기능과<br /> 다양한 양식으로 돌아올 정식 버전의 소식을 알려드립니다.
                         </p>
+
                         <form
-                            className="space-y-4"
+                            className="bg-white/10 backdrop-blur-xl border border-white/20 p-2 rounded-2xl flex flex-col sm:flex-row gap-3 shadow-2xl"
                             onSubmit={(e) => {
                                 e.preventDefault();
-                                alert('소중한 의견 감사합니다! 정식 버전 출시 소식도 이메일로 보내드리겠습니다.');
+                                alert('감사합니다! 정식 버전 출시 소식을 이메일로 보내드리겠습니다.');
                             }}
                         >
-                            <div className="flex flex-col sm:flex-row gap-3 p-1.5 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl">
-                                <input
-                                    type="email"
-                                    required
-                                    placeholder="이메일 주소를 입력해주세요"
-                                    className="flex-1 px-6 py-4 rounded-xl bg-transparent text-white placeholder:text-blue-100/50 focus:outline-none"
-                                />
-                                <button
-                                    type="submit"
-                                    className="px-10 py-4 bg-white text-primary-600 font-bold rounded-xl hover:bg-blue-50 transition-all shadow-lg active:scale-95"
-                                >
-                                    소식 받기
-                                </button>
-                            </div>
-
-                            {/* 시각적 분리선 */}
-                            <div className="mt-32 mb-16 h-px w-full bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
-
-                            <div className="text-left flex flex-col gap-10">
-                                <div className="relative group">
-                                    <div className="absolute -inset-1 bg-gradient-to-r from-sky-400 to-blue-500 rounded-[3rem] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-                                    <div className="relative p-10 sm:p-14 bg-blue-900/40 backdrop-blur-3xl border border-white/20 rounded-[3rem] shadow-2xl">
-                                        <div className="absolute -top-6 left-12 px-8 py-2.5 bg-gradient-to-r from-sky-400 to-blue-500 text-white text-[10px] font-black tracking-[0.3em] rounded-full shadow-2xl uppercase">
-                                            User Feedback
-                                        </div>
-
-                                        <label className="block text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-sky-200 mb-6 leading-[1.1]">
-                                            💬 불편한 점은<br className="sm:hidden" /> 없었나요?
-                                        </label>
-
-                                        <p className="text-sky-100 text-lg sm:text-2xl font-bold leading-relaxed max-w-2xl mb-10 opacity-90">
-                                            정부문서화일 라벨을 만들며 느꼈던 <span className="text-sky-300">작은 불편함</span>이나 <span className="text-sky-300">필요한 기능</span>이 있다면 무엇이든 말씀해주세요.
-                                        </p>
-
-                                        <textarea
-                                            placeholder="예: 이런 규격이 더 필요해요, 글자 배치가 아쉬워요 등 (익명으로 전달됩니다)"
-                                            rows={5}
-                                            className="w-full px-10 py-8 text-xl rounded-[2.5rem] bg-white/5 border-2 border-white/10 text-white placeholder:text-blue-100/20 focus:outline-none focus:ring-4 focus:ring-sky-400/30 transition-all resize-none shadow-inner"
-                                        />
-
-                                        <div className="mt-8 flex items-center gap-3 text-sky-300/60 font-medium text-sm ml-2">
-                                            <span className="flex h-2 w-2 rounded-full bg-sky-400 animate-pulse"></span>
-                                            여러분의 상세한 의견이 정식 버전의 핵심 기능이 됩니다.
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <input
+                                type="email"
+                                required
+                                placeholder="이메일 주소를 입력해주세요"
+                                className="flex-1 px-6 py-4 rounded-xl bg-transparent text-white placeholder:text-blue-100/50 focus:outline-none"
+                            />
+                            <button
+                                type="submit"
+                                className="px-10 py-4 bg-white text-primary-600 font-bold rounded-xl hover:bg-blue-50 transition-all shadow-lg active:scale-95"
+                            >
+                                소식 받기
+                            </button>
                         </form>
-                        <p className="mt-6 text-[11px] text-blue-200/60 flex items-center justify-center gap-1.5 font-medium">
+
+                        <p className="mt-6 text-[11px] text-blue-100/60 flex items-center justify-center gap-1.5 font-medium">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
                             </svg>
-                            입력해주신 메일 정보와 소중한 피드백은 정식 버전 개발 목적으로만 안전하게 사용됩니다.
+                            메일 주소는 정식 버전 알림 목적으로만 안전하게 보호됩니다.
                         </p>
+                    </div>
+                </section>
+
+                {/* 피드백 섹션 (단순화된 흰색 박스 디자인) */}
+                <section className="mt-12 max-w-3xl mx-auto">
+                    <div className="bg-white rounded-[2.5rem] p-8 sm:p-12 shadow-xl shadow-slate-200/60 border border-slate-100 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-primary-50 rounded-full -mr-16 -mt-16 opacity-50"></div>
+                        <div className="relative z-10">
+                            <div className="flex items-center gap-3 mb-6">
+                                <span className="flex h-3 w-3 rounded-full bg-primary-500"></span>
+                                <span className="text-xs font-bold text-primary-600 uppercase tracking-widest">Feedback</span>
+                            </div>
+                            <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 leading-tight">
+                                💬 불편한 점은 없었나요?
+                            </h3>
+                            <p className="text-gray-500 mb-8 text-sm sm:text-base leading-relaxed">
+                                사용 중 느끼신 사소한 의견이라도 남겨주세요. <br className="hidden sm:block" />
+                                여러분의 한마디가 더 나은 서비스를 만드는 데 큰 힘이 됩니다.
+                            </p>
+                            <form
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                    alert('소중한 피드백 감사합니다! 개발에 적극 반영하겠습니다.');
+                                }}
+                                className="space-y-4"
+                            >
+                                <textarea
+                                    placeholder="자유롭게 어떤 의견이든 남겨주세요 (익명 전달)"
+                                    rows={4}
+                                    className="w-full px-6 py-5 rounded-2xl bg-slate-50 border border-slate-200 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all resize-none"
+                                />
+                                <button
+                                    type="submit"
+                                    className="w-full sm:w-auto px-8 py-3.5 bg-gray-900 text-white font-bold rounded-xl hover:bg-gray-800 transition-all active:scale-95 shadow-lg shadow-gray-200"
+                                >
+                                    의견 보내기
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </section>
             </div>
