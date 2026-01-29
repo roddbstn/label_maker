@@ -150,24 +150,36 @@ export default function Home() {
                                 </button>
                             </div>
 
-                            <div className="text-left mt-24 flex flex-col gap-8">
-                                <div className="p-8 sm:p-10 bg-white/5 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] shadow-2xl relative">
-                                    <div className="absolute -top-6 left-10 px-6 py-2 bg-sky-500 text-white text-xs font-black tracking-widest rounded-full shadow-lg">
-                                        FEEDBACK
+                            {/* 시각적 분리선 */}
+                            <div className="mt-32 mb-16 h-px w-full bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+
+                            <div className="text-left flex flex-col gap-10">
+                                <div className="relative group">
+                                    <div className="absolute -inset-1 bg-gradient-to-r from-sky-400 to-blue-500 rounded-[3rem] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+                                    <div className="relative p-10 sm:p-14 bg-blue-900/40 backdrop-blur-3xl border border-white/20 rounded-[3rem] shadow-2xl">
+                                        <div className="absolute -top-6 left-12 px-8 py-2.5 bg-gradient-to-r from-sky-400 to-blue-500 text-white text-[10px] font-black tracking-[0.3em] rounded-full shadow-2xl uppercase">
+                                            User Feedback
+                                        </div>
+
+                                        <label className="block text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-sky-200 mb-6 leading-[1.1]">
+                                            💬 불편한 점은<br className="sm:hidden" /> 없었나요?
+                                        </label>
+
+                                        <p className="text-sky-100 text-lg sm:text-2xl font-bold leading-relaxed max-w-2xl mb-10 opacity-90">
+                                            정부문서화일 라벨을 만들며 느꼈던 <span className="text-sky-300">작은 불편함</span>이나 <span className="text-sky-300">필요한 기능</span>이 있다면 무엇이든 말씀해주세요.
+                                        </p>
+
+                                        <textarea
+                                            placeholder="예: 이런 규격이 더 필요해요, 글자 배치가 아쉬워요 등 (익명으로 전달됩니다)"
+                                            rows={5}
+                                            className="w-full px-10 py-8 text-xl rounded-[2.5rem] bg-white/5 border-2 border-white/10 text-white placeholder:text-blue-100/20 focus:outline-none focus:ring-4 focus:ring-sky-400/30 transition-all resize-none shadow-inner"
+                                        />
+
+                                        <div className="mt-8 flex items-center gap-3 text-sky-300/60 font-medium text-sm ml-2">
+                                            <span className="flex h-2 w-2 rounded-full bg-sky-400 animate-pulse"></span>
+                                            여러분의 상세한 의견이 정식 버전의 핵심 기능이 됩니다.
+                                        </div>
                                     </div>
-
-                                    <label className="block text-3xl sm:text-4xl font-black text-white mb-4 leading-tight">
-                                        💬 불편한 점은 없었나요?
-                                    </label>
-                                    <p className="text-sky-200/80 mb-8 text-base sm:text-xl font-bold leading-relaxed max-w-xl">
-                                        사소한 의견이라도 남겨주시면 정식 버전 개발에<br className="hidden sm:block" /> 큰 힘이 됩니다. 여러분의 목소리를 들려주세요!
-                                    </p>
-
-                                    <textarea
-                                        placeholder="예: 이런 양식도 추가해주세요, 글자 조절이 더 세밀했으면 좋겠어요 등"
-                                        rows={4}
-                                        className="w-full px-8 py-6 text-lg rounded-3xl bg-blue-900/40 border-2 border-white/10 text-white placeholder:text-blue-200/20 focus:outline-none focus:ring-4 focus:ring-sky-400/30 transition-all resize-none shadow-inner"
-                                    />
                                 </div>
                             </div>
                         </form>
