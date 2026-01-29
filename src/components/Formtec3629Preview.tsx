@@ -383,7 +383,7 @@ function SideClassLabel({
                         { text: "분류\n번호", isLabel: true },
                         { text: classificationCode || "", isLabel: false },
                         { text: "생산\n연도", isLabel: true },
-                        { text: productionYear || "", isLabel: false },
+                        { text: (productionYear || "").replace(/[^0-9]/g, ""), isLabel: false },
                         { text: "보존\n기간", isLabel: true },
                         { text: retentionPeriod || "", isLabel: false }
                     ].map((item, i) => {
@@ -548,8 +548,11 @@ function EdgeClassLabel({
     // 부서명에서 줄바꿈을 공백으로 대체 (옆면은 항상 1열로 표시)
     const deptNameForEdge = htmlToPlainText(departmentName).replace(/\n/g, ' ');
 
+    // 생산연도에서 숫자만 추출
+    const yearOnly = htmlToPlainText(productionYear).replace(/[^0-9]/g, '');
+
     const values = [
-        "", managementNumber, "", productionYear, "", retentionPeriod,
+        "", managementNumber, "", yearOnly, "", retentionPeriod,
         "", classificationCode, "", htmlToPlainText(title), "", deptNameForEdge,
     ];
 
