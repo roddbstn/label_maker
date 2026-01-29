@@ -124,23 +124,23 @@ export default function Home() {
                         <div className="inline-block px-4 py-1.5 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold tracking-widest mb-6 border border-white/30">
                             BETA VERSION
                         </div>
-                        <h3 className="text-2xl sm:text-4xl font-bold mb-6 leading-tight max-w-2xl">🚀 정식 버전 출시 알림을<br className="hidden sm:block" /> 가장 먼저 받아보세요</h3>
-                        <p className="text-blue-100/90 text-lg mb-10 font-medium max-w-2xl">
+                        <h3 className="text-2xl sm:text-4xl font-bold mb-6 leading-tight">🚀 정식 버전 출시 알림을<br className="hidden sm:block" /> 가장 먼저 받아보세요</h3>
+                        <p className="text-blue-100/90 text-lg mb-10 font-medium">
                             베타 서비스 종료 후 더 강력해진 자동화 기능과<br /> 다양한 양식으로 돌아올 정식 버전의 소식을 알려드립니다.
                         </p>
 
                         <form
-                            className="bg-white/10 backdrop-blur-xl border border-white/20 p-2 rounded-2xl flex flex-col sm:flex-row gap-3 shadow-2xl max-w-2xl"
                             onSubmit={(e) => {
                                 e.preventDefault();
                                 alert('감사합니다! 정식 버전 출시 소식을 이메일로 보내드리겠습니다.');
                             }}
+                            className="space-y-4"
                         >
                             <input
                                 type="email"
                                 required
                                 placeholder="이메일 주소를 입력해주세요"
-                                className="flex-1 px-6 py-4 rounded-xl bg-transparent text-white placeholder:text-blue-100/50 focus:outline-none"
+                                className="w-full px-6 py-4 rounded-xl bg-white/10 backdrop-blur-xl border border-white/20 text-white placeholder:text-blue-100/50 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all shadow-xl"
                             />
                             <button
                                 type="submit"
