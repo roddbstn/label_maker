@@ -39,21 +39,36 @@ export default function Home() {
             {/* 메인 콘텐츠 */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* 히어로 섹션 */}
-                <section className="text-center mb-12">
+                <section className="text-center mb-12 relative">
                     <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
                         정부문서화일 라벨,
                         <br />
                         <span className="text-primary-600">입력만 하면 자동으로 완성</span>
                     </h2>
-                    <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                    <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-10">
                         장평·자간 조절 노가다 없이, 긴 부서명도 알아서 예쁘게 맞춰드립니다.
                         <br />
                         설치 없이 바로 PDF 다운로드!
                     </p>
+
+                    {/* 스크롤 다운 화살표 */}
+                    <div className="flex justify-center">
+                        <a
+                            href="#editor-section"
+                            className="group flex flex-col items-center gap-2 transition-all hover:translate-y-1"
+                        >
+                            <div className="w-12 h-12 rounded-full bg-white/40 backdrop-blur-md border border-white/60 shadow-xl flex items-center justify-center text-primary-600 transition-all group-hover:bg-white/60 group-hover:shadow-2xl animate-bounce">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-6 h-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
+                                </svg>
+                            </div>
+                            <span className="text-xs font-bold text-primary-600/70 tracking-tighter uppercase">Scroll Down</span>
+                        </a>
+                    </div>
                 </section>
 
                 {/* 라벨 생성 섹션 */}
-                <section className="grid lg:grid-cols-2 gap-8 items-start">
+                <section id="editor-section" className="grid lg:grid-cols-2 gap-8 items-start scroll-mt-24">
                     {/* 입력 폼 */}
                     <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 p-6 lg:p-8">
                         <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
