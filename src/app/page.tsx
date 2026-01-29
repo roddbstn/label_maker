@@ -134,7 +134,7 @@ export default function Home() {
                                 </div>
 
                                 <h3 className="text-2xl sm:text-2xl font-bold text-slate-900 mb-4 leading-tight tracking-tight">
-                                    정식 버전 소식 받기
+                                    정식 버전 알림 받기
                                 </h3>
 
                                 <p className="text-slate-500 text-sm font-medium mb-8 leading-relaxed opacity-80 max-w-xs mx-auto">
@@ -183,7 +183,7 @@ export default function Home() {
                             <div className="absolute top-0 left-0 w-48 h-48 bg-slate-50 rounded-full -ml-24 -mt-24 opacity-40"></div>
 
                             <div className="relative z-10 w-full">
-                                <div className="mx-auto w-12 h-12 bg-slate-100/80 rounded-xl flex items-center justify-center mb-6 shadow-sm">
+                                <div className="mx-auto w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-slate-100">
                                     <span className="text-xl">💬</span>
                                 </div>
 
