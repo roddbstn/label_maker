@@ -410,7 +410,7 @@ function SideClassLabel({
                             justifyContent: 'center',
                             width: mmToPx(21, scale),
                             height: '100%',
-                            fontSize: mmToPx(3.2, scale),
+                            fontSize: mmToPx(3.8, scale), // 3.8mm로 통일
                             boxSizing: 'border-box',
                             borderRight: `${Math.max(1, mmToPx(0.5, scale))}px solid #000000`,
                         }}
