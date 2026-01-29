@@ -231,7 +231,7 @@ export default function Home() {
                             © 2026 라벨 메이커. 무료로 사용하실 수 있습니다.
                         </p>
                         <p>
-                            문의: <a href="mailto:contact@labelmaker.kr" className="text-primary-600 hover:underline">contact@labelmaker.kr</a>
+                            문의: <a href="https://open.kakao.com/o/sVRBnSdi" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:underline">카카오톡 오픈채팅</a>
                         </p>
                     </div>
                 </div>
