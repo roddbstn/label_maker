@@ -231,7 +231,7 @@ export default function LabelForm() {
 
             <form className="space-y-6 mt-4" onSubmit={(e) => e.preventDefault()}>
                 {/* 제목 필드 */}
-                <div className="space-y-1">
+                <div className="space-y-1 group">
                     <label className="block text-sm font-bold text-gray-700">
                         제목 <span className="text-red-500">*</span>
                     </label>
@@ -245,9 +245,10 @@ export default function LabelForm() {
                             placeholder="예: 2024년도 아동복지 사업"
                             minHeight="80px"
                         />
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 transition-opacity duration-200 opacity-0 group-hover:opacity-100">
                             <button
                                 type="button"
+                                tabIndex={-1}
                                 onClick={() => toggleFieldBold('titleIsBold', labelData.titleIsBold, 'title')}
                                 onMouseDown={(e) => e.preventDefault()}
                                 className={`w-12 h-7 border rounded-md font-bold text-sm transition-colors shadow-sm ${labelData.titleIsBold ? 'bg-blue-500 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'}`}
@@ -258,6 +259,7 @@ export default function LabelForm() {
                                 className={`border rounded-md h-7 pr-1 flex items-center transition-colors ${selectedFields['title'] ? 'bg-white border-black ring-1 ring-black' : 'bg-gray-50/50 border-gray-200'}`}
                             >
                                 <select
+                                    tabIndex={-1}
                                     value={selectedFields['title'] && selectionFontSizes['title'] !== undefined ? selectionFontSizes['title'] : (labelData.titleFontSize || 0)}
                                     onChange={(e) => setFieldFontSize('titleFontSize', Number(e.target.value), 'title')}
                                     className={`text-xs bg-transparent focus:outline-none cursor-pointer border-none outline-none appearance-none pl-2 pr-6 h-full w-full ${selectedFields['title'] ? 'text-black font-bold' : 'text-gray-400 font-normal'}`}
@@ -279,7 +281,7 @@ export default function LabelForm() {
                 </div>
 
                 {/* 생산연도 필드 */}
-                <div className="space-y-1">
+                <div className="space-y-1 group">
                     <label className="block text-sm font-bold text-gray-700">
                         생산연도 <span className="text-red-500">*</span>
                     </label>
@@ -293,9 +295,10 @@ export default function LabelForm() {
                             placeholder="예: 2024"
                             minHeight="45px"
                         />
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 transition-all duration-200 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
                             <button
                                 type="button"
+                                tabIndex={-1}
                                 onClick={() => toggleFieldBold('productionYearIsBold', labelData.productionYearIsBold, 'productionYear')}
                                 onMouseDown={(e) => e.preventDefault()}
                                 className={`w-12 h-7 border rounded-md font-bold text-sm transition-colors shadow-sm ${labelData.productionYearIsBold ? 'bg-blue-500 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'}`}
@@ -306,6 +309,7 @@ export default function LabelForm() {
                                 className={`border rounded-md h-7 pr-1 flex items-center transition-colors ${selectedFields['productionYear'] ? 'bg-white border-black ring-1 ring-black' : 'bg-gray-50/50 border-gray-200'}`}
                             >
                                 <select
+                                    tabIndex={-1}
                                     value={selectedFields['productionYear'] && selectionFontSizes['productionYear'] !== undefined ? selectionFontSizes['productionYear'] : (labelData.productionYearFontSize || 0)}
                                     onChange={(e) => setFieldFontSize('productionYearFontSize', Number(e.target.value), 'productionYear')}
                                     className={`text-xs bg-transparent focus:outline-none cursor-pointer border-none outline-none appearance-none pl-2 pr-6 h-full w-full ${selectedFields['productionYear'] ? 'text-black font-bold' : 'text-gray-400 font-normal'}`}
@@ -327,7 +331,7 @@ export default function LabelForm() {
                 </div>
 
                 {/* 부서명 필드 */}
-                <div className="space-y-1">
+                <div className="space-y-1 group">
                     <div className="flex items-center justify-between">
                         <label className="block text-sm font-bold text-gray-700">부서명</label>
                         <span className="text-[10px] text-gray-400 font-medium bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100">
@@ -344,9 +348,10 @@ export default function LabelForm() {
                             placeholder="예: 대전광역시아동보호전문기관"
                             minHeight="80px"
                         />
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 transition-all duration-200 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
                             <button
                                 type="button"
+                                tabIndex={-1}
                                 onClick={() => toggleFieldBold('departmentNameIsBold', labelData.departmentNameIsBold, 'departmentName')}
                                 onMouseDown={(e) => e.preventDefault()}
                                 className={`w-12 h-7 border rounded-md font-bold text-sm transition-colors shadow-sm ${labelData.departmentNameIsBold ? 'bg-blue-500 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'}`}
@@ -357,6 +362,7 @@ export default function LabelForm() {
                                 className={`border rounded-md h-7 pr-1 flex items-center transition-colors ${selectedFields['departmentName'] ? 'bg-white border-black ring-1 ring-black' : 'bg-gray-50/50 border-gray-200'}`}
                             >
                                 <select
+                                    tabIndex={-1}
                                     value={selectedFields['departmentName'] && selectionFontSizes['departmentName'] !== undefined ? selectionFontSizes['departmentName'] : (labelData.departmentNameFontSize || 0)}
                                     onChange={(e) => setFieldFontSize('departmentNameFontSize', Number(e.target.value), 'departmentName')}
                                     className={`text-xs bg-transparent focus:outline-none cursor-pointer border-none outline-none appearance-none pl-2 pr-6 h-full w-full ${selectedFields['departmentName'] ? 'text-black font-bold' : 'text-gray-400 font-normal'}`}
