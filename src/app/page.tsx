@@ -129,30 +129,46 @@ export default function Home() {
                             베타 서비스 종료 후 더 강력해진 자동화 기능과<br /> 다양한 양식으로 돌아올 정식 버전의 소식을 알려드립니다.
                         </p>
                         <form
-                            className="flex flex-col sm:flex-row gap-3 p-1.5 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl"
+                            className="space-y-4"
                             onSubmit={(e) => {
                                 e.preventDefault();
-                                alert('감사합니다! 출시 소식을 이메일로 보내드리겠습니다.');
+                                alert('소중한 의견 감사합니다! 정식 버전 출시 소식도 이메일로 보내드리겠습니다.');
                             }}
                         >
-                            <input
-                                type="email"
-                                required
-                                placeholder="이메일 주소를 입력해주세요"
-                                className="flex-1 px-6 py-4 rounded-xl bg-transparent text-white placeholder:text-blue-100/50 focus:outline-none"
-                            />
-                            <button
-                                type="submit"
-                                className="px-10 py-4 bg-white text-primary-600 font-bold rounded-xl hover:bg-blue-50 transition-all shadow-lg active:scale-95"
-                            >
-                                소식 받기
-                            </button>
+                            <div className="flex flex-col sm:flex-row gap-3 p-1.5 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl">
+                                <input
+                                    type="email"
+                                    required
+                                    placeholder="이메일 주소를 입력해주세요"
+                                    className="flex-1 px-6 py-4 rounded-xl bg-transparent text-white placeholder:text-blue-100/50 focus:outline-none"
+                                />
+                                <button
+                                    type="submit"
+                                    className="px-10 py-4 bg-white text-primary-600 font-bold rounded-xl hover:bg-blue-50 transition-all shadow-lg active:scale-95"
+                                >
+                                    소식 받기
+                                </button>
+                            </div>
+
+                            <div className="text-left mt-16 pt-10 border-t border-white/10">
+                                <label className="block text-xl sm:text-2xl font-bold text-white mb-3 ml-1">
+                                    💬 불편한 점은 없었나요?
+                                </label>
+                                <p className="text-blue-100/70 mb-6 ml-1 text-sm sm:text-base font-medium">
+                                    사용 중 느끼신 아주 사소한 의견이라도 작성해주시면 정식 버전 개발에 큰 도움이 됩니다.
+                                </p>
+                                <textarea
+                                    placeholder="예: 이런 양식도 추가해주세요, 글자 조절이 더 세밀했으면 좋겠어요 등"
+                                    rows={4}
+                                    className="w-full px-7 py-5 rounded-2xl bg-white/10 border border-white/20 text-white placeholder:text-blue-100/30 focus:outline-none focus:ring-2 focus:ring-white/30 backdrop-blur-md transition-all resize-none shadow-inner"
+                                />
+                            </div>
                         </form>
                         <p className="mt-6 text-[11px] text-blue-200/60 flex items-center justify-center gap-1.5 font-medium">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
                             </svg>
-                            입력해주신 메일 정보는 정식 버전 알림 목적으로만 안전하게 보호됩니다.
+                            입력해주신 메일 정보와 소중한 피드백은 정식 버전 개발 목적으로만 안전하게 사용됩니다.
                         </p>
                     </div>
                 </section>
