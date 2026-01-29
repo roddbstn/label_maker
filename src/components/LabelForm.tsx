@@ -212,24 +212,9 @@ export default function LabelForm() {
                 )}
             </div>
 
-            {/* 히스토리 토글 */}
-            <div>
-                <button
-                    type="button"
-                    onClick={() => setHistoryOpen(!historyOpen)}
-                    className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg text-sm font-medium text-gray-700 transition-colors"
-                >
-                    <span className="flex items-center gap-2">📋 이전 기록 ({history.length})</span>
-                    <span className={`transition-transform ${historyOpen ? "rotate-180" : ""}`}>▼</span>
-                </button>
-                {historyOpen && (
-                    <div className="mt-2 p-3 bg-white border border-gray-200 rounded-lg">
-                        <HistoryPanel />
-                    </div>
-                )}
-            </div>
 
-            <form className="space-y-6 mt-4" onSubmit={(e) => e.preventDefault()}>
+
+            <form className="space-y-2 mt-2" onSubmit={(e) => e.preventDefault()}>
                 {/* 제목 필드 */}
                 <div className="space-y-1 group">
                     <label className="block text-sm font-bold text-gray-700">
@@ -424,34 +409,10 @@ export default function LabelForm() {
                     </div>
                 </div>
 
+
+
                 {/* 버튼 그룹 */}
-                <div className="flex gap-3 pt-4 border-t border-gray-100">
-                    <button
-                        type="button"
-                        onClick={resetLabelData}
-                        className="flex-1 py-3 px-4 border border-gray-300 rounded-xl text-gray-700 font-medium hover:bg-gray-50 transition-all active:scale-95"
-                    >
-                        초기화
-                    </button>
-                    <button
-                        type="button"
-                        onClick={downloadPDF}
-                        disabled={isGenerating || !labelData.title || !labelData.productionYear}
-                        className="flex-1 py-3 px-4 border border-blue-500 rounded-xl text-blue-600 font-medium hover:bg-blue-50 transition-all active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2"
-                    >
-                        {isGenerating ? <span className="animate-spin text-lg">⏳</span> : <span className="text-lg">📄</span>}
-                        PDF 다운로드
-                    </button>
-                    <button
-                        type="button"
-                        onClick={print}
-                        disabled={isGenerating || !labelData.title || !labelData.productionYear}
-                        className="flex-1 py-3 px-4 bg-blue-600 rounded-xl text-white font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2"
-                    >
-                        <span className="text-lg">🖨️</span>
-                        바로 인쇄
-                    </button>
-                </div>
+                <div className="flex gap-2 pt-8 border-t border-gray-100">
             </form>
         </div>
     );

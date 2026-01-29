@@ -51,24 +51,30 @@ export default function Home() {
                         설치 없이 바로 PDF 다운로드!
                     </p>
 
-                    {/* 스크롤 다운 화살표 */}
-                    <div className="flex justify-center">
+                    {/* 스크롤 다운 화살표 (와이드 쉐브론 고도화 디자인) */}
+                    <div className="flex justify-center mt-6">
                         <a
                             href="#editor-section"
-                            className="group flex flex-col items-center gap-2 transition-all hover:translate-y-1"
+                            className="group relative flex items-center justify-center w-32 h-6 transition-all duration-300"
                         >
-                            <div className="w-12 h-12 rounded-full bg-white/40 backdrop-blur-md border border-white/60 shadow-xl flex items-center justify-center text-primary-600 transition-all group-hover:bg-white/60 group-hover:shadow-2xl animate-bounce">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-6 h-6">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
+                            {/* 베이스 유리 질감 바 */}
+                            <div className="absolute inset-0 bg-white/10 backdrop-blur-md border border-white/20 rounded-full shadow-lg transition-all group-hover:bg-white/25 group-hover:w-40 group-hover:-inset-x-4"></div>
+
+                            {/* 와이드 쉐브론 애니메이션 */}
+                            <div className="relative flex flex-col items-center -space-y-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-4 text-gray-400 group-hover:text-primary-500 transition-colors animate-pulse">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor" className="w-8 h-4 text-gray-300/50 group-hover:text-primary-300 transition-colors">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                                 </svg>
                             </div>
-                            <span className="text-xs font-bold text-primary-600/70 tracking-tighter uppercase">Scroll Down</span>
                         </a>
                     </div>
                 </section>
 
                 {/* 라벨 생성 섹션 */}
-                <section id="editor-section" className="grid lg:grid-cols-2 gap-8 items-start scroll-mt-24">
+                <section id="editor-section" className="grid lg:grid-cols-2 gap-8 items-start scroll-mt-8">
                     {/* 입력 폼 */}
                     <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 p-6 lg:p-8">
                         <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">

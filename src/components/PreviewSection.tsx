@@ -13,16 +13,16 @@ export default function PreviewSection() {
 
     return (
         <div className="space-y-4">
-            {/* 옵션 - 글자 크기 자동 조절 안내 */}
-            <div className="flex items-center gap-2 p-3 bg-blue-50/50 rounded-lg border border-blue-100/50">
-                <span className="text-sm">⭐</span>
-                <span className="text-sm text-blue-800 font-medium">
+            {/* 미리보기 */}
+            <LabelPreview autoFitText={autoFitText} />
+
+            {/* 옵션 - 글자 크기 자동 조절 안내 (하단 이동) */}
+            <div className="flex items-center gap-2 p-2.5 bg-blue-50/40 rounded-lg border border-blue-100/40">
+                <span className="text-xs">⭐</span>
+                <span className="text-xs text-blue-700/80 font-medium">
                     글꼴 크기가 칸에 맞게 최적화돼요
                 </span>
             </div>
-
-            {/* 미리보기 */}
-            <LabelPreview autoFitText={autoFitText} />
         </div>
     );
 }
