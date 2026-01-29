@@ -321,7 +321,12 @@ export default function LabelForm() {
 
                 {/* 부서명 필드 */}
                 <div className="space-y-1">
-                    <label className="block text-sm font-bold text-gray-700">부서명</label>
+                    <div className="flex items-center justify-between">
+                        <label className="block text-sm font-bold text-gray-700">부서명</label>
+                        <span className="text-[10px] text-gray-400 font-medium bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100">
+                            Shift + Enter로 줄바꿈 가능
+                        </span>
+                    </div>
                     <div className="flex flex-col gap-2">
                         <RichTextInput
                             key={`dept-${labelData.id}`}

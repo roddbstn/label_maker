@@ -121,23 +121,23 @@ export const FORMTEC_3629_COORDS = {
 
     /** 라벨 세트 1 (상단) */
     set1: {
-        title: { x: 17.6, y: 240.5, width: 123, height: 36.5 },
-        year: { x: 17.6, y: 217, width: 63.5, height: 23.5 },
-        department: { x: 17.6, y: 187, width: 84.5, height: 30 },
-        sideClass: { x: 17.6, y: 159, width: 93, height: 28 },
+        title: { x: 17.6, y: 240.5, width: 123, height: 36.5 },       // Left 17.6, Top 20 (297-20-36.5)
+        year: { x: 18.35, y: 216.5, width: 63.5, height: 23.5 },      // Gap adjusted for 20mm margins
+        department: { x: 18.35, y: 187.0, width: 84.5, height: 30 },  // Gap adjusted
+        sideClass: { x: 19.1, y: 151.0, width: 91, height: 26 },      // Gap adjusted
     },
 
     /** 라벨 세트 2 (하단) */
     set2: {
-        title: { x: 17.6, y: 107.5, width: 123, height: 36.5 },
-        year: { x: 17.6, y: 84, width: 63.5, height: 23.5 },
-        department: { x: 17.6, y: 54, width: 84.5, height: 30 },
-        sideClass: { x: 17.6, y: 26, width: 93, height: 28 },
+        title: { x: 17.6, y: 109.5, width: 123, height: 36.5 },       // Left 17.6
+        year: { x: 18.35, y: 85.5, width: 63.5, height: 23.5 },       // Gap adjusted
+        department: { x: 18.35, y: 56.0, width: 84.5, height: 30 },   // Gap adjusted
+        sideClass: { x: 19.1, y: 20.0, width: 91, height: 26 },       // Bottom 20
     },
 
-    /** 옆면 분류번호 라벨 (세로) */
-    edge1: { x: 152.8, y: 21, width: 16, height: 256 },
-    edge2: { x: 176.3, y: 21, width: 16, height: 256 },
+    /** 옆면 분류번호 라벨 (세로) - A4 여백 보정 (Right 17.7mm) */
+    edge1: { x: 153.1, y: 21.5, width: 14, height: 254 },             // Centered vertically
+    edge2: { x: 178.3, y: 21.5, width: 14, height: 254 },             // Right margin: 210-(178.3+14) = 17.7
 
     /** 측면 분류번호 내부 구조 */
     sideClassInternal: {
@@ -148,22 +148,22 @@ export const FORMTEC_3629_COORDS = {
 
     /** 옆면 분류번호 내부 구조 */
     edgeInternal: {
-        paddingX: 2,
+        paddingX: 1,  // 2mm에서 1mm로 축소
         paddingY: 0,
-        innerWidth: 12,
+        innerWidth: 12, // 14mm - 2mm 패딩 = 12mm
         rows: [
-            { label: "관리번호", height: 7.5 },
-            { label: "value", height: 16.5 },
-            { label: "생산연도", height: 7.5 },
-            { label: "value", height: 16.5 },
-            { label: "보존기간", height: 7.5 },
-            { label: "value", height: 16.5 },
-            { label: "분류번호", height: 7.5 },
-            { label: "value", height: 16.5 },
-            { label: "제목", height: 7.5 },
-            { label: "value", height: 110.0 },
-            { label: "부서명", height: 7.5 },
-            { label: "value", height: 34.0 }, // 35 -> 34 (내부 높이 합계 255mm로 조정)
+            { label: "관리번호", height: 6.0 },  // 7.5 -> 6.0
+            { label: "value", height: 11.0 },   // 14.0 -> 11.0
+            { label: "생산연도", height: 6.0 },  // 7.5 -> 6.0
+            { label: "value", height: 11.0 },   // 14.0 -> 11.0
+            { label: "보존기간", height: 6.0 },  // 7.5 -> 6.0
+            { label: "value", height: 11.0 },   // 14.0 -> 11.0
+            { label: "분류번호", height: 6.0 },  // 7.5 -> 6.0
+            { label: "value", height: 11.0 },   // 14.0 -> 11.0
+            { label: "제목", height: 6.0 },      // 7.5 -> 6.0
+            { label: "value", height: 104.0 },  // 90 -> 104.0 (축소분 반영)
+            { label: "부서명", height: 6.0 },
+            { label: "value", height: 74.0 },   // 62 -> 74.0 (축소분 반영)
         ],
     },
 } as const;

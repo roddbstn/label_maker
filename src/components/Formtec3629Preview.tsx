@@ -97,6 +97,7 @@ interface AutoFitTextProps {
     fallback?: string;
     fixedSize?: number; // HWP/Word 기준 pt 단위
     isBold?: boolean;
+    lineHeight?: number;
     scale: number;
 }
 
@@ -116,6 +117,7 @@ function AutoFitText({
     fallback = "",
     fixedSize,
     isBold = false,
+    lineHeight,
     scale,
 }: AutoFitTextProps) {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -185,7 +187,7 @@ function AutoFitText({
 
     const textStyle: React.CSSProperties = {
         fontSize: `${fontSize}px`,
-        lineHeight: 1,
+        lineHeight: lineHeight || 1,
         textAlign: "center",
         whiteSpace: "pre-wrap",
         wordBreak: "break-word",
@@ -322,8 +324,9 @@ function SideClassLabel({
     titleFontSize?: number; // pt 단위
 }) {
     const { padding, topRow, bottomRow } = FORMTEC_3629_COORDS.sideClassInternal;
-    const labelWidth = 93;
-    const labelHeight = 28;
+    // 라벨 크기는 FORMTEC_3629_COORDS에서 가져옴 (91x26mm)
+    const labelWidth = 91;
+    const labelHeight = 26;
     const innerWidth = labelWidth - padding * 2;
     const innerHeight = labelHeight - padding * 2;
 
@@ -331,22 +334,25 @@ function SideClassLabel({
 
     return (
         <div
-            className="absolute bg-white rounded-sm overflow-hidden"
+            className="absolute bg-white overflow-hidden"
             style={{
                 left: mmToPx(x, scale),
                 top: mmToPx(topY, scale),
                 width: mmToPx(labelWidth, scale),
                 height: mmToPx(labelHeight, scale),
-                border: `${mmToPx(0.5, scale)}px solid black`,
+                border: `${Math.max(1, mmToPx(0.5, scale))}px solid #000000`,
                 boxSizing: 'border-box'
             }}
         >
             {/* 내부 테이블 컨테이너 */}
             <div className="w-full h-full flex flex-col">
-                {/* 상단 행: 6칸 */}
                 <div
-                    className="flex border-b-[0.5px] border-black"
-                    style={{ height: mmToPx(13.5, scale) }} // 12 -> 14로 조정 (패딩 제거분 반영)
+                    style={{
+                        display: 'flex',
+                        width: '100%',
+                        flex: 1, // 높이를 유연하게 조절
+                        boxSizing: 'border-box'
+                    }}
                 >
                     {[
                         { text: "분류\n번호", isLabel: true },
@@ -355,49 +361,116 @@ function SideClassLabel({
                         { text: productionYear || "", isLabel: false },
                         { text: "보존\n기간", isLabel: true },
                         { text: retentionPeriod || "", isLabel: false }
-                    ].map((item, i) => (
-                        <div
-                            key={i}
-                            className={`flex items-center justify-center text-center border-r-[0.5px] border-black last:border-r-0 bg-white text-gray-800 ${item.isLabel ? "font-normal" : "font-medium"}`}
-                            style={{
-                                width: mmToPx(topRow.cellWidth, scale),
-                                fontSize: mmToPx(3.5, scale),
-                                whiteSpace: "pre-line",
-                                lineHeight: 1.2,
-                                fontFamily: !item.isLabel && fontFamily ? fontFamily : undefined,
-                            }}
-                        >
-                            {item.text}
-                        </div>
-                    ))}
+                    ].map((item, i) => {
+                        const cellHeightPx = mmToPx(12.5, scale);
+                        const fontSizePx = mmToPx(3.2, scale);
+
+                        return (
+                            <div
+                                key={i}
+                                className="bg-white text-gray-800"
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    flex: 1, // 너비를 비율로 설정하여 전체 폭에 완벽히 맞춤
+                                    height: '100%',
+                                    fontSize: fontSizePx,
+                                    fontFamily: !item.isLabel && fontFamily ? fontFamily : undefined,
+                                    boxSizing: 'border-box',
+                                    textAlign: 'center',
+                                    borderRight: i < 5 ? `${Math.max(1, mmToPx(0.5, scale))}px solid #000000` : "none",
+                                    borderBottom: `${Math.max(1, mmToPx(0.5, scale))}px solid #000000`,
+                                }}
+                            >
+                                <span style={{
+                                    whiteSpace: 'pre-line',
+                                    lineHeight: 1.2,
+                                }}>
+                                    {item.text}
+                                </span>
+                            </div>
+                        );
+                    })}
                 </div>
                 {/* 하단 행: 2칸 */}
-                <div className="flex flex-1" style={{ height: mmToPx(13.5, scale) }}>
+                <div
+                    style={{
+                        display: 'flex',
+                        width: '100%',
+                        flex: 1, // 상단 행과 동일한 비율
+                        boxSizing: 'border-box'
+                    }}
+                >
                     <div
-                        className="flex items-center justify-center text-center border-r-[0.5px] border-black bg-white text-gray-800"
+                        className="bg-white text-gray-800"
                         style={{
-                            width: mmToPx(bottomRow.titleWidth, scale),
-                            fontSize: mmToPx(3.5, scale),
-                            whiteSpace: "pre-line",
-                            lineHeight: 1.2,
-                            letterSpacing: "0.15em",
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: mmToPx(21, scale),
+                            height: '100%',
+                            fontSize: mmToPx(3.2, scale),
+                            boxSizing: 'border-box',
+                            borderRight: `${Math.max(1, mmToPx(0.5, scale))}px solid #000000`,
                         }}
                     >
-                        {"제                목\n(보존종료)"}
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            height: '100%',
+                            minWidth: mmToPx(10, scale),
+                        }}>
+                            <div style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                width: '100%',
+                                lineHeight: 1.1,
+                                fontSize: mmToPx(3.2, scale), // 크기 통일
+                                fontWeight: 'normal',
+                            }}>
+                                <span>제</span>
+                                <span>목</span>
+                            </div>
+                            <div style={{
+                                fontSize: mmToPx(3.2, scale), // 크기 통일
+                                lineHeight: 1.1,
+                                fontWeight: 'normal',
+                                whiteSpace: 'nowrap',
+                            }}>
+                                (보존종료)
+                            </div>
+                        </div>
                     </div>
+                    {/* 제목 값 셀 */}
                     <div
-                        className="flex items-center justify-center text-center font-medium truncate bg-white text-gray-800"
+                        className="font-medium bg-white text-gray-800"
                         style={{
-                            width: mmToPx(bottomRow.valueWidth, scale),
-                            // 사용자가 지정한 크기가 있으면 pt -> mm 변환하여 적용, 없으면 기본 4mm
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flex: 1,
+                            height: mmToPx(12.5, scale),
                             fontSize: titleFontSize && titleFontSize > 0
                                 ? mmToPx(titleFontSize * 0.3528, scale)
-                                : mmToPx(4, scale),
+                                : mmToPx(3.8, scale),
                             fontFamily: fontFamily || undefined,
                             fontWeight: isBold ? "bold" : undefined,
+                            boxSizing: 'border-box',
+                            padding: `0 ${mmToPx(2, scale)}px`,
+                            textAlign: 'center',
                         }}
                     >
-                        {htmlToPlainText(title)}
+                        <div style={{
+                            width: '100%',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                        }}>
+                            {htmlToPlainText(title) || "제목을 입력하세요"}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -419,6 +492,7 @@ function EdgeClassLabel({
     classificationCode,
     title,
     departmentName,
+    fontSize,
     fontFamily,
     isBold,
     titleFontSize,
@@ -434,15 +508,19 @@ function EdgeClassLabel({
     classificationCode: string;
     title: string;
     departmentName: string;
+    fontSize?: number;
     fontFamily?: string;
     isBold?: boolean;
     titleFontSize?: number;
     departmentNameFontSize?: number;
 }) {
     const { paddingX, paddingY, innerWidth, rows } = FORMTEC_3629_COORDS.edgeInternal;
-    const labelWidth = 16;
-    const labelHeight = 256;
+    const labelWidth = 14;  // 16mm에서 2mm 축소
+    const labelHeight = 254; // 256mm에서 2mm 축소
     const topY = pageHeight - y - labelHeight;
+
+    // 기본 폰트 크기 상향 (3.2 -> 3.6)
+    const effectiveFontSize = fontSize || 3.6;
 
     // 부서명에서 줄바꿈을 공백으로 대체 (옆면은 항상 1열로 표시)
     const deptNameForEdge = htmlToPlainText(departmentName).replace(/\n/g, ' ');
@@ -460,22 +538,19 @@ function EdgeClassLabel({
 
     return (
         <div
-            className="absolute bg-white rounded-sm overflow-hidden"
+            className="absolute bg-white overflow-hidden"
             style={{
                 left: mmToPx(x, scale),
                 top: mmToPx(topY, scale),
                 width: mmToPx(labelWidth, scale),
                 height: mmToPx(labelHeight, scale),
-                border: `${mmToPx(0.5, scale)}px solid black`, // EdgeClassLabel 외곽선 유지
+                border: `${Math.max(1, mmToPx(0.5, scale))}px solid #000000`,
                 boxSizing: 'border-box'
             }}
         >
             {/* 내부 테이블 컨테이너 */}
             <div
                 className="w-full h-full overflow-hidden flex flex-col"
-                style={{
-                    // padding을 제거하고 내부 요소들이 100%를 차지하게 함
-                }}
             >
                 {rows.map((row, i) => {
                     const isLabel = row.label !== "value";
@@ -517,23 +592,30 @@ function EdgeClassLabel({
                     const rowHeightPx = mmToPx(row.height, scale);
                     const isLast = i === rows.length - 1;
 
+                    // html2canvas 호환을 위해 absolute positioning 사용
+                    const currentFontSizePx = isLabel ? mmToPx(2.75, scale) : (
+                        i === titleIndex && titleFontSize && titleFontSize > 0
+                            ? mmToPx(titleFontSize * 0.3528, scale)
+                            : i === deptIndex && departmentNameFontSize && departmentNameFontSize > 0
+                                ? mmToPx(departmentNameFontSize * 0.3528, scale)
+                                : mmToPx(effectiveFontSize, scale)
+                    );
+
                     return (
                         <div
                             key={i}
-                            className={`flex items-center justify-center text-center overflow-hidden bg-white text-gray-800 ${isTitleOrDept ? "font-bold" : "font-medium"}`}
+                            className={`overflow-hidden bg-white text-gray-800 ${isTitleOrDept ? "font-bold" : "font-medium"}`}
                             style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
                                 width: "100%",
                                 height: rowHeightPx,
-                                fontSize: isLabel ? mmToPx(2.75, scale) : (
-                                    i === titleIndex && titleFontSize && titleFontSize > 0
-                                        ? mmToPx(titleFontSize * 0.3528, scale)
-                                        : i === deptIndex && departmentNameFontSize && departmentNameFontSize > 0
-                                            ? mmToPx(departmentNameFontSize * 0.3528, scale)
-                                            : mmToPx(fontSize, scale)
-                                ),
+                                fontSize: currentFontSizePx,
                                 // 칸 사이 선만 그림 (마지막 칸 제외)
-                                borderBottom: !isLast ? `${mmToPx(0.5, scale)}px solid black` : "none",
+                                borderBottom: !isLast ? `${Math.max(1, mmToPx(0.5, scale))}px solid #000000` : "none",
                                 fontFamily: !isLabel && fontFamily ? fontFamily : undefined,
+                                boxSizing: 'border-box',
                             }}
                         >
                             {needsVertical ? (
@@ -558,11 +640,11 @@ function EdgeClassLabel({
                                         // 글자당 할당 가능한 높이 계산
                                         const charHeightPx = availableHeightPx / Math.max(textLength, 1);
 
-                                        // 폰트 크기 = 글자당 높이의 85% (글자 간격 확보)
+                                        // 폰트 크기 = 글자당 높이의 98% (여백 최소화)
                                         // 단, 가로 폭을 넘지 않도록 제한
-                                        let fontSizePx = charHeightPx * 0.85;
-                                        fontSizePx = Math.min(fontSizePx, availableWidthPx * 0.8);
-                                        fontSizePx = Math.min(fontSizePx, mmToPx(4, scale)); // 최대 4mm
+                                        let fontSizePx = charHeightPx * 0.98;
+                                        fontSizePx = Math.min(fontSizePx, availableWidthPx * 0.85);
+                                        fontSizePx = Math.min(fontSizePx, mmToPx(4.5, scale)); // 최대 4.5mm
                                         fontSizePx = Math.max(fontSizePx, mmToPx(1.5, scale)); // 최소 1.5mm
 
                                         return (
@@ -612,9 +694,8 @@ function EdgeClassLabel({
                                         style={{
                                             display: "flex",
                                             alignItems: "center",
-                                            justifyContent: "center",
-                                            writingMode: "vertical-lr",
-                                            textOrientation: "upright",
+                                            justifyContent: displayText === "제   목" ? "space-between" : "center",
+                                            // 짧은 칸(라벨 등)은 가로 방향이 더 시인성이 좋음
                                             whiteSpace: displayText.includes('\n') ? "pre-line" : "nowrap",
                                             maxHeight: "100%",
                                             width: "100%",
@@ -622,14 +703,39 @@ function EdgeClassLabel({
                                             overflow: "hidden",
                                             textOverflow: "ellipsis",
                                             lineHeight: 1.2,
+                                            padding: displayText === "제   목" ? `0 ${mmToPx(1.5, scale)}px` : 0,
+                                            boxSizing: "border-box",
                                         }}
                                     >
-                                        {displayText}
+                                        {displayText === "제   목" ? (
+                                            <>
+                                                <span>제</span>
+                                                <span>목</span>
+                                            </>
+                                        ) : (
+                                            displayText
+                                        )}
                                     </span>
                                 )
                             ) : (
-                                <span style={{ whiteSpace: displayText.includes('\n') ? "pre-line" : "nowrap", lineHeight: 1.2 }}>
-                                    {displayText}
+                                // flex박스로 중앙 정렬
+                                <span style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: row.label === "제목" ? "space-between" : "center",
+                                    whiteSpace: displayText.includes('\n') ? "pre-line" : "nowrap",
+                                    width: row.label === "제목" ? `calc(100% - ${mmToPx(4, scale)}px)` : "100%",
+                                    lineHeight: 1.2,
+                                    textAlign: 'center',
+                                }}>
+                                    {row.label === "제목" ? (
+                                        <>
+                                            <span>제</span>
+                                            <span>목</span>
+                                        </>
+                                    ) : (
+                                        displayText
+                                    )}
                                 </span>
                             )}
                         </div>
@@ -684,7 +790,8 @@ export default function Formtec3629Preview({ currentPage = 0 }: Formtec3629Previ
                 style={{
                     width: previewWidth,
                     height: previewHeight,
-                    outline: "0.5px solid black",
+                    border: "0.5mm solid #000000",
+                    boxSizing: 'border-box',
                 }}
             >
                 {/* 라벨 세트 1 (상단) */}
@@ -758,6 +865,7 @@ export default function Formtec3629Preview({ currentPage = 0 }: Formtec3629Previ
                                 fallback="부서명"
                                 fixedSize={label1.departmentNameFontSize}
                                 isBold={label1.departmentNameIsBold}
+                                lineHeight={1.6}
                                 scale={scale}
                             />
                         </LabelBox>
@@ -868,6 +976,7 @@ export default function Formtec3629Preview({ currentPage = 0 }: Formtec3629Previ
                                 fallback="부서명"
                                 fixedSize={label2.departmentNameFontSize}
                                 isBold={label2.departmentNameIsBold}
+                                lineHeight={1.6}
                                 scale={scale}
                             />
                         </LabelBox>
