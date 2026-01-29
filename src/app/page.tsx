@@ -148,19 +148,12 @@ export default function Home() {
                                     }}
                                     className="space-y-3 max-w-xs mx-auto"
                                 >
-                                    <div className="relative group/input">
-                                        <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none text-slate-400 group-focus-within/input:text-primary-500 transition-colors">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-                                            </svg>
-                                        </div>
-                                        <input
-                                            type="email"
-                                            required
-                                            placeholder="이메일 주소"
-                                            className="w-full pl-12 pr-6 py-3 rounded-xl bg-white border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all shadow-sm group-hover/input:border-slate-300"
-                                        />
-                                    </div>
+                                    <input
+                                        type="email"
+                                        required
+                                        placeholder="이메일 주소"
+                                        className="w-full px-6 py-3 rounded-xl bg-slate-50/50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all shadow-inner"
+                                    />
                                     <button
                                         type="submit"
                                         className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#222222] text-white text-sm font-black rounded-xl hover:bg-[#333333] transition-all shadow-lg shadow-slate-100 active:scale-[0.98] tracking-wide"
