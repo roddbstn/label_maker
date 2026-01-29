@@ -24,17 +24,35 @@ function htmlToPlainText(html: string): string {
 
 /**
  * HTML을 미리보기용으로 정규화 및 스케일 조정
+ * - pt 단위 스타일 추출 및 스케일 적용
+ * - 36pt(중간), 24pt(작게)를 상대적 크기로 변환하기 위한 데이터 속성 유지
  */
-function normalizeHtmlForPreview(html: string, scale: number): string {
+function normalizeHtmlForPreview(html: string, scale: number, autoFontSize: number): string {
     if (!html) return "";
 
-    // pt 단위 스타일 추출 및 스케일 적용
-    // 예: font-size: 12pt -> font-size: (12 * ptToMm * scale)px
-    let processedHtml = html.replace(/font-size:\s*(\d+(\.\d+)?)pt/gi, (match, p1) => {
+    let processedHtml = html;
+
+    // 36pt -> -5mm 효과
+    // 24pt -> -10mm 효과
+    const offsetMedium = 5; // mm
+    const offsetSmall = 10; // mm
+
+    processedHtml = processedHtml.replace(/font-size:\s*(\d+(\.\d+)?)pt/gi, (match, p1) => {
         const pt = parseFloat(p1);
-        const ptToMm = 0.3528;
-        const px = pt * ptToMm * scale;
-        return `font-size: ${px}px`;
+        let finalPx: number;
+
+        if (pt === 36) {
+            // 중간: Auto - 5mm
+            finalPx = Math.max(8, autoFontSize - mmToPx(offsetMedium, scale));
+        } else if (pt === 24) {
+            // 작게: Auto - 10mm
+            finalPx = Math.max(6, autoFontSize - mmToPx(offsetSmall, scale));
+        } else {
+            // 기타 커스텀 pt
+            const ptToMm = 0.3528;
+            finalPx = pt * ptToMm * scale;
+        }
+        return `font-size: ${finalPx}px`;
     });
 
     return processedHtml
@@ -124,7 +142,7 @@ function AutoFitText({
     const [fontSize, setFontSize] = useState(baseSize);
 
     const displayText = text || fallback;
-    const normalizedHtml = isHtml ? normalizeHtmlForPreview(text, scale) : "";
+    const normalizedHtml = isHtml ? normalizeHtmlForPreview(text, scale, fontSize) : "";
 
     // pt 단위를 미리보기 픽셀(px)로 변환 로직
     // 1pt = 0.3528mm. 여기에 이미 계산된 scale을 곱해줌.
@@ -223,7 +241,7 @@ function AutoFitText({
                 <div
                     data-text
                     style={textStyle}
-                    dangerouslySetInnerHTML={{ __html: normalizedHtml }}
+                    dangerouslySetInnerHTML={{ __html: normalizeHtmlForPreview(text, scale, fontSize) }}
                 />
             </div>
         );
@@ -428,14 +446,14 @@ function SideClassLabel({
                                 justifyContent: 'space-between',
                                 width: '100%',
                                 lineHeight: 1.1,
-                                fontSize: mmToPx(3.8, scale), // 3.8mm로 통일
+                                fontSize: mmToPx(4.0, scale), // 4.0mm로 통일
                                 fontWeight: 'normal',
                             }}>
                                 <span>제</span>
                                 <span>목</span>
                             </div>
                             <div style={{
-                                fontSize: mmToPx(3.8, scale), // 3.8mm로 통일
+                                fontSize: mmToPx(4.0, scale), // 4.0mm로 통일
                                 lineHeight: 1.1,
                                 fontWeight: 'normal',
                                 whiteSpace: 'nowrap',
@@ -453,11 +471,9 @@ function SideClassLabel({
                             justifyContent: 'center',
                             flex: 1,
                             height: mmToPx(12.5, scale),
-                            fontSize: titleFontSize && titleFontSize > 0
-                                ? mmToPx(titleFontSize * 0.3528, scale)
-                                : mmToPx(3.8, scale),
+                            fontSize: mmToPx(4.0, scale), // 전면 스타일을 무시하고 4.0mm로 고정
                             fontFamily: fontFamily || undefined,
-                            fontWeight: isBold ? "bold" : undefined,
+                            fontWeight: 'normal', // 전면 스타일(bold)을 무시
                             boxSizing: 'border-box',
                             padding: `0 ${mmToPx(2, scale)}px`,
                             textAlign: 'center',
@@ -594,11 +610,9 @@ function EdgeClassLabel({
 
                     // html2canvas 호환을 위해 absolute positioning 사용
                     const currentFontSizePx = isLabel ? mmToPx(2.75, scale) : (
-                        i === titleIndex && titleFontSize && titleFontSize > 0
-                            ? mmToPx(titleFontSize * 0.3528, scale)
-                            : i === deptIndex && departmentNameFontSize && departmentNameFontSize > 0
-                                ? mmToPx(departmentNameFontSize * 0.3528, scale)
-                                : mmToPx(effectiveFontSize, scale)
+                        i === titleIndex || i === deptIndex
+                            ? mmToPx(9, scale) // 제목/부서명은 옆면 표준 크기(9mm) 고정
+                            : mmToPx(effectiveFontSize, scale)
                     );
 
                     return (

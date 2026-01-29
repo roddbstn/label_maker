@@ -9,9 +9,9 @@ import { useState } from "react";
 
 // 폰트 크기 옵션 (단계별 선택)
 const FONT_SIZE_OPTIONS = [
-    { label: "크게 (Auto)", value: 0 },
-    { label: "중간", value: 16 },
-    { label: "작게", value: 12 },
+    { label: "12 (Auto)", value: 0 },
+    { label: "중간", value: 36 }, // -5mm 효과를 위한 내부 값
+    { label: "작게", value: 24 }, // -10mm 효과를 위한 내부 값
 ];
 
 export default function LabelForm() {

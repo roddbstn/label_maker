@@ -186,17 +186,26 @@ export function applyTextStyle(
     } else if (command === "fontSize") {
         const selection = window.getSelection();
         if (selection && selection.rangeCount > 0 && !selection.isCollapsed && editorElement.contains(selection.anchorNode)) {
-            const fontSize = value || "12";
-            document.execCommand("fontSize", false, "7");
-            const fontElements = editorElement.querySelectorAll('font[size="7"]');
-            fontElements.forEach(font => {
-                const span = document.createElement('span');
-                span.style.fontSize = `${fontSize}pt`;
-                while (font.firstChild) {
-                    span.appendChild(font.firstChild);
-                }
-                font.parentNode?.replaceChild(span, font);
-            });
+            const fontSize = value || "0";
+
+            // value가 "0"이면 폰트 크기 태그 제거 (기본으로 복구)
+            if (fontSize === "0") {
+                document.execCommand("removeFormat", false);
+            } else {
+                // fontSize 명령 실행 (pt 단위로 직접 주입하기 위해 임시 태그 사용)
+                document.execCommand("fontSize", false, "7");
+                const fontElements = editorElement.querySelectorAll('font[size="7"]');
+                fontElements.forEach(font => {
+                    const span = document.createElement('span');
+                    span.style.fontSize = `${fontSize}pt`;
+                    span.setAttribute('data-size', fontSize === "36" ? "medium" : fontSize === "24" ? "small" : "custom");
+                    while (font.firstChild) {
+                        span.appendChild(font.firstChild);
+                    }
+                    font.parentNode?.replaceChild(span, font);
+                });
+            }
+
             // 에디터의 input 이벤트를 강제로 발생시켜 상태 업데이트
             const event = new Event('input', { bubbles: true });
             editorElement.dispatchEvent(event);
