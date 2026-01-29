@@ -222,9 +222,9 @@ export default function LabelPreview({ autoFitText = true }: LabelPreviewProps) 
     const totalPages = Math.ceil(labels.length / 2);
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-3">
             {/* 탭 전환 UI */}
-            <div className="flex gap-2 border-b border-gray-200 pb-2">
+            <div className="flex gap-2 border-b border-gray-200">
                 <button
                     type="button"
                     onClick={() => setActiveTab("formtec")}

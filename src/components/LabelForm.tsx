@@ -4,7 +4,6 @@ import React, { useCallback, useRef, useEffect } from "react";
 import { useLabelStore } from "@/store/labelStore";
 import RichTextInput from "./RichTextInput";
 import StyleToolbar from "./StyleToolbar";
-import HistoryPanel from "./HistoryPanel";
 import { useState } from "react";
 
 // 폰트 크기 옵션 (단계별 선택)
@@ -32,8 +31,7 @@ export default function LabelForm() {
     // 현재 라벨 데이터
     const labelData = labels[currentLabelIndex];
 
-    // 히스토리 패널 열림 상태
-    const [historyOpen, setHistoryOpen] = useState(false);
+
 
     // 스크롤 컨테이너 ref
     const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -411,8 +409,34 @@ export default function LabelForm() {
 
 
 
-                {/* 버튼 그룹 */}
-                <div className="flex gap-2 pt-8 border-t border-gray-100">
+                {/* 버튼 그룹 (구분선 제거) */}
+                <div className="flex gap-2 pt-10">
+                    <button
+                        type="button"
+                        onClick={resetLabelData}
+                        className="flex-1 py-3.5 px-4 border border-gray-200 rounded-xl text-gray-700 font-bold hover:bg-gray-50 transition-all active:scale-95 shadow-sm"
+                    >
+                        초기화
+                    </button>
+                    <button
+                        type="button"
+                        onClick={downloadPDF}
+                        disabled={isGenerating || !labelData.title || !labelData.productionYear}
+                        className="flex-1 py-3.5 px-4 border border-blue-200 rounded-xl text-blue-600 font-bold hover:bg-blue-50 transition-all active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2 shadow-sm"
+                    >
+                        {isGenerating ? <span className="animate-spin text-lg">⏳</span> : <span className="text-lg">📄</span>}
+                        PDF 다운로드
+                    </button>
+                    <button
+                        type="button"
+                        onClick={print}
+                        disabled={isGenerating || !labelData.title || !labelData.productionYear}
+                        className="flex-[1.2] py-3.5 px-2 bg-blue-600 rounded-xl text-white font-bold hover:bg-blue-700 shadow-xl shadow-blue-200 transition-all active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-1.5"
+                    >
+                        <span className="text-base">🖨️</span>
+                        <span className="whitespace-nowrap">바로 인쇄</span>
+                    </button>
+                </div>
             </form>
         </div>
     );

@@ -784,8 +784,8 @@ export default function Formtec3629Preview({ currentPage = 0 }: Formtec3629Previ
     const { labels } = useLabelStore();
     const coords = FORMTEC_3629_COORDS;
 
-    // 미리보기 스케일 (A4 너비를 기준)
-    const previewWidth = 380;
+    // 미리보기 스케일 (A4 너비를 기준) - 가로 길이를 줄여 전체 높이를 1번 영역과 맞춤
+    const previewWidth = 310;
     const scale = previewWidth / coords.page.width;
     const previewHeight = coords.page.height * scale;
 
