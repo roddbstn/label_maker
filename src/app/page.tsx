@@ -9,9 +9,11 @@ export default function Home() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
-                                <span className="text-white font-bold text-lg">L</span>
-                            </div>
+                            <img
+                                src="/label_maker_logo.png"
+                                alt="라벨 메이커 로고"
+                                className="w-10 h-10 object-contain rounded-xl shadow-sm"
+                            />
                             <div>
                                 <h1 className="text-xl font-bold text-gray-900">라벨 메이커</h1>
                                 <p className="text-xs text-gray-500">정부문서화일 라벨 자동 생성</p>
