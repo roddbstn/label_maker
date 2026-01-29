@@ -13,21 +13,12 @@ export default function PreviewSection() {
 
     return (
         <div className="space-y-4">
-            {/* 옵션 - 글자 크기 자동 조절 */}
-            <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
-                <input
-                    type="checkbox"
-                    id="autoFitText"
-                    checked={autoFitText}
-                    onChange={(e) => setAutoFitText(e.target.checked)}
-                    className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 cursor-pointer"
-                />
-                <label
-                    htmlFor="autoFitText"
-                    className="text-sm text-gray-700 cursor-pointer select-none"
-                >
-                    ✨ 글자 크기 칸 크기에 최적화하기
-                </label>
+            {/* 옵션 - 글자 크기 자동 조절 안내 */}
+            <div className="flex items-center gap-2 p-3 bg-blue-50/50 rounded-lg border border-blue-100/50">
+                <span className="text-sm">⭐</span>
+                <span className="text-sm text-blue-800 font-medium">
+                    글꼴 크기가 칸에 맞게 최적화돼요
+                </span>
             </div>
 
             {/* 미리보기 */}
