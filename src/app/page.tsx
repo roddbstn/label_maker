@@ -150,17 +150,18 @@ export default function Home() {
                                 </button>
                             </div>
 
-                            <div className="text-left mt-16 pt-10 border-t border-white/10">
-                                <label className="block text-xl sm:text-2xl font-bold text-white mb-3 ml-1">
+                            <div className="text-left mt-20 pt-12 border-t border-white/20">
+                                <label className="block text-2xl sm:text-3xl font-black text-sky-300 mb-4 ml-1">
                                     💬 불편한 점은 없었나요?
                                 </label>
-                                <p className="text-blue-100/70 mb-6 ml-1 text-sm sm:text-base font-medium">
-                                    사용 중 느끼신 아주 사소한 의견이라도 작성해주시면 정식 버전 개발에 큰 도움이 됩니다.
+                                <p className="text-blue-50/80 mb-8 ml-1 text-base sm:text-lg font-bold leading-relaxed">
+                                    사용 중 느끼신 아주 사소한 의견이라도 남겨주세요.<br className="hidden sm:block" />
+                                    여러분의 소중한 한마디가 정식 버전 개발의 핵심이 됩니다!
                                 </p>
                                 <textarea
                                     placeholder="예: 이런 양식도 추가해주세요, 글자 조절이 더 세밀했으면 좋겠어요 등"
                                     rows={4}
-                                    className="w-full px-7 py-5 rounded-2xl bg-white/10 border border-white/20 text-white placeholder:text-blue-100/30 focus:outline-none focus:ring-2 focus:ring-white/30 backdrop-blur-md transition-all resize-none shadow-inner"
+                                    className="w-full px-8 py-6 rounded-3xl bg-white/15 border-2 border-white/20 text-white placeholder:text-white/20 focus:outline-none focus:ring-4 focus:ring-sky-400/30 backdrop-blur-2xl transition-all resize-none shadow-2xl"
                                 />
                             </div>
                         </form>
