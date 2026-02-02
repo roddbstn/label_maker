@@ -5,6 +5,7 @@ import { useLabelStore } from "@/store/labelStore";
 import RichTextInput from "./RichTextInput";
 import StyleToolbar from "./StyleToolbar";
 import { useState } from "react";
+import * as gtag from "@/lib/gtag";
 
 // 폰트 크기 옵션 (단계별 선택)
 const FONT_SIZE_OPTIONS = [
@@ -185,7 +186,15 @@ export default function LabelForm() {
 
                 <button
                     type="button"
-                    onClick={addLabel}
+                    id="guide-target-2"
+                    onClick={() => {
+                        gtag.event({
+                            action: "label_add",
+                            category: "interaction",
+                            label: "Green Plus Button"
+                        });
+                        addLabel();
+                    }}
                     className="flex items-center justify-center w-10 h-10 rounded-lg bg-green-500 text-white hover:bg-green-600 transition-colors shadow-md"
                 >
                     <span className="text-xl font-bold">+</span>
@@ -410,7 +419,7 @@ export default function LabelForm() {
 
 
                 {/* 버튼 그룹 (구분선 제거) */}
-                <div className="flex gap-2 pt-10">
+                <div className="flex gap-2 pt-6">
                     <button
                         type="button"
                         onClick={resetLabelData}
@@ -420,7 +429,14 @@ export default function LabelForm() {
                     </button>
                     <button
                         type="button"
-                        onClick={downloadPDF}
+                        onClick={() => {
+                            gtag.event({
+                                action: "pdf_download",
+                                category: "interaction",
+                                label: "Download Button"
+                            });
+                            downloadPDF();
+                        }}
                         disabled={isGenerating || !labelData.title || !labelData.productionYear}
                         className="flex-1 py-3.5 px-4 border border-blue-200 rounded-xl text-blue-600 font-bold hover:bg-blue-50 transition-all active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2 shadow-sm"
                     >
@@ -429,7 +445,15 @@ export default function LabelForm() {
                     </button>
                     <button
                         type="button"
-                        onClick={print}
+                        id="guide-target-3"
+                        onClick={() => {
+                            gtag.event({
+                                action: "label_print",
+                                category: "interaction",
+                                label: "Print Button"
+                            });
+                            print();
+                        }}
                         disabled={isGenerating || !labelData.title || !labelData.productionYear}
                         className="flex-[1.2] py-3.5 px-2 bg-blue-600 rounded-xl text-white font-bold hover:bg-blue-700 shadow-xl shadow-blue-200 transition-all active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-1.5"
                     >

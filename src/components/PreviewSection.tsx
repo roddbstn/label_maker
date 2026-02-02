@@ -12,7 +12,7 @@ export default function PreviewSection() {
     const [autoFitText, setAutoFitText] = useState(true);
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-2">
             {/* 미리보기 */}
             <LabelPreview autoFitText={autoFitText} />
 

@@ -2,8 +2,11 @@
 
 import LabelForm from "@/components/LabelForm";
 import PreviewSection from "@/components/PreviewSection";
+import GuideOverlay from "@/components/GuideOverlay";
+import { useState } from "react";
 
 export default function Home() {
+    const [isGuideOpen, setIsGuideOpen] = useState(false);
     return (
         <main className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
             {/* 헤더 */}
@@ -22,9 +25,12 @@ export default function Home() {
                             </div>
                         </div>
                         <nav className="flex items-center gap-4">
-                            <a href="#guide" className="text-sm text-gray-600 hover:text-primary-600 transition-colors">
+                            <button
+                                onClick={() => setIsGuideOpen(true)}
+                                className="text-sm text-gray-600 hover:text-primary-600 transition-colors"
+                            >
                                 사용 가이드
-                            </a>
+                            </button>
                             <button
                                 onClick={() => {
                                     document.getElementById('waitlist-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -39,27 +45,23 @@ export default function Home() {
             </header>
 
             {/* 메인 콘텐츠 */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                {/* 히어로 섹션 */}
-                <section className="text-center mb-12 relative">
-                    <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-                        정부문서화일 라벨,
-                        <br />
-                        <span className="text-primary-600">입력만 하면 자동으로 완성</span>
-                    </h2>
-                    <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-10">
-                        장평·자간 조절 노가다 없이, 긴 부서명도 알아서 예쁘게 맞춰드립니다.
-                        <br />
-                        설치 없이 바로 PDF 다운로드!
-                    </p>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                {/* 히어로 섹션 - 콤팩트 버전 */}
+                <section className="text-center mb-8 relative">
 
+                    <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
+                        정부문서화일 라벨, <span className="text-primary-600 text-nowrap">입력만 하면 자동으로 완성</span>
+                    </h2>
+                    <p className="text-base text-gray-600 max-w-2xl mx-auto">
+                        장평·자간 조절 노가다 없이, 긴 부서명도 알아서 예쁘게 맞춰드립니다. 한글 파일 없이 바로 출력!
+                    </p>
                 </section>
 
                 {/* 라벨 생성 섹션 */}
                 <section className="grid lg:grid-cols-2 gap-8 items-start">
                     {/* 입력 폼 */}
                     <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 p-6 lg:p-8 flex flex-col h-full">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
+                        <h3 id="guide-target-1" className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
                             <span className="w-8 h-8 bg-primary-100 text-primary-600 rounded-lg flex items-center justify-center text-sm font-bold">
                                 1
                             </span>
@@ -71,7 +73,7 @@ export default function Home() {
                     </div>
 
                     {/* 미리보기 */}
-                    <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 p-6 lg:p-8 flex flex-col h-full">
+                    <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 p-6 lg:px-8 lg:pt-8 lg:pb-4 flex flex-col h-full">
                         <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
                             <span className="w-8 h-8 bg-primary-100 text-primary-600 rounded-lg flex items-center justify-center text-sm font-bold">
                                 2
@@ -84,34 +86,34 @@ export default function Home() {
                     </div>
                 </section>
 
-                {/* 특징 섹션 */}
-                <section className="mt-16 grid sm:grid-cols-3 gap-6">
-                    <div className="bg-white rounded-xl p-6 text-center">
-                        <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                            <span className="text-2xl">✨</span>
+                {/* 특징 섹션 - 가로형으로 더 콤팩트하게 */}
+                <section className="mt-12 grid sm:grid-cols-3 gap-4">
+                    <div className="bg-white/50 rounded-xl p-4 flex items-center gap-4">
+                        <div className="w-10 h-10 bg-green-100 rounded-lg flex-shrink-0 flex items-center justify-center">
+                            <span className="text-xl">✨</span>
                         </div>
-                        <h4 className="font-semibold text-gray-900 mb-2">자동 텍스트 피팅</h4>
-                        <p className="text-sm text-gray-600">
-                            긴 부서명도 자동으로 크기 조절
-                        </p>
+                        <div>
+                            <h4 className="font-semibold text-gray-900 text-lg">자동 텍스트 피팅</h4>
+                            <p className="text-sm text-gray-500">긴 부서명도 자동 조절</p>
+                        </div>
                     </div>
-                    <div className="bg-white rounded-xl p-6 text-center">
-                        <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                            <span className="text-2xl">🖨️</span>
+                    <div className="bg-white/50 rounded-xl p-4 flex items-center gap-4">
+                        <div className="w-10 h-10 bg-blue-100 rounded-lg flex-shrink-0 flex items-center justify-center">
+                            <span className="text-xl">🖨️</span>
                         </div>
-                        <h4 className="font-semibold text-gray-900 mb-2">폼텍 3629 규격</h4>
-                        <p className="text-sm text-gray-600">
-                            바로 출력 가능한 정확한 규격
-                        </p>
+                        <div>
+                            <h4 className="font-semibold text-gray-900 text-lg">폼텍 3629 규격</h4>
+                            <p className="text-sm text-gray-500">바로 출력 가능한 정확한 규격</p>
+                        </div>
                     </div>
-                    <div className="bg-white rounded-xl p-6 text-center">
-                        <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                            <span className="text-2xl">💻</span>
+                    <div className="bg-white/50 rounded-xl p-4 flex items-center gap-4">
+                        <div className="w-10 h-10 bg-purple-100 rounded-lg flex-shrink-0 flex items-center justify-center">
+                            <span className="text-xl">💻</span>
                         </div>
-                        <h4 className="font-semibold text-gray-900 mb-2">설치 불필요</h4>
-                        <p className="text-sm text-gray-600">
-                            웹 브라우저에서 바로 사용
-                        </p>
+                        <div>
+                            <h4 className="font-semibold text-gray-900 text-lg">설치 불필요</h4>
+                            <p className="text-sm text-gray-500">브라우저에서 바로 사용</p>
+                        </div>
                     </div>
                 </section>
 
@@ -120,7 +122,7 @@ export default function Home() {
                     <section id="waitlist-section" className="relative group h-full">
                         <div className="absolute -inset-3 bg-gradient-to-r from-slate-100 to-blue-50/50 rounded-[3rem] blur-xl opacity-40 transition duration-1000 group-hover:opacity-60"></div>
 
-                        <div className="relative h-full bg-white rounded-[2.5rem] p-8 sm:p-12 shadow-[0_24px_48px_-12px_rgba(0,0,0,0.06)] border border-slate-50 overflow-hidden text-center flex flex-col items-center justify-center">
+                        <div className="relative h-full bg-white/40 backdrop-blur-sm rounded-[2.5rem] p-8 sm:p-12 shadow-[0_24px_48px_-12px_rgba(0,0,0,0.06)] border border-slate-50 overflow-hidden text-center flex flex-col items-center justify-center">
                             <div className="absolute top-0 right-0 w-48 h-48 bg-slate-50 rounded-full -mr-24 -mt-24 opacity-40"></div>
                             <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-50/20 rounded-full -ml-24 -mb-24 opacity-40"></div>
 
@@ -172,7 +174,7 @@ export default function Home() {
                     <section className="relative group h-full">
                         <div className="absolute -inset-3 bg-gradient-to-r from-slate-100 to-blue-50/30 rounded-[3rem] blur-xl opacity-30 transition duration-1000 group-hover:opacity-50"></div>
 
-                        <div className="relative h-full bg-white rounded-[2.5rem] p-8 sm:p-12 shadow-[0_24px_48px_-12px_rgba(0,0,0,0.04)] border border-slate-50 overflow-hidden text-center flex flex-col items-center justify-center">
+                        <div className="relative h-full bg-white/40 backdrop-blur-sm rounded-[2.5rem] p-8 sm:p-12 shadow-[0_24px_48px_-12px_rgba(0,0,0,0.04)] border border-slate-50 overflow-hidden text-center flex flex-col items-center justify-center">
                             <div className="absolute top-0 left-0 w-48 h-48 bg-slate-50 rounded-full -ml-24 -mt-24 opacity-40"></div>
 
                             <div className="relative z-10 w-full">
@@ -229,6 +231,8 @@ export default function Home() {
                     </div>
                 </div>
             </footer>
+
+            <GuideOverlay isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
         </main>
     );
 }
