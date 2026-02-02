@@ -600,8 +600,8 @@ function EdgeClassLabel({
                             case "제목":
                                 displayText = "제   목";
                                 break;
-                            case "부서명":
-                                displayText = "부서명";
+                            case "부 서 명":
+                                displayText = "부 서 명";
                                 break;
                         }
                     }
@@ -718,7 +718,7 @@ function EdgeClassLabel({
                                         style={{
                                             display: "flex",
                                             alignItems: "center",
-                                            justifyContent: displayText === "제   목" ? "space-between" : "center",
+                                            justifyContent: (displayText === "제   목" || displayText === "부 서 명") ? "space-between" : "center",
                                             // 짧은 칸(라벨 등)은 가로 방향이 더 시인성이 좋음
                                             whiteSpace: displayText.includes('\n') ? "pre-line" : "nowrap",
                                             maxHeight: "100%",
@@ -736,6 +736,12 @@ function EdgeClassLabel({
                                                 <span>제</span>
                                                 <span>목</span>
                                             </>
+                                        ) : displayText === "부 서 명" ? (
+                                            <>
+                                                <span>부</span>
+                                                <span>서</span>
+                                                <span>명</span>
+                                            </>
                                         ) : (
                                             displayText
                                         )}
@@ -746,9 +752,9 @@ function EdgeClassLabel({
                                 <span style={{
                                     display: "flex",
                                     alignItems: "center",
-                                    justifyContent: row.label === "제목" ? "space-between" : "center",
+                                    justifyContent: (row.label === "제목" || row.label === "부 서 명") ? "space-between" : "center",
                                     whiteSpace: displayText.includes('\n') ? "pre-line" : "nowrap",
-                                    width: row.label === "제목" ? `calc(100% - ${mmToPx(4, scale)}px)` : "100%",
+                                    width: (row.label === "제목" || row.label === "부 서 명") ? `calc(100% - ${mmToPx(4, scale)}px)` : "100%",
                                     lineHeight: 1,
                                     textAlign: 'center',
                                     paddingBottom: isLabel ? mmToPx(0.4, scale) : 0, // 라벨 텍스트를 위로 살짝 올림
@@ -757,6 +763,12 @@ function EdgeClassLabel({
                                         <>
                                             <span>제</span>
                                             <span>목</span>
+                                        </>
+                                    ) : row.label === "부 서 명" ? (
+                                        <>
+                                            <span>부</span>
+                                            <span>서</span>
+                                            <span>명</span>
                                         </>
                                     ) : (
                                         displayText

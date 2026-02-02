@@ -162,7 +162,7 @@ export const FORMTEC_3629_COORDS = {
             { label: "value", height: 11.0 },   // 14.0 -> 11.0
             { label: "제목", height: 6.0 },      // 7.5 -> 6.0
             { label: "value", height: 104.0 },  // 90 -> 104.0 (축소분 반영)
-            { label: "부서명", height: 6.0 },
+            { label: "부 서 명", height: 6.0 },
             { label: "value", height: 74.0 },   // 62 -> 74.0 (축소분 반영)
         ],
     },
