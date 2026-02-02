@@ -3,6 +3,7 @@
 import React, { useRef, useState, useLayoutEffect } from "react";
 import { useLabelStore } from "@/store/labelStore";
 import Formtec3629Preview from "./Formtec3629Preview";
+import * as gtag from "@/lib/gtag";
 
 type PreviewTab = "file" | "formtec";
 
@@ -227,7 +228,14 @@ export default function LabelPreview({ autoFitText = true }: LabelPreviewProps) 
             <div className="flex gap-2 border-b border-gray-200">
                 <button
                     type="button"
-                    onClick={() => setActiveTab("formtec")}
+                    onClick={() => {
+                        gtag.event({
+                            action: "preview_form_click",
+                            category: "interaction",
+                            label: "Form Template Tab"
+                        });
+                        setActiveTab("formtec");
+                    }}
                     className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${activeTab === "formtec"
                         ? "bg-blue-500 text-white"
                         : "bg-gray-100 text-gray-600 hover:bg-gray-200"
@@ -237,7 +245,14 @@ export default function LabelPreview({ autoFitText = true }: LabelPreviewProps) 
                 </button>
                 <button
                     type="button"
-                    onClick={() => setActiveTab("file")}
+                    onClick={() => {
+                        gtag.event({
+                            action: "preview_file_click",
+                            category: "interaction",
+                            label: "Actual File Tab"
+                        });
+                        setActiveTab("file");
+                    }}
                     className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${activeTab === "file"
                         ? "bg-blue-500 text-white"
                         : "bg-gray-100 text-gray-600 hover:bg-gray-200"

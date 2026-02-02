@@ -3,10 +3,28 @@
 import LabelForm from "@/components/LabelForm";
 import PreviewSection from "@/components/PreviewSection";
 import GuideOverlay from "@/components/GuideOverlay";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import * as gtag from "@/lib/gtag";
 
 export default function Home() {
     const [isGuideOpen, setIsGuideOpen] = useState(false);
+
+    // 이탈(Exit) 트래킹
+    useEffect(() => {
+        const handleExit = () => {
+            gtag.event({
+                action: "page_exit",
+                category: "engagement",
+                label: "User Left Page"
+            });
+        };
+
+        window.addEventListener("beforeunload", handleExit);
+        return () => {
+            window.removeEventListener("beforeunload", handleExit);
+        };
+    }, []);
+
     return (
         <main className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
             {/* 헤더 */}
@@ -26,13 +44,25 @@ export default function Home() {
                         </div>
                         <nav className="flex items-center gap-4">
                             <button
-                                onClick={() => setIsGuideOpen(true)}
+                                onClick={() => {
+                                    gtag.event({
+                                        action: "guide_view",
+                                        category: "interaction",
+                                        label: "Header Guide Button"
+                                    });
+                                    setIsGuideOpen(true);
+                                }}
                                 className="text-sm text-gray-600 hover:text-primary-600 transition-colors"
                             >
                                 사용 가이드
                             </button>
                             <button
                                 onClick={() => {
+                                    gtag.event({
+                                        action: "waitlist_cta_click",
+                                        category: "interaction",
+                                        label: "Header Waitlist Button"
+                                    });
                                     document.getElementById('waitlist-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                                 }}
                                 className="text-sm bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg font-medium transition-all shadow-md shadow-primary-100 hover:scale-105 active:scale-95"
@@ -146,6 +176,11 @@ export default function Home() {
                                 <form
                                     onSubmit={(e) => {
                                         e.preventDefault();
+                                        gtag.event({
+                                            action: "waitlist_submit",
+                                            category: "conversion",
+                                            label: "Waitlist Form"
+                                        });
                                         alert('반갑습니다! 정식 버전 출시 소식을 보내드릴게요.');
                                     }}
                                     className="space-y-3 max-w-xs mx-auto"
@@ -196,6 +231,11 @@ export default function Home() {
                                 <form
                                     onSubmit={(e) => {
                                         e.preventDefault();
+                                        gtag.event({
+                                            action: "feedback_submit",
+                                            category: "engagement",
+                                            label: "Feedback Form"
+                                        });
                                         alert('소중한 피드백 감사합니다! 개발에 적극 반영하겠습니다.');
                                     }}
                                     className="space-y-3 max-w-xs mx-auto"

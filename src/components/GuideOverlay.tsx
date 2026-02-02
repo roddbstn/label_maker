@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
+import * as gtag from "@/lib/gtag";
 
 interface GuideOverlayProps {
     isOpen: boolean;
@@ -50,7 +51,14 @@ export default function GuideOverlay({ isOpen, onClose }: GuideOverlayProps) {
     return (
         <div
             className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-[2px] animate-in fade-in duration-300 pointer-events-auto cursor-pointer flex items-center justify-center"
-            onClick={onClose}
+            onClick={() => {
+                gtag.event({
+                    action: "guide_close",
+                    category: "interaction",
+                    label: "Guide Overlay Backdrop"
+                });
+                onClose();
+            }}
         >
             {/* 중앙 종료 안내 문구 - 배지 스타일로 복구 (흐린 검정) */}
             <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[110] animate-in zoom-in fade-in duration-700 delay-300 pointer-events-none">

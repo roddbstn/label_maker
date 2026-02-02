@@ -422,7 +422,14 @@ export default function LabelForm() {
                 <div className="flex gap-2 pt-6">
                     <button
                         type="button"
-                        onClick={resetLabelData}
+                        onClick={() => {
+                            gtag.event({
+                                action: "label_reset",
+                                category: "interaction",
+                                label: "Reset Button"
+                            });
+                            resetLabelData();
+                        }}
                         className="flex-1 py-3.5 px-4 border border-gray-200 rounded-xl text-gray-700 font-bold hover:bg-gray-50 transition-all active:scale-95 shadow-sm"
                     >
                         초기화
