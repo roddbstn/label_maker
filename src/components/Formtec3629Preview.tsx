@@ -333,7 +333,8 @@ function SideClassLabel({
     retentionPeriod,
     title,
     fontFamily,
-    isBold,
+    titleIsBold,
+    productionYearIsBold,
     titleFontSize,
 }: {
     x: number;
@@ -345,7 +346,8 @@ function SideClassLabel({
     retentionPeriod: string;
     title: string;
     fontFamily?: string;
-    isBold?: boolean;
+    titleIsBold?: boolean;
+    productionYearIsBold?: boolean;
     titleFontSize?: number; // pt 단위
 }) {
     const { padding, topRow, bottomRow } = FORMTEC_3629_COORDS.sideClassInternal;
@@ -400,8 +402,9 @@ function SideClassLabel({
                                     justifyContent: 'center',
                                     flex: 1, // 너비를 비율로 설정하여 전체 폭에 완벽히 맞춤
                                     height: '100%',
-                                    fontSize: fontSizePx,
+                                    fontSize: item.isLabel ? mmToPx(3.6, scale) : mmToPx(4.0, scale),
                                     fontFamily: !item.isLabel && fontFamily ? fontFamily : undefined,
+                                    fontWeight: !item.isLabel && i === 3 ? (productionYearIsBold ? 900 : 600) : 'normal',
                                     boxSizing: 'border-box',
                                     textAlign: 'center',
                                     borderRight: i < 5 ? `${Math.max(1, mmToPx(0.5, scale))}px solid #000000` : "none",
@@ -409,8 +412,8 @@ function SideClassLabel({
                                 }}
                             >
                                 <span style={{
-                                    whiteSpace: 'pre-line',
-                                    lineHeight: 1.2,
+                                    whiteSpace: item.isLabel ? 'pre-line' : 'nowrap',
+                                    lineHeight: 1.1,
                                 }}>
                                     {item.text}
                                 </span>
@@ -453,14 +456,14 @@ function SideClassLabel({
                                 justifyContent: 'space-between',
                                 width: '100%',
                                 lineHeight: 1.1,
-                                fontSize: mmToPx(4.0, scale), // 4.0mm로 통일
+                                fontSize: mmToPx(3.6, scale), // 4.0mm에서 3.6mm로 축소
                                 fontWeight: 'normal',
                             }}>
                                 <span>제</span>
                                 <span>목</span>
                             </div>
                             <div style={{
-                                fontSize: mmToPx(4.0, scale), // 4.0mm로 통일
+                                fontSize: mmToPx(3.3, scale), // 조금 더 작게 (3.3mm)
                                 lineHeight: 1.1,
                                 fontWeight: 'normal',
                                 whiteSpace: 'nowrap',
@@ -478,9 +481,9 @@ function SideClassLabel({
                             justifyContent: 'center',
                             flex: 1,
                             height: mmToPx(12.5, scale),
-                            fontSize: mmToPx(4.0, scale), // 전면 스타일을 무시하고 4.0mm로 고정
+                            fontSize: mmToPx(4.7, scale), // 4.0mm에서 4.7mm로 상향 (약 +2px)
                             fontFamily: fontFamily || undefined,
-                            fontWeight: 'normal', // 전면 스타일(bold)을 무시
+                            fontWeight: titleIsBold ? 900 : 600, // 기본 600, Bold 버튼 시 900
                             boxSizing: 'border-box',
                             padding: `0 ${mmToPx(2, scale)}px`,
                             textAlign: 'center',
@@ -621,8 +624,8 @@ function EdgeClassLabel({
                     // html2canvas 호환을 위해 absolute positioning 사용
                     const currentFontSizePx = isLabel ? mmToPx(2.75, scale) : (
                         i === titleIndex || i === deptIndex
-                            ? mmToPx(9, scale) // 제목/부서명은 옆면 표준 크기(9mm) 고정
-                            : mmToPx(effectiveFontSize, scale)
+                            ? mmToPx(10, scale) // 제목/부서명 9mm에서 10mm로 상향 (+2px 이상)
+                            : mmToPx(effectiveFontSize + 0.5, scale) // 기타 값들도 살짝 상향
                     );
 
                     return (
@@ -668,7 +671,7 @@ function EdgeClassLabel({
                                         // 단, 가로 폭을 넘지 않도록 제한
                                         let fontSizePx = charHeightPx * 0.98;
                                         fontSizePx = Math.min(fontSizePx, availableWidthPx * 0.85);
-                                        fontSizePx = Math.min(fontSizePx, mmToPx(4.5, scale)); // 최대 4.5mm
+                                        fontSizePx = Math.min(fontSizePx, mmToPx(5.2, scale)); // 최대 4.5mm에서 5.2mm로 상향
                                         fontSizePx = Math.max(fontSizePx, mmToPx(1.5, scale)); // 최소 1.5mm
 
                                         return (
@@ -796,8 +799,8 @@ export default function Formtec3629Preview({ currentPage = 0 }: Formtec3629Previ
     const { labels } = useLabelStore();
     const coords = FORMTEC_3629_COORDS;
 
-    // 미리보기 스케일 (A4 너비를 기준) - 가로 길이를 줄여 전체 높이를 1번 영역과 맞춤
-    const previewWidth = 310;
+    // 미리보기 스케일 (A4 너비를 기준) - 가로 길이를 상향하여 폼과 균형 맞춤
+    const previewWidth = 480;
     const scale = previewWidth / coords.page.width;
     const previewHeight = coords.page.height * scale;
 
@@ -918,7 +921,8 @@ export default function Formtec3629Preview({ currentPage = 0 }: Formtec3629Previ
                             retentionPeriod={label1.retentionPeriod}
                             title={label1.title}
                             fontFamily={label1.fontFamily}
-                            isBold={label1.titleIsBold}
+                            titleIsBold={label1.titleIsBold}
+                            productionYearIsBold={label1.productionYearIsBold}
                             titleFontSize={label1.titleFontSize}
                         />
 
@@ -1029,7 +1033,8 @@ export default function Formtec3629Preview({ currentPage = 0 }: Formtec3629Previ
                             retentionPeriod={label2.retentionPeriod}
                             title={label2.title}
                             fontFamily={label2.fontFamily}
-                            isBold={label2.titleIsBold}
+                            titleIsBold={label2.titleIsBold}
+                            productionYearIsBold={label2.productionYearIsBold}
                             titleFontSize={label2.titleFontSize}
                         />
 
