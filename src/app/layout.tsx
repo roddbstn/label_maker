@@ -21,6 +21,10 @@ export const metadata: Metadata = {
         type: "website",
         locale: "ko_KR",
     },
+    icons: {
+        icon: "/label_maker_logo.png",
+        apple: "/label_maker_logo.png",
+    },
 };
 
 export default function RootLayout({
