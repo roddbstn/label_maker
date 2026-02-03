@@ -98,14 +98,23 @@ export const useLabelStore = create<LabelStoreState>()(
                     // 최소 1개는 유지
                     if (state.labels.length <= 1) return state;
 
-                    const newLabels = state.labels.filter((l) => l.id !== id);
+                    // 라벨 삭제 후 남은 라벨들의 번호를 1부터 다시 순서대로 부여
+                    const remainingLabels = state.labels
+                        .filter((l) => l.id !== id)
+                        .map((label, index) => ({
+                            ...label,
+                            labelNumber: index + 1
+                        }));
+
                     const newIndex = Math.min(
                         state.currentLabelIndex,
-                        newLabels.length - 1
+                        remainingLabels.length - 1
                     );
+
                     return {
-                        labels: newLabels,
+                        labels: remainingLabels,
                         currentLabelIndex: newIndex,
+                        nextLabelNumber: remainingLabels.length + 1
                     };
                 }),
 
