@@ -83,7 +83,7 @@ export default function Home() {
                         정부문서화일 라벨, <span className="text-primary-600 text-nowrap">입력만 하면 자동으로 완성</span>
                     </h2>
                     <p className="text-base text-gray-600 max-w-2xl mx-auto">
-                        장평·자간 조절 노가다 없이, 긴 부서명도 알아서 예쁘게 맞춰드립니다. 한글 파일 없이 바로 출력!
+                        장평·자간 조절 노가다 없이, 긴 부서명도 알아서 예쁘게 맞춰드립니다. <br></br>한글 파일 없이 바로 출력!
                     </p>
                 </section>
 
