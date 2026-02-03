@@ -436,14 +436,14 @@ export default function LabelForm() {
                             <button
                                 type="button"
                                 onClick={() => updateLabelData({ classificationCode: "사업" })}
-                                className="px-4 py-1.5 bg-accent/10 hover:bg-accent/20 text-accent border border-accent/30 rounded-lg text-xs font-bold transition-all"
+                                className="px-4 py-1.5 bg-white text-gray-600 border border-gray-300 rounded-md text-xs font-bold hover:bg-gray-50 shadow-sm transition-all"
                             >
                                 사업
                             </button>
                             <button
                                 type="button"
                                 onClick={() => updateLabelData({ classificationCode: "회계" })}
-                                className="px-4 py-1.5 bg-accent/10 hover:bg-accent/20 text-accent border border-accent/30 rounded-lg text-xs font-bold transition-all"
+                                className="px-4 py-1.5 bg-white text-gray-600 border border-gray-300 rounded-md text-xs font-bold hover:bg-gray-50 shadow-sm transition-all"
                             >
                                 회계
                             </button>
@@ -469,21 +469,21 @@ export default function LabelForm() {
                             <button
                                 type="button"
                                 onClick={() => updateLabelData({ retentionPeriod: "1년" })}
-                                className="px-3 py-1.5 bg-accent/10 hover:bg-accent/20 text-accent border border-accent/30 rounded-lg text-xs font-bold transition-all"
+                                className="px-3 py-1.5 bg-white text-gray-600 border border-gray-300 rounded-md text-xs font-bold hover:bg-gray-50 shadow-sm transition-all"
                             >
                                 1년
                             </button>
                             <button
                                 type="button"
                                 onClick={() => updateLabelData({ retentionPeriod: "3년" })}
-                                className="px-3 py-1.5 bg-accent/10 hover:bg-accent/20 text-accent border border-accent/30 rounded-lg text-xs font-bold transition-all"
+                                className="px-3 py-1.5 bg-white text-gray-600 border border-gray-300 rounded-md text-xs font-bold hover:bg-gray-50 shadow-sm transition-all"
                             >
                                 3년
                             </button>
                             <button
                                 type="button"
                                 onClick={() => updateLabelData({ retentionPeriod: "5년" })}
-                                className="px-3 py-1.5 bg-accent/10 hover:bg-accent/20 text-accent border border-accent/30 rounded-lg text-xs font-bold transition-all"
+                                className="px-3 py-1.5 bg-white text-gray-600 border border-gray-300 rounded-md text-xs font-bold hover:bg-gray-50 shadow-sm transition-all"
                             >
                                 5년
                             </button>
