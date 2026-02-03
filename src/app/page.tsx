@@ -4,6 +4,7 @@ import LabelForm from "@/components/LabelForm";
 import PreviewSection from "@/components/PreviewSection";
 import GuideOverlay from "@/components/GuideOverlay";
 import { useState, useEffect } from "react";
+import { submitWaitlistAction, submitFeedbackAction } from '@/lib/actions';
 import * as gtag from "@/lib/gtag";
 
 export default function Home() {
@@ -76,17 +77,6 @@ export default function Home() {
 
             {/* 메인 콘텐츠 */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                {/* 히어로 섹션 - 콤팩트 버전 */}
-                <section className="text-center mb-8 relative">
-
-                    <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
-                        정부문서화일 라벨, <span className="text-primary-600 text-nowrap">입력만 하면 자동으로 완성</span>
-                    </h2>
-                    <p className="text-base text-gray-600 max-w-2xl mx-auto">
-                        장평·자간 조절 노가다 없이, 긴 부서명도 알아서 예쁘게 맞춰드립니다. <br></br>한글 파일 없이 바로 출력!
-                    </p>
-                </section>
-
                 {/* 라벨 생성 섹션 */}
                 <section className="grid lg:grid-cols-2 gap-8 items-start">
                     {/* 입력 폼 */}
@@ -114,6 +104,18 @@ export default function Home() {
                             <PreviewSection />
                         </div>
                     </div>
+                </section>
+
+                {/* 히어로 섹션 - 콤팩트 버전 (하단 배치) */}
+                <section className="text-center py-16 md:py-24 relative border-t border-slate-100 mt-12">
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 tracking-tight leading-tight">
+                        정부문서화일 라벨, <br className="sm:hidden" />
+                        <span className="text-primary-600">입력만 하면 자동으로 완성</span>
+                    </h2>
+                    <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                        장평·자간 조절 노가다 없이, 긴 부서명도 알아서 예쁘게 맞춰드립니다. <br className="hidden sm:block" />
+                        한글 파일 없이 바로 출력!
+                    </p>
                 </section>
 
                 {/* 특징 섹션 - 가로형으로 더 콤팩트하게 */}
@@ -174,19 +176,29 @@ export default function Home() {
                                 </p>
 
                                 <form
-                                    onSubmit={(e) => {
+                                    onSubmit={async (e) => {
                                         e.preventDefault();
+                                        const formData = new FormData(e.currentTarget);
+
                                         gtag.event({
                                             action: "waitlist_submit",
                                             category: "conversion",
                                             label: "Waitlist Form"
                                         });
-                                        alert('반갑습니다! 정식 버전 출시 소식을 보내드릴게요.');
+
+                                        const result = await submitWaitlistAction(formData);
+                                        if (result.success) {
+                                            alert('반갑습니다! 정식 버전 출시 소식을 보내드릴게요.');
+                                            (e.target as HTMLFormElement).reset();
+                                        } else {
+                                            alert(result.error || '오류가 발생했습니다.');
+                                        }
                                     }}
                                     className="space-y-3 max-w-xs mx-auto"
                                 >
                                     <input
                                         type="email"
+                                        name="email"
                                         required
                                         placeholder="이메일 주소"
                                         className="w-full px-6 py-3 rounded-xl bg-slate-50/50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all shadow-inner"
@@ -229,21 +241,39 @@ export default function Home() {
                                 </p>
 
                                 <form
-                                    onSubmit={(e) => {
+                                    onSubmit={async (e) => {
                                         e.preventDefault();
+                                        const formData = new FormData(e.currentTarget);
+
                                         gtag.event({
                                             action: "feedback_submit",
                                             category: "engagement",
                                             label: "Feedback Form"
                                         });
-                                        alert('소중한 피드백 감사합니다! 개발에 적극 반영하겠습니다.');
+
+                                        const result = await submitFeedbackAction(formData);
+                                        if (result.success) {
+                                            alert('소중한 피드백 감사합니다! 개발에 적극 반영하겠습니다.');
+                                            (e.target as HTMLFormElement).reset();
+                                        } else {
+                                            alert(result.error || '오류가 발생했습니다.');
+                                        }
                                     }}
                                     className="space-y-3 max-w-xs mx-auto"
                                 >
                                     <textarea
+                                        name="feedback"
+                                        required
                                         placeholder="익명으로 의견 남기기"
                                         rows={2}
                                         className="w-full px-6 py-3 rounded-xl bg-slate-50/50 border border-slate-200 text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all resize-none shadow-inner"
+                                    />
+                                    <input
+                                        type="text"
+                                        name="organization"
+                                        required
+                                        placeholder="본인 기관명 (회사명)"
+                                        className="w-full px-6 py-3 rounded-xl bg-slate-50/50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all shadow-inner"
                                     />
                                     <button
                                         type="submit"
