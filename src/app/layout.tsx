@@ -3,27 +3,47 @@ import Script from "next/script";
 import "./globals.css";
 
 export const metadata: Metadata = {
-    title: "라벨 메이커 - 정부문서화일 라벨 자동 생성",
+    metadataBase: new URL("https://label-maker.vercel.app"), // 실 배포 시 수정 필요
+    title: {
+        default: "라벨 메이커 - 정부문서화일 라벨 자동 생성",
+        template: "%s | 라벨 메이커"
+    },
     description:
-        "정부문서화일(황대일 파일) 라벨을 웹에서 쉽게 만들고 PDF로 다운로드하세요. 설치 없이 브라우저에서 바로 사용 가능합니다.",
+        "정부문서화일(황대일 파일) 라벨을 웹에서 쉽게 만들고 PDF로 다운로드하세요. 폼텍 3629 규격 완벽 지원. 설치 없이 무료로 바로 사용 가능한 라벨 자동 생성기입니다.",
     keywords: [
         "라벨 메이커",
-        "정부문서화일",
-        "황대일 파일",
-        "라벨 출력",
-        "PDF 생성",
+        "라벨 생성기",
+        "정부문서화일 라벨",
+        "황대일 파일 라벨",
+        "화일 라벨 출력",
+        "PDF 라벨 생성",
         "폼텍 3629",
+        "공공기관 라벨",
     ],
+    alternates: {
+        canonical: "/",
+    },
     openGraph: {
         title: "라벨 메이커 - 정부문서화일 라벨 자동 생성",
         description:
-            "입력만 하면 자동으로 예쁘게 맞춰진 라벨 PDF를 받으세요. 설치 없이 무료로 사용 가능!",
+            "입력만 하면 자동으로 예쁘게 맞춰진 라벨 PDF를 받으세요. 폼텍 3629 규격 지원, 설치 없이 무료 사용!",
         type: "website",
         locale: "ko_KR",
+        images: [
+            {
+                url: "/label_maker_logo.png",
+                width: 800,
+                height: 600,
+                alt: "라벨 메이커 로고",
+            },
+        ],
     },
     icons: {
         icon: "/label_maker_logo.png",
         apple: "/label_maker_logo.png",
+    },
+    verification: {
+        google: "google-site-verification-placeholder", // 사용자가 나중에 채울 수 있도록
     },
 };
 

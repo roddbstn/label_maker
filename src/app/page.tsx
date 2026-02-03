@@ -35,11 +35,16 @@ export default function Home() {
                         <div className="flex items-center gap-3">
                             <img
                                 src="/label_maker_logo.png"
-                                alt="라벨 메이커 로고"
+                                alt="라벨 메이커 - 정부문서화일 라벨 자동 생성기 로고"
+                                width={40}
+                                height={40}
                                 className="w-10 h-10 object-contain rounded-xl shadow-sm"
                             />
                             <div>
-                                <h1 className="text-xl font-bold text-gray-900">라벨 메이커</h1>
+                                <h1 className="text-xl font-bold text-gray-900">
+                                    라벨 메이커
+                                    <span className="sr-only">: 정부문서화일 라벨 자동 생성기</span>
+                                </h1>
                                 <p className="text-xs text-gray-500">정부문서화일 라벨 자동 생성</p>
                             </div>
                         </div>
