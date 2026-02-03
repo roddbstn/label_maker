@@ -128,7 +128,7 @@ export default function LabelForm() {
     }
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-2">
             {/* 라벨 탭 UI */}
             <div
                 style={{
@@ -161,16 +161,16 @@ export default function LabelForm() {
                                             <div
                                                 key={label.id}
                                                 className={`
-                                                    flex items-center gap-2 px-5 py-3 rounded-[1.2rem] cursor-pointer
+                                                    flex items-center gap-2 px-4 py-2.5 rounded-xl cursor-pointer
                                                     transition-all duration-200
                                                     ${isActive
-                                                        ? "bg-[#0084ff] text-white shadow-[0_8px_16px_-4px_rgba(0,132,255,0.3)]"
+                                                        ? "bg-[#0084ff] text-white shadow-[0_4px_12px_-2px_rgba(0,132,255,0.3)]"
                                                         : "bg-[#f1f3f5] text-[#495057] hover:bg-[#e9ecef]"
                                                     }
                                                 `}
                                                 onClick={() => selectLabel(labelIndex)}
                                             >
-                                                <span className="text-[17px] font-bold whitespace-nowrap">
+                                                <span className="text-[15px] font-bold whitespace-nowrap">
                                                     라벨 {label.labelNumber}
                                                 </span>
                                                 {labels.length > 1 && (
@@ -181,8 +181,8 @@ export default function LabelForm() {
                                                             removeLabel(label.id);
                                                         }}
                                                         className={`
-                                                            ml-1 w-5 h-5 flex items-center justify-center rounded-full
-                                                            transition-colors text-lg font-medium opacity-70 hover:opacity-100
+                                                            ml-1 w-4 h-4 flex items-center justify-center rounded-full
+                                                            transition-colors text-base font-medium opacity-70 hover:opacity-100
                                                         `}
                                                     >
                                                         ×
@@ -194,16 +194,30 @@ export default function LabelForm() {
                                 </div>
                                 {/* 페이지 표시 */}
                                 <div className="relative w-full mt-1">
-                                    <div className="flex items-center justify-center relative h-[24px]">
-                                        {pageLabels.length === 2 && (
-                                            <div className="absolute top-0 w-full flex items-center justify-between px-[20%]">
-                                                <div className="w-[40%] h-[12px] border-l-2 border-b-2 border-[#dee2e6] rounded-bl-lg"></div>
-                                                <div className="w-[40%] h-[12px] border-r-2 border-b-2 border-[#dee2e6] rounded-br-lg"></div>
-                                            </div>
+                                    <div className="flex items-center justify-center gap-2 px-[15%] h-[24px]">
+                                        {pageLabels.length === 2 ? (
+                                            <>
+                                                {/* 왼쪽 대괄호 */}
+                                                <div className="flex-1 h-full flex flex-col">
+                                                    <div className="h-1/2 border-l-2 border-[#dee2e6]"></div>
+                                                    <div className="border-t-2 border-[#dee2e6]"></div>
+                                                </div>
+
+                                                <span className="text-[11px] font-bold text-[#adb5bd] whitespace-nowrap">
+                                                    페이지 {pageIndex + 1}
+                                                </span>
+
+                                                {/* 오른쪽 대괄호 */}
+                                                <div className="flex-1 h-full flex flex-col">
+                                                    <div className="h-1/2 border-r-2 border-[#dee2e6]"></div>
+                                                    <div className="border-t-2 border-[#dee2e6]"></div>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <span className="text-[11px] font-bold text-[#adb5bd] whitespace-nowrap">
+                                                페이지 {pageIndex + 1}
+                                            </span>
                                         )}
-                                        <span className="text-[11px] font-bold text-[#adb5bd] z-10 mt-1">
-                                            페이지 {pageIndex + 1}
-                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -229,10 +243,10 @@ export default function LabelForm() {
             </div>
 
             {/* 현재 라벨 정보 */}
-            <div className="flex items-center justify-between px-4 py-4 rounded-[1.2rem] bg-[#eff6ff] border border-[#dbeafe]/50">
+            <div className="flex items-center justify-between px-3 py-3 rounded-xl bg-[#eff6ff] border border-[#dbeafe]/50">
                 <div className="flex items-center gap-2">
-                    <span className="text-xl">📝</span>
-                    <div className="text-[17px] font-bold text-[#4b5563]">
+                    <span className="text-lg opacity-80">📝</span>
+                    <div className="text-[14px] font-medium text-[#6b7280]">
                         라벨 {labelData.labelNumber} 편집 중
                     </div>
                 </div>
