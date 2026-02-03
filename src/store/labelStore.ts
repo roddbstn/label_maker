@@ -11,7 +11,7 @@ function createNewLabel(labelNumber: number): LabelData {
         id: crypto.randomUUID(),
         labelNumber,
         title: "",
-        productionYear: "",
+        productionYear: "2026년",
         departmentName: "",
         classificationCode: "",
         retentionPeriod: "",
