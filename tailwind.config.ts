@@ -23,6 +23,11 @@ const config: Config = {
                     900: "#0b3f6e",
                     950: "#072849",
                 },
+                // 분류/보존기간 빠른 선택 버튼 컬러
+                accent: {
+                    DEFAULT: "#393cff",
+                    light: "#a5a7ff",
+                },
                 secondary: {
                     50: "#f5f7fa",
                     100: "#eaeef4",

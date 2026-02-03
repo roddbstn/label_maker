@@ -121,6 +121,12 @@ export default function LabelForm() {
 
     if (!labelData) return null;
 
+    // 라벨을 2개씩 페이지로 그룹핑
+    const labelPages: Array<typeof labels> = [];
+    for (let i = 0; i < labels.length; i += 2) {
+        labelPages.push(labels.slice(i, i + 2));
+    }
+
     return (
         <div className="space-y-4">
             {/* 라벨 탭 UI */}
@@ -129,7 +135,7 @@ export default function LabelForm() {
                     display: "grid",
                     gridTemplateColumns: "1fr 48px",
                     gap: "8px",
-                    alignItems: "center",
+                    alignItems: "flex-start",
                     width: "100%"
                 }}
             >
@@ -143,42 +149,63 @@ export default function LabelForm() {
                         scrollbarColor: "#cbd5e1 #f1f5f9"
                     }}
                 >
-                    <div className="flex items-center gap-2" style={{ width: "max-content" }}>
-                        {labels.map((label, index) => (
-                            <div
-                                key={label.id}
-                                className={`
-                                    flex items-center gap-1 px-3 py-2 rounded-lg cursor-pointer
-                                    transition-all duration-200
-                                    ${index === currentLabelIndex
-                                        ? "bg-blue-500 text-white shadow-md"
-                                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                                    }
-                                `}
-                                onClick={() => selectLabel(index)}
-                            >
-                                <span className="text-sm font-medium whitespace-nowrap">
-                                    라벨 {label.labelNumber}
-                                </span>
-                                {labels.length > 1 && (
-                                    <button
-                                        type="button"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            removeLabel(label.id);
-                                        }}
-                                        className={`
-                                            ml-1 w-5 h-5 flex items-center justify-center rounded-full
-                                            transition-colors text-xs font-bold
-                                            ${index === currentLabelIndex
-                                                ? "hover:bg-blue-600 text-white/80 hover:text-white"
-                                                : "hover:bg-gray-300 text-gray-500 hover:text-gray-700"
-                                            }
-                                        `}
-                                    >
-                                        ×
-                                    </button>
-                                )}
+                    <div className="flex items-start gap-4" style={{ width: "max-content" }}>
+                        {labelPages.map((pageLabels, pageIndex) => (
+                            <div key={`page-${pageIndex}`} className="flex flex-col items-center">
+                                {/* 라벨 탭들 */}
+                                <div className="flex items-center gap-2">
+                                    {pageLabels.map((label) => {
+                                        const labelIndex = labels.findIndex(l => l.id === label.id);
+                                        const isActive = labelIndex === currentLabelIndex;
+                                        return (
+                                            <div
+                                                key={label.id}
+                                                className={`
+                                                    flex items-center gap-2 px-5 py-3 rounded-[1.2rem] cursor-pointer
+                                                    transition-all duration-200
+                                                    ${isActive
+                                                        ? "bg-[#0084ff] text-white shadow-[0_8px_16px_-4px_rgba(0,132,255,0.3)]"
+                                                        : "bg-[#f1f3f5] text-[#495057] hover:bg-[#e9ecef]"
+                                                    }
+                                                `}
+                                                onClick={() => selectLabel(labelIndex)}
+                                            >
+                                                <span className="text-[17px] font-bold whitespace-nowrap">
+                                                    라벨 {label.labelNumber}
+                                                </span>
+                                                {labels.length > 1 && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            removeLabel(label.id);
+                                                        }}
+                                                        className={`
+                                                            ml-1 w-5 h-5 flex items-center justify-center rounded-full
+                                                            transition-colors text-lg font-medium opacity-70 hover:opacity-100
+                                                        `}
+                                                    >
+                                                        ×
+                                                    </button>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                                {/* 페이지 표시 */}
+                                <div className="relative w-full mt-1">
+                                    <div className="flex items-center justify-center relative h-[24px]">
+                                        {pageLabels.length === 2 && (
+                                            <div className="absolute top-0 w-full flex items-center justify-between px-[20%]">
+                                                <div className="w-[40%] h-[12px] border-l-2 border-b-2 border-[#dee2e6] rounded-bl-lg"></div>
+                                                <div className="w-[40%] h-[12px] border-r-2 border-b-2 border-[#dee2e6] rounded-br-lg"></div>
+                                            </div>
+                                        )}
+                                        <span className="text-[11px] font-bold text-[#adb5bd] z-10 mt-1">
+                                            페이지 {pageIndex + 1}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -202,13 +229,18 @@ export default function LabelForm() {
             </div>
 
             {/* 현재 라벨 정보 */}
-            <div className="text-sm text-gray-500 bg-blue-50 px-3 py-2 rounded-lg flex items-center justify-between">
-                <div>📝 <strong>라벨 {labelData.labelNumber}</strong> 편집 중</div>
+            <div className="flex items-center justify-between px-4 py-4 rounded-[1.2rem] bg-[#eff6ff] border border-[#dbeafe]/50">
+                <div className="flex items-center gap-2">
+                    <span className="text-xl">📝</span>
+                    <div className="text-[17px] font-bold text-[#4b5563]">
+                        라벨 {labelData.labelNumber} 편집 중
+                    </div>
+                </div>
                 {labels.length > 1 && (
                     <select
                         value={currentLabelIndex}
                         onChange={(e) => selectLabel(Number(e.target.value))}
-                        className="ml-2 px-2 py-1 bg-white border border-gray-200 rounded text-xs text-gray-700"
+                        className="px-2 py-1 bg-white/80 border border-[#dbeafe] rounded-lg text-xs text-[#6b7280] outline-none focus:ring-2 focus:ring-blue-400/50"
                     >
                         {labels.map((label, index) => (
                             <option key={label.id} value={index}>
@@ -377,7 +409,7 @@ export default function LabelForm() {
 
                 {/* 나머지 일반 필드들 */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
+                    <div className="group">
                         <label className="block text-xs font-medium text-gray-500 mb-1">분류번호</label>
                         <input
                             type="text"
@@ -386,8 +418,24 @@ export default function LabelForm() {
                             placeholder="예: 사업, 회계"
                             className="w-full h-10 px-3 bg-white border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                         />
+                        <div className="flex gap-2 mt-2 transition-all duration-200 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
+                            <button
+                                type="button"
+                                onClick={() => updateLabelData({ classificationCode: "사업" })}
+                                className="px-4 py-1.5 bg-accent/10 hover:bg-accent/20 text-accent border border-accent/30 rounded-lg text-xs font-bold transition-all"
+                            >
+                                사업
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => updateLabelData({ classificationCode: "회계" })}
+                                className="px-4 py-1.5 bg-accent/10 hover:bg-accent/20 text-accent border border-accent/30 rounded-lg text-xs font-bold transition-all"
+                            >
+                                회계
+                            </button>
+                        </div>
                     </div>
-                    <div>
+                    <div className="group">
                         <label className="block text-xs font-medium text-gray-500 mb-1">보존기간</label>
                         <select
                             value={labelData.retentionPeriod}
@@ -403,6 +451,29 @@ export default function LabelForm() {
                             <option value="3년">3년</option>
                             <option value="1년">1년</option>
                         </select>
+                        <div className="flex gap-2 mt-2 transition-all duration-200 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
+                            <button
+                                type="button"
+                                onClick={() => updateLabelData({ retentionPeriod: "1년" })}
+                                className="px-3 py-1.5 bg-accent/10 hover:bg-accent/20 text-accent border border-accent/30 rounded-lg text-xs font-bold transition-all"
+                            >
+                                1년
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => updateLabelData({ retentionPeriod: "3년" })}
+                                className="px-3 py-1.5 bg-accent/10 hover:bg-accent/20 text-accent border border-accent/30 rounded-lg text-xs font-bold transition-all"
+                            >
+                                3년
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => updateLabelData({ retentionPeriod: "5년" })}
+                                className="px-3 py-1.5 bg-accent/10 hover:bg-accent/20 text-accent border border-accent/30 rounded-lg text-xs font-bold transition-all"
+                            >
+                                5년
+                            </button>
+                        </div>
                     </div>
                     <div>
                         <label className="block text-xs font-medium text-gray-500 mb-1">관리번호</label>
@@ -469,6 +540,6 @@ export default function LabelForm() {
                     </button>
                 </div>
             </form>
-        </div>
+        </div >
     );
 }
