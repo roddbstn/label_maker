@@ -32,8 +32,6 @@ export default function LabelForm() {
     // 현재 라벨 데이터
     const labelData = labels[currentLabelIndex];
 
-
-
     // 스크롤 컨테이너 ref
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const prevLabelsLengthRef = useRef(labels.length);
@@ -43,7 +41,6 @@ export default function LabelForm() {
     const [selectionFontSizes, setSelectionFontSizes] = useState<Record<string, number | undefined>>({});
 
     const handleSelectionChange = (fieldId: string) => (hasSelection: boolean, rect: DOMRect | null, fontSize?: number) => {
-        // hasSelection이 true라 하더라도 실제로 해당 에디터가 활성화된 상태인지 확인
         setSelectedFields(prev => ({ ...prev, [fieldId]: hasSelection }));
         setSelectionFontSizes(prev => ({ ...prev, [fieldId]: fontSize }));
     };
@@ -76,12 +73,10 @@ export default function LabelForm() {
         const editor = inputId ? document.getElementById(inputId) : null;
 
         if (selection && selection.rangeCount > 0 && !selection.isCollapsed && editor?.contains(selection.anchorNode)) {
-            // 선택된 텍스트가 있는 경우: 부분 Bold 적용
             import("./RichTextInput").then(({ applyTextStyle }) => {
                 applyTextStyle(editor, "bold");
             });
         } else {
-            // 선택된 텍스트가 없는 경우: 필드 전체 Bold 토글
             updateLabelData({ [field]: !currentVal });
         }
     };
@@ -91,15 +86,11 @@ export default function LabelForm() {
         const editor = inputId ? document.getElementById(inputId) : null;
 
         if (selection && selection.rangeCount > 0 && !selection.isCollapsed && editor?.contains(selection.anchorNode)) {
-            // 선택된 텍스트가 있는 경우: 부분 글자 크기 적용 (size 0 포함)
-            // UI에 즉시 반영하기 위해 상태 먼저 업데이트
             setSelectionFontSizes(prev => ({ ...prev, [field.replace('FontSize', '')]: size }));
-
             import("./RichTextInput").then(({ applyTextStyle }) => {
                 applyTextStyle(editor, "fontSize", size.toString());
             });
         } else {
-            // 선택된 텍스트가 없는 경우: 필드 전체 글자 크기 설정
             updateLabelData({ [field]: size === 0 ? undefined : size });
         }
     };
@@ -118,6 +109,22 @@ export default function LabelForm() {
         const title = htmlToPlainText(label.title);
         return title.length > 15 ? title.slice(0, 15) + "..." : (title || "(제목 없음)");
     };
+
+    // 최근 사용된 부서명 추천 목록 생성
+    const getRecentDepartments = useCallback(() => {
+        const allDepts = [
+            ...labels.map(l => htmlToPlainText(l.departmentName)),
+            ...history.map(h => htmlToPlainText(h.labelData.departmentName))
+        ];
+
+        const uniqueDepts = Array.from(new Set(allDepts))
+            .filter(dept => dept.trim().length > 0)
+            .slice(0, 5);
+
+        return uniqueDepts;
+    }, [labels, history]);
+
+    const recentDepts = getRecentDepartments();
 
     if (!labelData) return null;
 
@@ -152,7 +159,6 @@ export default function LabelForm() {
                     <div className="flex items-start gap-4" style={{ width: "max-content" }}>
                         {labelPages.map((pageLabels, pageIndex) => (
                             <div key={`page-${pageIndex}`} className="flex flex-col items-center">
-                                {/* 라벨 탭들 */}
                                 <div className="flex items-center gap-2">
                                     {pageLabels.map((label) => {
                                         const labelIndex = labels.findIndex(l => l.id === label.id);
@@ -180,10 +186,7 @@ export default function LabelForm() {
                                                             e.stopPropagation();
                                                             removeLabel(label.id);
                                                         }}
-                                                        className={`
-                                                            ml-1 w-4 h-4 flex items-center justify-center rounded-full
-                                                            transition-colors text-base font-medium opacity-70 hover:opacity-100
-                                                        `}
+                                                        className="ml-1 w-4 h-4 flex items-center justify-center rounded-full transition-colors text-base font-medium opacity-70 hover:opacity-100"
                                                     >
                                                         ×
                                                     </button>
@@ -192,22 +195,17 @@ export default function LabelForm() {
                                         );
                                     })}
                                 </div>
-                                {/* 페이지 표시 */}
                                 <div className="relative w-full mt-1">
                                     <div className="flex items-center justify-center gap-2 px-[15%] h-[24px]">
                                         {pageLabels.length === 2 ? (
                                             <>
-                                                {/* 왼쪽 대괄호 */}
                                                 <div className="flex-1 h-full flex flex-col">
                                                     <div className="h-1/2 border-l-2 border-[#dee2e6]"></div>
                                                     <div className="border-t-2 border-[#dee2e6]"></div>
                                                 </div>
-
                                                 <span className="text-[11px] font-bold text-[#adb5bd] whitespace-nowrap">
                                                     페이지 {pageIndex + 1}
                                                 </span>
-
-                                                {/* 오른쪽 대괄호 */}
                                                 <div className="flex-1 h-full flex flex-col">
                                                     <div className="h-1/2 border-r-2 border-[#dee2e6]"></div>
                                                     <div className="border-t-2 border-[#dee2e6]"></div>
@@ -242,7 +240,6 @@ export default function LabelForm() {
                 </button>
             </div>
 
-            {/* 현재 라벨 정보 */}
             <div className="flex items-center justify-between px-3 py-3 rounded-xl bg-[#eff6ff] border border-[#dbeafe]/50">
                 <div className="flex items-center gap-2">
                     <span className="text-lg opacity-80">📝</span>
@@ -265,10 +262,7 @@ export default function LabelForm() {
                 )}
             </div>
 
-
-
             <form className="space-y-2 mt-2" onSubmit={(e) => e.preventDefault()}>
-                {/* 제목 필드 */}
                 <div className="space-y-1 group">
                     <label className="block text-sm font-bold text-gray-700">
                         제목 <span className="text-red-500">*</span>
@@ -286,39 +280,26 @@ export default function LabelForm() {
                         <div className="flex items-center gap-2 transition-opacity duration-200 opacity-0 group-hover:opacity-100">
                             <button
                                 type="button"
-                                tabIndex={-1}
                                 onClick={() => toggleFieldBold('titleIsBold', labelData.titleIsBold, 'title')}
-                                onMouseDown={(e) => e.preventDefault()}
                                 className={`w-12 h-7 border rounded-md font-bold text-sm transition-colors shadow-sm ${labelData.titleIsBold ? 'bg-blue-500 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'}`}
                             >
                                 B
                             </button>
-                            <div
-                                className={`border rounded-md h-7 pr-1 flex items-center transition-colors ${selectedFields['title'] ? 'bg-white border-black ring-1 ring-black' : 'bg-gray-50/50 border-gray-200'}`}
-                            >
+                            <div className={`border rounded-md h-7 pr-1 flex items-center transition-colors ${selectedFields['title'] ? 'bg-white border-black ring-1 ring-black' : 'bg-gray-50/50 border-gray-200'}`}>
                                 <select
-                                    tabIndex={-1}
                                     value={selectedFields['title'] && selectionFontSizes['title'] !== undefined ? selectionFontSizes['title'] : (labelData.titleFontSize || 0)}
                                     onChange={(e) => setFieldFontSize('titleFontSize', Number(e.target.value), 'title')}
                                     className={`text-xs bg-transparent focus:outline-none cursor-pointer border-none outline-none appearance-none pl-2 pr-6 h-full w-full ${selectedFields['title'] ? 'text-black font-bold' : 'text-gray-400 font-normal'}`}
                                 >
-                                    {selectedFields['title'] && selectionFontSizes['title'] === -1 && (
-                                        <option value="-1"></option>
-                                    )}
                                     {FONT_SIZE_OPTIONS.map(opt => (
-                                        <option key={opt.value} value={opt.value} className="text-gray-700 text-sm">{opt.label}</option>
+                                        <option key={opt.value} value={opt.value}>{opt.label}</option>
                                     ))}
-                                    {selectedFields['title'] && selectionFontSizes['title'] !== undefined && selectionFontSizes['title'] > 0 && selectionFontSizes['title'] !== 12 && !FONT_SIZE_OPTIONS.some(opt => opt.value === selectionFontSizes['title']) && (
-                                        <option value={selectionFontSizes['title']}>{selectionFontSizes['title']} (커스텀)</option>
-                                    )}
                                 </select>
-                                <span className={`text-[10px] absolute right-1 pointer-events-none ${selectedFields['title'] ? 'text-black font-bold' : 'text-gray-400'}`}>▼</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* 생산연도 필드 */}
                 <div className="space-y-1 group">
                     <label className="block text-sm font-bold text-gray-700">
                         생산연도 <span className="text-red-500">*</span>
@@ -336,39 +317,26 @@ export default function LabelForm() {
                         <div className="flex items-center gap-2 transition-all duration-200 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
                             <button
                                 type="button"
-                                tabIndex={-1}
                                 onClick={() => toggleFieldBold('productionYearIsBold', labelData.productionYearIsBold, 'productionYear')}
-                                onMouseDown={(e) => e.preventDefault()}
                                 className={`w-12 h-7 border rounded-md font-bold text-sm transition-colors shadow-sm ${labelData.productionYearIsBold ? 'bg-blue-500 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'}`}
                             >
                                 B
                             </button>
-                            <div
-                                className={`border rounded-md h-7 pr-1 flex items-center transition-colors ${selectedFields['productionYear'] ? 'bg-white border-black ring-1 ring-black' : 'bg-gray-50/50 border-gray-200'}`}
-                            >
+                            <div className={`border rounded-md h-7 pr-1 flex items-center transition-colors ${selectedFields['productionYear'] ? 'bg-white border-black ring-1 ring-black' : 'bg-gray-50/50 border-gray-200'}`}>
                                 <select
-                                    tabIndex={-1}
                                     value={selectedFields['productionYear'] && selectionFontSizes['productionYear'] !== undefined ? selectionFontSizes['productionYear'] : (labelData.productionYearFontSize || 0)}
                                     onChange={(e) => setFieldFontSize('productionYearFontSize', Number(e.target.value), 'productionYear')}
                                     className={`text-xs bg-transparent focus:outline-none cursor-pointer border-none outline-none appearance-none pl-2 pr-6 h-full w-full ${selectedFields['productionYear'] ? 'text-black font-bold' : 'text-gray-400 font-normal'}`}
                                 >
-                                    {selectedFields['productionYear'] && selectionFontSizes['productionYear'] === -1 && (
-                                        <option value="-1"></option>
-                                    )}
                                     {FONT_SIZE_OPTIONS.map(opt => (
-                                        <option key={opt.value} value={opt.value} className="text-gray-700 text-sm">{opt.label}</option>
+                                        <option key={opt.value} value={opt.value}>{opt.label}</option>
                                     ))}
-                                    {selectedFields['productionYear'] && selectionFontSizes['productionYear'] !== undefined && selectionFontSizes['productionYear'] > 0 && selectionFontSizes['productionYear'] !== 12 && !FONT_SIZE_OPTIONS.some(opt => opt.value === selectionFontSizes['productionYear']) && (
-                                        <option value={selectionFontSizes['productionYear']}>{selectionFontSizes['productionYear']} (커스텀)</option>
-                                    )}
                                 </select>
-                                <span className={`text-[10px] absolute right-1 pointer-events-none ${selectedFields['productionYear'] ? 'text-black font-bold' : 'text-gray-400'}`}>▼</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* 부서명 필드 */}
                 <div className="space-y-1 group">
                     <div className="flex items-center justify-between">
                         <label className="block text-sm font-bold text-gray-700">부서명</label>
@@ -389,39 +357,42 @@ export default function LabelForm() {
                         <div className="flex items-center gap-2 transition-all duration-200 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
                             <button
                                 type="button"
-                                tabIndex={-1}
                                 onClick={() => toggleFieldBold('departmentNameIsBold', labelData.departmentNameIsBold, 'departmentName')}
-                                onMouseDown={(e) => e.preventDefault()}
                                 className={`w-12 h-7 border rounded-md font-bold text-sm transition-colors shadow-sm ${labelData.departmentNameIsBold ? 'bg-blue-500 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'}`}
                             >
                                 B
                             </button>
-                            <div
-                                className={`border rounded-md h-7 pr-1 flex items-center transition-colors ${selectedFields['departmentName'] ? 'bg-white border-black ring-1 ring-black' : 'bg-gray-50/50 border-gray-200'}`}
-                            >
+                            <div className={`border rounded-md h-7 pr-1 flex items-center transition-colors ${selectedFields['departmentName'] ? 'bg-white border-black ring-1 ring-black' : 'bg-gray-50/50 border-gray-200'}`}>
                                 <select
-                                    tabIndex={-1}
                                     value={selectedFields['departmentName'] && selectionFontSizes['departmentName'] !== undefined ? selectionFontSizes['departmentName'] : (labelData.departmentNameFontSize || 0)}
                                     onChange={(e) => setFieldFontSize('departmentNameFontSize', Number(e.target.value), 'departmentName')}
                                     className={`text-xs bg-transparent focus:outline-none cursor-pointer border-none outline-none appearance-none pl-2 pr-6 h-full w-full ${selectedFields['departmentName'] ? 'text-black font-bold' : 'text-gray-400 font-normal'}`}
                                 >
-                                    {selectedFields['departmentName'] && selectionFontSizes['departmentName'] === -1 && (
-                                        <option value="-1"></option>
-                                    )}
                                     {FONT_SIZE_OPTIONS.map(opt => (
-                                        <option key={opt.value} value={opt.value} className="text-gray-700 text-sm">{opt.label}</option>
+                                        <option key={opt.value} value={opt.value}>{opt.label}</option>
                                     ))}
-                                    {selectedFields['departmentName'] && selectionFontSizes['departmentName'] !== undefined && selectionFontSizes['departmentName'] > 0 && selectionFontSizes['departmentName'] !== 12 && !FONT_SIZE_OPTIONS.some(opt => opt.value === selectionFontSizes['departmentName']) && (
-                                        <option value={selectionFontSizes['departmentName']}>{selectionFontSizes['departmentName']} (커스텀)</option>
-                                    )}
                                 </select>
-                                <span className={`text-[10px] absolute right-1 pointer-events-none ${selectedFields['departmentName'] ? 'text-black font-bold' : 'text-gray-400'}`}>▼</span>
                             </div>
                         </div>
+
+                        {recentDepts.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5 mt-1 animate-in fade-in slide-in-from-top-1 duration-300">
+                                <span className="text-[10px] text-gray-400 font-medium py-1 pr-1">최근 사용:</span>
+                                {recentDepts.map((dept, idx) => (
+                                    <button
+                                        key={`${dept}-${idx}`}
+                                        type="button"
+                                        onClick={() => updateLabelData({ departmentName: dept })}
+                                        className="px-2.5 py-1 bg-blue-50/50 hover:bg-blue-100/70 text-blue-600 border border-blue-100 rounded-full text-[11px] font-semibold transition-all active:scale-95"
+                                    >
+                                        {dept}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
 
-                {/* 나머지 일반 필드들 */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="group">
                         <label className="block text-xs font-medium text-gray-500 mb-1">분류번호</label>
@@ -466,27 +437,9 @@ export default function LabelForm() {
                             <option value="1년">1년</option>
                         </select>
                         <div className="flex gap-2 mt-2 transition-all duration-200 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
-                            <button
-                                type="button"
-                                onClick={() => updateLabelData({ retentionPeriod: "1년" })}
-                                className="px-3 py-1.5 bg-white text-gray-600 border border-gray-300 rounded-md text-xs font-bold hover:bg-gray-50 shadow-sm transition-all"
-                            >
-                                1년
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => updateLabelData({ retentionPeriod: "3년" })}
-                                className="px-3 py-1.5 bg-white text-gray-600 border border-gray-300 rounded-md text-xs font-bold hover:bg-gray-50 shadow-sm transition-all"
-                            >
-                                3년
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => updateLabelData({ retentionPeriod: "5년" })}
-                                className="px-3 py-1.5 bg-white text-gray-600 border border-gray-300 rounded-md text-xs font-bold hover:bg-gray-50 shadow-sm transition-all"
-                            >
-                                5년
-                            </button>
+                            <button type="button" onClick={() => updateLabelData({ retentionPeriod: "1년" })} className="px-3 py-1.5 bg-white text-gray-600 border border-gray-300 rounded-md text-xs font-bold hover:bg-gray-50 shadow-sm transition-all">1년</button>
+                            <button type="button" onClick={() => updateLabelData({ retentionPeriod: "3년" })} className="px-3 py-1.5 bg-white text-gray-600 border border-gray-300 rounded-md text-xs font-bold hover:bg-gray-50 shadow-sm transition-all">3년</button>
+                            <button type="button" onClick={() => updateLabelData({ retentionPeriod: "5년" })} className="px-3 py-1.5 bg-white text-gray-600 border border-gray-300 rounded-md text-xs font-bold hover:bg-gray-50 shadow-sm transition-all">5년</button>
                         </div>
                     </div>
                     <div>
@@ -501,18 +454,11 @@ export default function LabelForm() {
                     </div>
                 </div>
 
-
-
-                {/* 버튼 그룹 (구분선 제거) */}
                 <div className="flex gap-2 pt-6">
                     <button
                         type="button"
                         onClick={() => {
-                            gtag.event({
-                                action: "label_reset",
-                                category: "interaction",
-                                label: "Reset Button"
-                            });
+                            gtag.event({ action: "label_reset", category: "interaction", label: "Reset Button" });
                             resetLabelData();
                         }}
                         className="flex-1 py-3.5 px-4 border border-gray-200 rounded-xl text-gray-700 font-bold hover:bg-gray-50 transition-all active:scale-95 shadow-sm"
@@ -522,11 +468,7 @@ export default function LabelForm() {
                     <button
                         type="button"
                         onClick={() => {
-                            gtag.event({
-                                action: "pdf_download",
-                                category: "interaction",
-                                label: "Download Button"
-                            });
+                            gtag.event({ action: "pdf_download", category: "interaction", label: "Download Button" });
                             downloadPDF();
                         }}
                         disabled={isGenerating || !labelData.title || !labelData.productionYear}
@@ -539,21 +481,16 @@ export default function LabelForm() {
                         type="button"
                         id="guide-target-3"
                         onClick={() => {
-                            gtag.event({
-                                action: "label_print",
-                                category: "interaction",
-                                label: "Print Button"
-                            });
+                            gtag.event({ action: "label_print", category: "interaction", label: "Print Button" });
                             print();
                         }}
                         disabled={isGenerating || !labelData.title || !labelData.productionYear}
                         className="flex-[1.2] py-3.5 px-2 bg-blue-600 rounded-xl text-white font-bold hover:bg-blue-700 shadow-xl shadow-blue-200 transition-all active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-1.5"
                     >
-                        <span className="text-base">🖨️</span>
-                        <span className="whitespace-nowrap">바로 인쇄</span>
+                        🖨️ 바로 인쇄
                     </button>
                 </div>
             </form>
-        </div >
+        </div>
     );
 }
