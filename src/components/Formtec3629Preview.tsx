@@ -222,6 +222,7 @@ function AutoFitText({
         width: "100%",
         height: "100%",
         fontWeight: isBold ? "bold" : "inherit",
+        fontFamily: "'HamchoromDotum', 'Malgun Gothic', sans-serif",
         // html2canvas 보정용 추가 스타일
         verticalAlign: "middle",
     };
@@ -402,9 +403,9 @@ function SideClassLabel({
                                     justifyContent: 'center',
                                     flex: 1, // 너비를 비율로 설정하여 전체 폭에 완벽히 맞춤
                                     height: '100%',
-                                    fontSize: item.isLabel ? mmToPx(3.6, scale) : mmToPx(4.0, scale),
-                                    fontFamily: !item.isLabel && fontFamily ? fontFamily : undefined,
-                                    fontWeight: !item.isLabel && i === 3 ? (productionYearIsBold ? 900 : 600) : 'normal',
+                                    fontSize: item.isLabel ? mmToPx(3.2, scale) : mmToPx(3.6, scale), // 1px씩 줄임 (3.6->3.2, 4.0->3.6)
+                                    fontFamily: "'HamchoromDotum', 'Malgun Gothic', sans-serif",
+                                    fontWeight: 'bold', // 항상 볼드
                                     boxSizing: 'border-box',
                                     textAlign: 'center',
                                     borderRight: i < 5 ? `${Math.max(1, mmToPx(0.5, scale))}px solid #000000` : "none",
@@ -456,16 +457,18 @@ function SideClassLabel({
                                 justifyContent: 'space-between',
                                 width: '100%',
                                 lineHeight: 1.1,
-                                fontSize: mmToPx(3.6, scale), // 4.0mm에서 3.6mm로 축소
-                                fontWeight: 'normal',
+                                fontSize: mmToPx(3.2, scale), // 3.6mm에서 3.2mm로 축소 (-1px)
+                                fontWeight: 'bold', // 볼드 처리
+                                fontFamily: "'HamchoromDotum', 'Malgun Gothic', sans-serif",
                             }}>
                                 <span>제</span>
                                 <span>목</span>
                             </div>
                             <div style={{
-                                fontSize: mmToPx(3.3, scale), // 조금 더 작게 (3.3mm)
+                                fontSize: mmToPx(3.0, scale), // 3.3mm에서 3.0mm로 축소
                                 lineHeight: 1.1,
-                                fontWeight: 'normal',
+                                fontWeight: 'bold', // 볼드 처리
+                                fontFamily: "'HamchoromDotum', 'Malgun Gothic', sans-serif",
                                 whiteSpace: 'nowrap',
                             }}>
                                 (보존종료)
@@ -481,9 +484,9 @@ function SideClassLabel({
                             justifyContent: 'center',
                             flex: 1,
                             height: mmToPx(12.5, scale),
-                            fontSize: mmToPx(4.7, scale), // 4.0mm에서 4.7mm로 상향 (약 +2px)
-                            fontFamily: fontFamily || undefined,
-                            fontWeight: titleIsBold ? 900 : 600, // 기본 600, Bold 버튼 시 900
+                            fontSize: mmToPx(4.3, scale), // 4.7mm에서 4.3mm로 축소 (-1px)
+                            fontFamily: "'HamchoromDotum', 'Malgun Gothic', sans-serif",
+                            fontWeight: 'black', // 900
                             boxSizing: 'border-box',
                             padding: `0 ${mmToPx(2, scale)}px`,
                             textAlign: 'center',
@@ -622,16 +625,16 @@ function EdgeClassLabel({
                     const isLast = i === rows.length - 1;
 
                     // html2canvas 호환을 위해 absolute positioning 사용
-                    const currentFontSizePx = isLabel ? mmToPx(2.75, scale) : (
+                    const currentFontSizePx = isLabel ? mmToPx(2.45, scale) : (
                         i === titleIndex || i === deptIndex
-                            ? mmToPx(10, scale) // 제목/부서명 9mm에서 10mm로 상향 (+2px 이상)
-                            : mmToPx(effectiveFontSize + 0.5, scale) // 기타 값들도 살짝 상향
+                            ? mmToPx(9.5, scale) // 제목/부서명도 0.5mm(약 1.5px) 축소 및 볼드
+                            : mmToPx(effectiveFontSize - 0.35, scale) // 기타 값들도 살짝 상향에서 하향으로 변경
                     );
 
                     return (
                         <div
                             key={i}
-                            className={`overflow-hidden bg-white text-gray-800 ${isTitleOrDept ? "font-bold" : "font-medium"}`}
+                            className={`overflow-hidden bg-white text-gray-800 font-bold`}
                             style={{
                                 display: 'flex',
                                 alignItems: 'center',
@@ -641,7 +644,7 @@ function EdgeClassLabel({
                                 fontSize: currentFontSizePx,
                                 // 칸 사이 선만 그림 (마지막 칸 제외)
                                 borderBottom: !isLast ? `${Math.max(1, mmToPx(0.5, scale))}px solid #000000` : "none",
-                                fontFamily: !isLabel && fontFamily ? fontFamily : undefined,
+                                fontFamily: "'HamchoromDotum', 'Malgun Gothic', sans-serif",
                                 boxSizing: 'border-box',
                             }}
                         >

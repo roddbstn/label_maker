@@ -121,18 +121,18 @@ export const FORMTEC_3629_COORDS = {
 
     /** 라벨 세트 1 (상단) */
     set1: {
-        title: { x: 20.6, y: 238.5, width: 123, height: 36.5 },       // x+3, y-2
-        year: { x: 21.35, y: 214.5, width: 63.5, height: 23.5 },      // x+3, y-2
-        department: { x: 21.35, y: 185.0, width: 84.5, height: 30 },  // x+3, y-2
-        sideClass: { x: 22.1, y: 153.0, width: 91, height: 26 },      // x+3, y+2
+        title: { x: 20.6, y: 240.5, width: 123, height: 36.5 },       // 238.5 -> 240.5 (+2mm)
+        year: { x: 21.35, y: 216.5, width: 63.5, height: 23.5 },      // 214.5 -> 216.5 (+2mm)
+        department: { x: 21.35, y: 187.0, width: 84.5, height: 30 },  // 185.0 -> 187.0 (+2mm)
+        sideClass: { x: 22.1, y: 155.0, width: 91, height: 26 },      // 153.0 -> 155.0 (+2mm)
     },
 
     /** 라벨 세트 2 (하단) */
     set2: {
-        title: { x: 20.6, y: 107.5, width: 123, height: 36.5 },       // x+3, y-2
-        year: { x: 21.35, y: 83.5, width: 63.5, height: 23.5 },       // x+3, y-2
-        department: { x: 21.35, y: 54.0, width: 84.5, height: 30 },   // x+3, y-2
-        sideClass: { x: 22.1, y: 21.0, width: 91, height: 26 },       // x+3, y+1
+        title: { x: 20.6, y: 108.5, width: 123, height: 36.5 },       // 107.5 -> 108.5 (+1mm)
+        year: { x: 21.35, y: 84.5, width: 63.5, height: 23.5 },       // 83.5 -> 84.5 (+1mm)
+        department: { x: 21.35, y: 55.0, width: 84.5, height: 30 },   // 54.0 -> 55.0 (+1mm)
+        sideClass: { x: 22.1, y: 22.0, width: 91, height: 26 },       // 21.0 -> 22.0 (+1mm)
     },
 
     /** 옆면 분류번호 라벨 (세로) - A4 여백 보정 (Right 17.7mm) */

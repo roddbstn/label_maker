@@ -5,6 +5,21 @@
 /* Pretendard 폰트 */
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css");
 
+/* 함초롬돋움 (Noonnu CDN) */
+@font-face {
+  font-family: 'HamchoromDotum';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/HamchoromDotum.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'HamchoromDotum';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/HamchoromDotum.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+}
+
 /* 전역 스타일 */
 :root {
   --background: #ffffff;
