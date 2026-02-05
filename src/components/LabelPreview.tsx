@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useLayoutEffect } from "react";
+import React, { useRef, useState, useLayoutEffect, useEffect } from "react";
 import { useLabelStore } from "@/store/labelStore";
 import Formtec3629Preview from "./Formtec3629Preview";
 import * as gtag from "@/lib/gtag";
@@ -195,6 +195,12 @@ export default function LabelPreview({ autoFitText = true }: LabelPreviewProps) 
     const { labels, currentLabelIndex } = useLabelStore();
     const [activeTab, setActiveTab] = useState<PreviewTab>("formtec");
     const [currentPage, setCurrentPage] = useState(0);
+
+    // 라벨 선택 시 해당 라벨이 있는 페이지로 자동 전환
+    useEffect(() => {
+        const targetPage = Math.floor(currentLabelIndex / 2);
+        setCurrentPage(targetPage);
+    }, [currentLabelIndex]);
 
     // 현재 라벨 데이터 직접 접근
     const labelData = labels[currentLabelIndex] || {

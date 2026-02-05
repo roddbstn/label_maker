@@ -113,12 +113,12 @@ export default function LabelForm() {
     // 최근 사용된 부서명 추천 목록 생성
     const getRecentDepartments = useCallback(() => {
         const allDepts = [
-            ...labels.map(l => htmlToPlainText(l.departmentName)),
-            ...history.map(h => htmlToPlainText(h.labelData.departmentName))
+            ...labels.map(l => l.departmentName),
+            ...history.map(h => h.labelData.departmentName)
         ];
 
         const uniqueDepts = Array.from(new Set(allDepts))
-            .filter(dept => dept.trim().length > 0)
+            .filter(dept => dept && dept.trim().length > 0)
             .slice(0, 5);
 
         return uniqueDepts;
@@ -385,7 +385,7 @@ export default function LabelForm() {
                                         onClick={() => updateLabelData({ departmentName: dept })}
                                         className="px-2.5 py-1 bg-blue-50/50 hover:bg-blue-100/70 text-blue-600 border border-blue-100 rounded-full text-[11px] font-semibold transition-all active:scale-95"
                                     >
-                                        {dept}
+                                        {htmlToPlainText(dept)}
                                     </button>
                                 ))}
                             </div>
@@ -401,7 +401,7 @@ export default function LabelForm() {
                             value={labelData.classificationCode}
                             onChange={handleInputChange("classificationCode")}
                             placeholder="예: 사업, 회계"
-                            className="w-full h-10 px-3 bg-white border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                            className="w-full h-10 px-3 bg-white border border-gray-300 rounded-lg text-sm text-[#222222] focus:ring-2 focus:ring-blue-500 outline-none"
                         />
                         <div className="flex gap-2 mt-2 transition-all duration-200 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
                             <button
@@ -425,7 +425,7 @@ export default function LabelForm() {
                         <select
                             value={labelData.retentionPeriod}
                             onChange={handleInputChange("retentionPeriod")}
-                            className="w-full h-10 px-3 bg-white border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                            className="w-full h-10 px-3 bg-white border border-gray-300 rounded-lg text-sm text-[#222222] focus:ring-2 focus:ring-blue-500 outline-none"
                         >
                             <option value="">선택하세요</option>
                             <option value="영구">영구</option>
@@ -449,7 +449,7 @@ export default function LabelForm() {
                             value={labelData.managementNumber}
                             onChange={handleInputChange("managementNumber")}
                             placeholder="예: A-001"
-                            className="w-full h-10 px-3 bg-white border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                            className="w-full h-10 px-3 bg-white border border-gray-300 rounded-lg text-sm text-[#222222] focus:ring-2 focus:ring-blue-500 outline-none"
                         />
                     </div>
                 </div>

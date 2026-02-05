@@ -3,6 +3,7 @@
 import LabelForm from "@/components/LabelForm";
 import PreviewSection from "@/components/PreviewSection";
 import GuideOverlay from "@/components/GuideOverlay";
+import PrintAllContainer from "@/components/PrintAllContainer";
 import { useState, useEffect } from "react";
 import { submitWaitlistAction, submitFeedbackAction } from '@/lib/actions';
 import * as gtag from "@/lib/gtag";
@@ -308,6 +309,7 @@ export default function Home() {
             </footer>
 
             <GuideOverlay isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
+            <PrintAllContainer />
         </main>
     );
 }

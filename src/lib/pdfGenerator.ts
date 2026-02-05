@@ -115,11 +115,11 @@ export async function generateLabelPDF(labels: LabelData | LabelData[]): Promise
  * 미리보기 DOM을 그대로 복제하여 인쇄 (100% 미리보기 일치 보장)
  */
 export async function printLabel(): Promise<void> {
-    const previewElement = document.getElementById("formtec-3629-preview");
+    const printContainer = document.getElementById("print-all-container");
 
-    if (!previewElement) {
-        console.error("폼텍 3629 미리보기 요소를 찾을 수 없습니다.");
-        alert("미리보기 요소를 찾을 수 없습니다. 양식 미리보기 탭을 선택해주세요.");
+    if (!printContainer) {
+        console.error("전체 인쇄용 컨테이너를 찾을 수 없습니다.");
+        alert("인쇄 준비 중 오류가 발생했습니다.");
         return;
     }
 
@@ -165,67 +165,6 @@ export async function printLabel(): Promise<void> {
             .map(link => link.outerHTML)
             .join('\n');
 
-        // 미리보기 요소 복제 (깊은 복제)
-        const clonedPreview = previewElement.cloneNode(true) as HTMLElement;
-
-        // UI 전용 스타일 제거 (그림자, 테두리, 마진 등)
-        clonedPreview.classList.remove('shadow-xl', 'mx-auto');
-        clonedPreview.style.boxShadow = 'none';
-        clonedPreview.style.border = 'none';
-        clonedPreview.style.outline = 'none';
-        clonedPreview.style.margin = '0';
-        clonedPreview.style.position = 'absolute';
-        clonedPreview.style.top = '0';
-        clonedPreview.style.left = '0';
-
-        // 모든 computed styles를 인라인으로 적용
-        const applyComputedStyles = (original: Element, clone: Element) => {
-            if (original instanceof HTMLElement && clone instanceof HTMLElement) {
-                const computed = window.getComputedStyle(original);
-                const importantStyles = [
-                    'font-family', 'font-size', 'font-weight', 'font-style',
-                    'color', 'background-color', 'background',
-                    'border', 'border-width', 'border-style', 'border-color',
-                    'border-top', 'border-right', 'border-bottom', 'border-left',
-                    'padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
-                    'margin', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
-                    'width', 'height', 'min-width', 'min-height', 'max-width', 'max-height',
-                    'display', 'position', 'top', 'right', 'bottom', 'left',
-                    'transform', 'transform-origin',
-                    'text-align', 'vertical-align', 'line-height', 'letter-spacing',
-                    'white-space', 'word-break', 'overflow', 'text-overflow',
-                    'writing-mode', 'box-sizing', 'flex', 'flex-direction', 'justify-content', 'align-items',
-                    'border-radius', 'opacity',
-                ];
-
-                importantStyles.forEach(prop => {
-                    const value = computed.getPropertyValue(prop);
-                    if (value) {
-                        clone.style.setProperty(prop, value);
-                    }
-                });
-            }
-
-            const originalChildren = original.children;
-            const cloneChildren = clone.children;
-            for (let i = 0; i < originalChildren.length; i++) {
-                if (cloneChildren[i]) {
-                    applyComputedStyles(originalChildren[i], cloneChildren[i]);
-                }
-            }
-        };
-
-        applyComputedStyles(previewElement, clonedPreview);
-
-        // 복제된 요소에 대해 다시 한번 UI 스타일 제거 (computed style 적용 과정에서 다시 붙었을 수 있음)
-        clonedPreview.style.boxShadow = 'none';
-        clonedPreview.style.border = 'none';
-        clonedPreview.style.outline = 'none';
-        clonedPreview.style.margin = '0';
-        clonedPreview.style.position = 'absolute';
-        clonedPreview.style.top = '0';
-        clonedPreview.style.left = '0';
-
         iframeDoc.open();
         iframeDoc.write(`
             <!DOCTYPE html>
@@ -248,58 +187,128 @@ export async function printLabel(): Promise<void> {
                     }
                     html, body {
                         width: 210mm;
-                        height: 297mm;
                         margin: 0;
                         padding: 0;
                         background-color: white;
-                        overflow: hidden;
                     }
-                    #print-content {
+                    .print-page {
                         width: 210mm;
                         height: 297mm;
                         position: relative;
                         background: white;
                         overflow: hidden;
+                        page-break-after: always;
+                    }
+                    .print-page:last-child {
+                        page-break-after: avoid;
                     }
                 </style>
             </head>
             <body>
-                <div id="print-content"></div>
+                <div id="print-root"></div>
             </body>
             </html>
         `);
         iframeDoc.close();
 
-        // 원본 요소의 크기 측정
-        const originalWidth = previewElement.offsetWidth;
-        const originalHeight = previewElement.offsetHeight;
+        const printRoot = iframeDoc.getElementById("print-root");
+        if (!printRoot) return;
 
         // A4 크기 (픽셀, 96dpi 기준: 210mm = 793.7px, 297mm = 1122.5px)
         const a4WidthPx = 793.7;
         const a4HeightPx = 1122.5;
 
-        // 스케일 계산 (A4에 맞추기)
-        const scaleX = a4WidthPx / originalWidth;
-        const scaleY = a4HeightPx / originalHeight;
-        const scale = Math.min(scaleX, scaleY); // 비율 유지
+        // 모든 페이지 프리뷰 요소 가져오기
+        const pagePreviews = printContainer.querySelectorAll("#formtec-3629-preview");
 
-        // 복제된 요소에 스케일 적용
-        clonedPreview.style.transformOrigin = 'top left';
-        clonedPreview.style.transform = `scale(${scale})`;
-        clonedPreview.style.width = `${originalWidth}px`;
-        clonedPreview.style.height = `${originalHeight}px`;
+        pagePreviews.forEach((previewElement) => {
+            if (!(previewElement instanceof HTMLElement)) return;
 
-        // 복제된 요소를 iframe에 삽입
-        const printContent = iframeDoc.getElementById("print-content");
-        if (printContent) {
-            printContent.appendChild(clonedPreview);
-        }
+            // 라벨 페이지 래퍼 생성
+            const pageDiv = iframeDoc.createElement("div");
+            pageDiv.className = "print-page";
+
+            // 미리보기 요소 복제 (깊은 복제)
+            const clonedPreview = previewElement.cloneNode(true) as HTMLElement;
+
+            // UI 전용 스타일 제거
+            clonedPreview.classList.remove('shadow-xl', 'mx-auto');
+            clonedPreview.style.boxShadow = 'none';
+            clonedPreview.style.border = 'none';
+            clonedPreview.style.outline = 'none';
+            clonedPreview.style.margin = '0';
+            clonedPreview.style.position = 'absolute';
+            clonedPreview.style.top = '0';
+            clonedPreview.style.left = '0';
+
+            // 모든 computed styles를 인라인으로 적용
+            const applyComputedStyles = (original: Element, clone: Element) => {
+                if (original instanceof HTMLElement && clone instanceof HTMLElement) {
+                    const computed = window.getComputedStyle(original);
+                    const importantStyles = [
+                        'font-family', 'font-size', 'font-weight', 'font-style',
+                        'color', 'background-color', 'background',
+                        'border', 'border-width', 'border-style', 'border-color',
+                        'border-top', 'border-right', 'border-bottom', 'border-left',
+                        'padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
+                        'margin', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
+                        'width', 'height', 'min-width', 'min-height', 'max-width', 'max-height',
+                        'display', 'position', 'top', 'right', 'bottom', 'left',
+                        'transform', 'transform-origin',
+                        'text-align', 'vertical-align', 'line-height', 'letter-spacing',
+                        'white-space', 'word-break', 'overflow', 'text-overflow',
+                        'writing-mode', 'box-sizing', 'flex', 'flex-direction', 'justify-content', 'align-items',
+                        'border-radius', 'opacity',
+                    ];
+
+                    importantStyles.forEach(prop => {
+                        const value = computed.getPropertyValue(prop);
+                        if (value) {
+                            clone.style.setProperty(prop, value);
+                        }
+                    });
+                }
+
+                const originalChildren = original.children;
+                const cloneChildren = clone.children;
+                for (let i = 0; i < originalChildren.length; i++) {
+                    if (cloneChildren[i]) {
+                        applyComputedStyles(originalChildren[i], cloneChildren[i]);
+                    }
+                }
+            };
+
+            applyComputedStyles(previewElement, clonedPreview);
+
+            // 다시 한번 UI 스타일 정리
+            clonedPreview.style.boxShadow = 'none';
+            clonedPreview.style.border = 'none';
+            clonedPreview.style.margin = '0';
+            clonedPreview.style.position = 'absolute';
+            clonedPreview.style.top = '0';
+            clonedPreview.style.left = '0';
+
+            // 스케일 계산
+            const originalWidth = previewElement.offsetWidth;
+            const originalHeight = previewElement.offsetHeight;
+            const scaleX = a4WidthPx / originalWidth;
+            const scaleY = a4HeightPx / originalHeight;
+            const scale = Math.min(scaleX, scaleY);
+
+            clonedPreview.style.transformOrigin = 'top left';
+            clonedPreview.style.transform = `scale(${scale})`;
+            clonedPreview.style.width = `${originalWidth}px`;
+            clonedPreview.style.height = `${originalHeight}px`;
+
+            pageDiv.appendChild(clonedPreview);
+            printRoot.appendChild(pageDiv);
+        });
 
         // 폰트 로딩 대기 후 인쇄
         setTimeout(() => {
             iframe.contentWindow?.focus();
             iframe.contentWindow?.print();
-        }, 500);
+        }, 800);
 
     } catch (error) {
         console.error("인쇄 준비 중 오류:", error);
