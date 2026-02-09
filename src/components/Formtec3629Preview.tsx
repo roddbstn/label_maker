@@ -639,7 +639,7 @@ function EdgeClassLabel({
                     const isTitleOrDept = i === titleIndex || i === deptIndex;
                     const fontSize = isLabel ? 2.75 : (isTitleOrDept ? 9 : 3.25);
                     const rowHeightPx = mmToPx(row.height, scale);
-                    const isLast = i === rows.length - 1;
+                    const isLast = i === adjustedRows.length - 1;
 
                     // html2canvas 호환을 위해 absolute positioning 사용
                     const currentFontSizePx = isLabel ? mmToPx(2.45, scale) : (
