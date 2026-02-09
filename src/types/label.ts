@@ -32,6 +32,9 @@ export interface LabelData {
     /** 부서명 스타일 */
     departmentNameFontSize?: number;
     departmentNameIsBold?: boolean;
+
+    /** 옆면 분류번호에서 부서명 칸 숨기기 */
+    hideDepartmentOnEdge?: boolean;
 }
 
 /** 히스토리 레코드 (저장 시간 포함) */

@@ -526,6 +526,7 @@ function EdgeClassLabel({
     isBold,
     titleFontSize,
     departmentNameFontSize,
+    hideDepartmentOnEdge,
 }: {
     x: number;
     y: number;
@@ -542,6 +543,7 @@ function EdgeClassLabel({
     isBold?: boolean;
     titleFontSize?: number;
     departmentNameFontSize?: number;
+    hideDepartmentOnEdge?: boolean;
 }) {
     const { paddingX, paddingY, innerWidth, rows } = FORMTEC_3629_COORDS.edgeInternal;
     const labelWidth = 14;  // 16mm에서 2mm 축소
@@ -566,6 +568,21 @@ function EdgeClassLabel({
     const titleIndex = 9;
     const deptIndex = 11;
 
+    // Conditionally adjust rows based on hideDepartmentOnEdge
+    const baseRows = FORMTEC_3629_COORDS.edgeInternal.rows;
+    const adjustedRows = hideDepartmentOnEdge
+        ? baseRows.map((row, i) => {
+            // Expand title value row (index 9): 104mm + 6mm (dept label) + 74mm (dept value) = 184mm
+            if (i === 9) {
+                return { ...row, height: 184.0 };
+            }
+            return row;
+        }).filter((row, i) =>
+            // Remove department label (index 10) and department value (index 11)
+            i !== 10 && i !== 11
+        )
+        : baseRows;
+
     let currentY = paddingY;
 
     return (
@@ -584,7 +601,7 @@ function EdgeClassLabel({
             <div
                 className="w-full h-full overflow-hidden flex flex-col"
             >
-                {rows.map((row, i) => {
+                {adjustedRows.map((row, i) => {
                     const isLabel = row.label !== "value";
                     let displayText = isLabel ? row.label : values[i] || "";
 
@@ -945,6 +962,7 @@ export default function Formtec3629Preview({ currentPage = 0 }: Formtec3629Previ
                             isBold={label1.titleIsBold}
                             titleFontSize={label1.titleFontSize}
                             departmentNameFontSize={label1.departmentNameFontSize}
+                            hideDepartmentOnEdge={label1.hideDepartmentOnEdge}
                         />
                     </>
                 )}
@@ -1057,6 +1075,7 @@ export default function Formtec3629Preview({ currentPage = 0 }: Formtec3629Previ
                             isBold={label2.titleIsBold}
                             titleFontSize={label2.titleFontSize}
                             departmentNameFontSize={label2.departmentNameFontSize}
+                            hideDepartmentOnEdge={label2.hideDepartmentOnEdge}
                         />
                     </>
                 )}

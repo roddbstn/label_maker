@@ -2,14 +2,20 @@
   {
     "type": "waitlist",
     "email": "test@example.com",
-    "id": "1770091785634",
-    "createdAt": "2026-02-03T04:09:45.634Z"
+    "id": "1770621255925",
+    "createdAt": "2026-02-09T07:14:15.925Z"
+  },
+  {
+    "type": "waitlist",
+    "email": "test@example.com",
+    "id": "1770621409145",
+    "createdAt": "2026-02-09T07:16:49.145Z"
   },
   {
     "type": "feedback",
-    "feedback": "This is a test feedback.",
-    "organization": "Test Org",
-    "id": "1770091799086",
-    "createdAt": "2026-02-03T04:09:59.086Z"
+    "feedback": "테스트 피드백",
+    "organization": "테스트 기관",
+    "id": "1770621412483",
+    "createdAt": "2026-02-09T07:16:52.483Z"
   }
 ]

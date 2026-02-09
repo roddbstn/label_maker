@@ -339,7 +339,20 @@ export default function LabelForm() {
 
                 <div className="space-y-1 group">
                     <div className="flex items-center justify-between">
-                        <label className="block text-sm font-bold text-gray-700">부서명</label>
+                        <div className="flex items-center gap-2">
+                            <label className="block text-sm font-bold text-gray-700">부서명</label>
+                            <label className="flex items-center gap-1.5 cursor-pointer group/checkbox">
+                                <input
+                                    type="checkbox"
+                                    checked={labelData.hideDepartmentOnEdge || false}
+                                    onChange={(e) => updateLabelData({ hideDepartmentOnEdge: e.target.checked })}
+                                    className="w-3.5 h-3.5 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                                />
+                                <span className="text-[11px] text-gray-500 group-hover/checkbox:text-gray-700 transition-colors">
+                                    옆면에서 숨기기
+                                </span>
+                            </label>
+                        </div>
                         <span className="text-[10px] text-gray-400 font-medium bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100">
                             Shift + Enter로 줄바꿈 가능
                         </span>

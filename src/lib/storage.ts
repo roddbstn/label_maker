@@ -27,6 +27,13 @@ export const getSubmissions = (): Submission[] => {
 
 export const saveSubmission = (submission: Omit<Submission, 'id' | 'createdAt'>) => {
     try {
+        // Ensure data directory exists
+        const dataDir = path.join(process.cwd(), 'data');
+        if (!fs.existsSync(dataDir)) {
+            console.log('Creating data directory:', dataDir);
+            fs.mkdirSync(dataDir, { recursive: true });
+        }
+
         const submissions = getSubmissions();
         const newSubmission: Submission = {
             ...submission,
@@ -38,6 +45,8 @@ export const saveSubmission = (submission: Omit<Submission, 'id' | 'createdAt'>)
         return newSubmission;
     } catch (error) {
         console.error('Error saving submission:', error);
+        console.error('Current working directory:', process.cwd());
+        console.error('Attempted file path:', DATA_FILE);
         throw new Error('Failed to save submission');
     }
 };
