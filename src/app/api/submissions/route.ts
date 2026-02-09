@@ -15,12 +15,19 @@ export async function OPTIONS() {
     return NextResponse.json({}, { headers: corsHeaders });
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+    const origin = request.headers.get('origin');
+    console.log(`[API] Submissions request from origin: ${origin}`);
+
     try {
-        const submissions = await getSubmissions(); // Now async
+        const submissions = await getSubmissions();
+        console.log(`[API] Successfully fetched ${submissions.length} submissions`);
         return NextResponse.json(submissions, { headers: corsHeaders });
     } catch (error) {
-        console.error('API Error fetching submissions:', error);
-        return NextResponse.json({ error: 'Failed to fetch submissions' }, { status: 500, headers: corsHeaders });
+        console.error('[API Error] Fetching submissions:', error);
+        return NextResponse.json(
+            { error: 'Failed to fetch submissions' },
+            { status: 500, headers: corsHeaders }
+        );
     }
 }
