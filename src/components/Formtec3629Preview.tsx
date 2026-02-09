@@ -368,7 +368,7 @@ function SideClassLabel({
                 top: mmToPx(topY, scale),
                 width: mmToPx(labelWidth, scale),
                 height: mmToPx(labelHeight, scale),
-                border: `${Math.max(1, mmToPx(0.5, scale))}px solid #000000`,
+                border: `${Math.max(1, mmToPx(0.3, scale))}px solid #000000`,
                 boxSizing: 'border-box'
             }}
         >
@@ -408,8 +408,8 @@ function SideClassLabel({
                                     fontWeight: 'bold', // 항상 볼드
                                     boxSizing: 'border-box',
                                     textAlign: 'center',
-                                    borderRight: i < 5 ? `${Math.max(1, mmToPx(0.5, scale))}px solid #000000` : "none",
-                                    borderBottom: `${Math.max(1, mmToPx(0.5, scale))}px solid #000000`,
+                                    borderRight: i < 5 ? `${Math.max(1, mmToPx(0.3, scale))}px solid #000000` : "none",
+                                    borderBottom: `${Math.max(1, mmToPx(0.3, scale))}px solid #000000`,
                                 }}
                             >
                                 <span style={{
@@ -441,7 +441,7 @@ function SideClassLabel({
                             height: '100%',
                             fontSize: mmToPx(4.0, scale), // 4.0mm로 통일
                             boxSizing: 'border-box',
-                            borderRight: `${Math.max(1, mmToPx(0.5, scale))}px solid #000000`,
+                            borderRight: `${Math.max(1, mmToPx(0.3, scale))}px solid #000000`,
                         }}
                     >
                         <div style={{
@@ -576,7 +576,7 @@ function EdgeClassLabel({
                 top: mmToPx(topY, scale),
                 width: mmToPx(labelWidth, scale),
                 height: mmToPx(labelHeight, scale),
-                border: `${Math.max(1, mmToPx(0.5, scale))}px solid #000000`,
+                border: `${Math.max(1, mmToPx(0.3, scale))}px solid #000000`,
                 boxSizing: 'border-box'
             }}
         >
@@ -643,7 +643,7 @@ function EdgeClassLabel({
                                 height: rowHeightPx,
                                 fontSize: currentFontSizePx,
                                 // 칸 사이 선만 그림 (마지막 칸 제외)
-                                borderBottom: !isLast ? `${Math.max(1, mmToPx(0.5, scale))}px solid #000000` : "none",
+                                borderBottom: !isLast ? `${Math.max(1, mmToPx(0.3, scale))}px solid #000000` : "none",
                                 fontFamily: "'HamchoromDotum', 'Malgun Gothic', sans-serif",
                                 boxSizing: 'border-box',
                             }}
