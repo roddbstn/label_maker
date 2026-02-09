@@ -346,7 +346,7 @@ export default function LabelForm() {
                                     type="checkbox"
                                     checked={labelData.hideDepartmentOnEdge || false}
                                     onChange={(e) => updateLabelData({ hideDepartmentOnEdge: e.target.checked })}
-                                    className="w-3.5 h-3.5 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                                    className="w-3.5 h-3.5 rounded border-gray-300 text-blue-600 accent-blue-600 focus:ring-2 focus:ring-blue-500 cursor-pointer"
                                 />
                                 <span className="text-[11px] text-gray-500 group-hover/checkbox:text-gray-700 transition-colors">
                                     옆면에서 숨기기
