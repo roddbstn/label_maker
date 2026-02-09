@@ -5,10 +5,10 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
     try {
-        const submissions = getSubmissions();
+        const submissions = await getSubmissions(); // Now async
         return NextResponse.json(submissions);
     } catch (error) {
         console.error('API Error fetching submissions:', error);
-        return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
+        return NextResponse.json({ error: 'Failed to' }, { status: 500 });
     }
 }

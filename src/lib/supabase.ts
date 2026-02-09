@@ -11,6 +11,16 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 /**
+ * Supabase 어드민 클라이언트 (서버용)
+ * - RLS를 우회하여 데이터베이스 작업 수행
+ */
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+export const supabaseAdmin = supabaseServiceRoleKey
+    ? createClient(supabaseUrl, supabaseServiceRoleKey)
+    : supabase; // Fallback to anon if secret key is missing
+
+
+/**
  * 새 batch_id 생성
  * 비회원 사용자 식별을 위한 UUID
  */

@@ -11,7 +11,7 @@ export async function submitWaitlistAction(formData: FormData) {
     }
 
     try {
-        saveSubmission({
+        await saveSubmission({
             type: 'waitlist',
             email,
         });
@@ -32,7 +32,7 @@ export async function submitFeedbackAction(formData: FormData) {
     }
 
     try {
-        saveSubmission({
+        await saveSubmission({
             type: 'feedback',
             feedback,
             organization,

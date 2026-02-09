@@ -1,7 +1,4 @@
-import fs from 'fs';
-import path from 'path';
-
-const DATA_FILE = path.join(process.cwd(), 'data', 'submissions.json');
+import { supabaseAdmin } from './supabase';
 
 export interface Submission {
     id: string;
@@ -12,41 +9,71 @@ export interface Submission {
     createdAt: string;
 }
 
-export const getSubmissions = (): Submission[] => {
+/**
+ * Save submission to Supabase database
+ * @param submission - Submission data without id and createdAt
+ * @returns Saved submission with id and createdAt
+ */
+export const saveSubmission = async (
+    submission: Omit<Submission, 'id' | 'createdAt'>
+): Promise<Submission> => {
     try {
-        if (!fs.existsSync(DATA_FILE)) {
-            return [];
+        const { data, error } = await supabaseAdmin
+            .from('submissions')
+            .insert({
+                type: submission.type,
+                email: submission.email || null,
+                feedback: submission.feedback || null,
+                organization: submission.organization || null,
+            })
+            .select()
+            .single();
+
+        if (error) {
+            console.error('Supabase error saving submission:', error);
+            throw new Error('Failed to save submission to database');
         }
-        const data = fs.readFileSync(DATA_FILE, 'utf8');
-        return JSON.parse(data);
+
+        return {
+            id: data.id,
+            type: data.type,
+            email: data.email || undefined,
+            feedback: data.feedback || undefined,
+            organization: data.organization || undefined,
+            createdAt: data.created_at,
+        };
     } catch (error) {
-        console.error('Error reading submissions:', error);
-        return [];
+        console.error('Error saving submission:', error);
+        throw new Error('Failed to save submission');
     }
 };
 
-export const saveSubmission = (submission: Omit<Submission, 'id' | 'createdAt'>) => {
+/**
+ * Get all submissions from Supabase database
+ * @returns Array of submissions sorted by creation date (newest first)
+ */
+export const getSubmissions = async (): Promise<Submission[]> => {
     try {
-        // Ensure data directory exists
-        const dataDir = path.join(process.cwd(), 'data');
-        if (!fs.existsSync(dataDir)) {
-            console.log('Creating data directory:', dataDir);
-            fs.mkdirSync(dataDir, { recursive: true });
+        const { data, error } = await supabaseAdmin
+            .from('submissions')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error('Supabase error fetching submissions:', error);
+            return [];
         }
 
-        const submissions = getSubmissions();
-        const newSubmission: Submission = {
-            ...submission,
-            id: Date.now().toString(),
-            createdAt: new Date().toISOString(),
-        };
-        submissions.push(newSubmission);
-        fs.writeFileSync(DATA_FILE, JSON.stringify(submissions, null, 2));
-        return newSubmission;
+        return data.map(row => ({
+            id: row.id,
+            type: row.type,
+            email: row.email || undefined,
+            feedback: row.feedback || undefined,
+            organization: row.organization || undefined,
+            createdAt: row.created_at,
+        }));
     } catch (error) {
-        console.error('Error saving submission:', error);
-        console.error('Current working directory:', process.cwd());
-        console.error('Attempted file path:', DATA_FILE);
-        throw new Error('Failed to save submission');
+        console.error('Error fetching submissions:', error);
+        return [];
     }
 };
