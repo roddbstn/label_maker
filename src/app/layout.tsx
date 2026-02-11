@@ -3,7 +3,7 @@ import Script from "next/script";
 import "./globals.css";
 
 export const metadata: Metadata = {
-    metadataBase: new URL("https://label-maker.vercel.app"), // 실 배포 시 수정 필요
+    metadataBase: new URL("https://labelmaker.kr"),
     title: {
         default: "라벨 메이커 - 정부문서화일 라벨 자동 생성",
         template: "%s | 라벨 메이커"
@@ -27,14 +27,16 @@ export const metadata: Metadata = {
         title: "라벨 메이커 - 정부문서화일 라벨 자동 생성",
         description:
             "입력만 하면 자동으로 예쁘게 맞춰진 라벨 PDF를 받으세요. 폼텍 3629 규격 지원, 설치 없이 무료 사용!",
+        url: "https://labelmaker.kr",
+        siteName: "라벨 메이커",
         type: "website",
         locale: "ko_KR",
         images: [
             {
-                url: "/label_maker_logo.png",
-                width: 800,
-                height: 600,
-                alt: "라벨 메이커 로고",
+                url: "/og-image.png",
+                width: 1200,
+                height: 630,
+                alt: "라벨 메이커 - 정부문서화일 라벨 자동 생성",
             },
         ],
     },
