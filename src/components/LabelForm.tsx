@@ -40,6 +40,12 @@ export default function LabelForm() {
     const [selectedFields, setSelectedFields] = useState<Record<string, boolean>>({});
     const [selectionFontSizes, setSelectionFontSizes] = useState<Record<string, number | undefined>>({});
 
+    // 상세 수정 패널 열림 상태 (필드별)
+    const [detailOpenFields, setDetailOpenFields] = useState<Record<string, boolean>>({});
+    const toggleDetailOpen = (field: string, isOpen?: boolean) => {
+        setDetailOpenFields(prev => ({ ...prev, [field]: isOpen ?? !prev[field] }));
+    };
+
     const handleSelectionChange = (fieldId: string) => (hasSelection: boolean, rect: DOMRect | null, fontSize?: number) => {
         setSelectedFields(prev => ({ ...prev, [fieldId]: hasSelection }));
         setSelectionFontSizes(prev => ({ ...prev, [fieldId]: fontSize }));
@@ -81,17 +87,56 @@ export default function LabelForm() {
         }
     };
 
-    const setFieldFontSize = (field: string, size: number, inputId?: string) => {
+    // 면별 글자 크기 변경 (상세 수정 패널용)
+    const setFaceFontSize = (baseField: string, face: 'front' | 'side' | 'edge', size: number, inputId?: string) => {
         const selection = window.getSelection();
         const editor = inputId ? document.getElementById(inputId) : null;
+        const sizeVal = size === 0 ? undefined : size;
+        const hasSelection = selection && selection.rangeCount > 0 && !selection.isCollapsed && editor?.contains(selection.anchorNode);
 
-        if (selection && selection.rangeCount > 0 && !selection.isCollapsed && editor?.contains(selection.anchorNode)) {
-            setSelectionFontSizes(prev => ({ ...prev, [field.replace('FontSize', '')]: size }));
-            import("./RichTextInput").then(({ applyTextStyle }) => {
-                applyTextStyle(editor, "fontSize", size.toString());
-            });
+        if (hasSelection && editor) {
+            // 텍스트 선택 상태
+            if (face === 'front') {
+                // 전면: 에디터에 직접 인라인 적용
+                setSelectionFontSizes(prev => ({ ...prev, [baseField]: size }));
+                import("./RichTextInput").then(({ applyTextStyle }) => {
+                    applyTextStyle(editor, "fontSize", size.toString());
+                });
+            } else {
+                // 측면/옆면: 에디터에 적용 후 HTML 캡처, 그 다음 원본 복원
+                const originalHtml = editor.innerHTML;
+                import("./RichTextInput").then(({ applyTextStyle }) => {
+                    applyTextStyle(editor, "fontSize", size.toString());
+                    const modifiedHtml = editor.innerHTML;
+                    // 에디터를 원본으로 복원
+                    editor.innerHTML = originalHtml;
+                    const event = new Event('input', { bubbles: true });
+                    editor.dispatchEvent(event);
+
+                    const updates: Record<string, any> = {};
+                    if (baseField === 'title') {
+                        if (face === 'side') updates.titleSide = modifiedHtml;
+                        if (face === 'edge') updates.titleEdge = modifiedHtml;
+                    } else if (baseField === 'departmentName') {
+                        if (face === 'edge') updates.departmentNameEdge = modifiedHtml;
+                    }
+                    if (Object.keys(updates).length > 0) updateLabelData(updates);
+                });
+            }
         } else {
-            updateLabelData({ [field]: size === 0 ? undefined : size });
+            // 전체 필드 글자 크기 변경
+            const updates: Record<string, any> = {};
+            if (baseField === 'title') {
+                if (face === 'front') updates.titleFontSize = sizeVal;
+                if (face === 'side') updates.titleFontSizeSide = sizeVal;
+                if (face === 'edge') updates.titleFontSizeEdge = sizeVal;
+            } else if (baseField === 'departmentName') {
+                if (face === 'front') updates.departmentNameFontSize = sizeVal;
+                if (face === 'edge') updates.departmentNameFontSizeEdge = sizeVal;
+            } else if (baseField === 'productionYear') {
+                if (face === 'front') updates.productionYearFontSize = sizeVal;
+            }
+            if (Object.keys(updates).length > 0) updateLabelData(updates);
         }
     };
 
@@ -272,12 +317,18 @@ export default function LabelForm() {
                             key={`title-${labelData.id}`}
                             id="title"
                             value={labelData.title}
-                            onChange={(val) => updateLabelData({ title: val })}
+                            onChange={(val) => {
+                                const updates: Record<string, any> = { title: val };
+                                // 면별 오버라이드가 있으면 함께 업데이트 (텍스트 내용 동기화)
+                                if (labelData.titleSide !== undefined) updates.titleSide = val;
+                                if (labelData.titleEdge !== undefined) updates.titleEdge = val;
+                                updateLabelData(updates);
+                            }}
                             onSelectionChange={handleSelectionChange('title')}
                             placeholder="예: 2024년도 아동복지 사업"
                             minHeight="80px"
                         />
-                        <div className="flex items-center gap-2 transition-opacity duration-200 opacity-0 group-hover:opacity-100">
+                        <div className="flex items-center gap-2 flex-wrap transition-opacity duration-200 opacity-0 group-hover:opacity-100">
                             <button
                                 type="button"
                                 onClick={() => toggleFieldBold('titleIsBold', labelData.titleIsBold, 'title')}
@@ -285,18 +336,53 @@ export default function LabelForm() {
                             >
                                 B
                             </button>
-                            <div className={`border rounded-md h-7 pr-1 flex items-center transition-colors ${selectedFields['title'] ? 'bg-white border-black ring-1 ring-black' : 'bg-gray-50/50 border-gray-200'}`}>
-                                <select
-                                    value={selectedFields['title'] && selectionFontSizes['title'] !== undefined ? selectionFontSizes['title'] : (labelData.titleFontSize || 0)}
-                                    onChange={(e) => setFieldFontSize('titleFontSize', Number(e.target.value), 'title')}
-                                    className={`text-xs bg-transparent focus:outline-none cursor-pointer border-none outline-none appearance-none pl-2 pr-6 h-full w-full ${selectedFields['title'] ? 'text-black font-bold' : 'text-gray-400 font-normal'}`}
+                            {/* 상세 수정 토글 */}
+                            <div
+                                className="relative flex items-center"
+                                onMouseEnter={() => toggleDetailOpen('title', true)}
+                                onMouseLeave={() => toggleDetailOpen('title', false)}
+                            >
+                                <button
+                                    type="button"
+                                    className={`h-7 px-2 border rounded-md text-[11px] font-medium transition-colors shadow-sm flex items-center gap-1 ${detailOpenFields['title']
+                                        ? 'bg-blue-50 text-blue-600 border-blue-200'
+                                        : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'
+                                        }`}
                                 >
-                                    {FONT_SIZE_OPTIONS.map(opt => (
-                                        <option key={opt.value} value={opt.value}>{opt.label}</option>
-                                    ))}
-                                </select>
+                                    상세 수정
+                                    <span className={`text-[10px] transition-transform ${detailOpenFields['title'] ? 'rotate-180' : ''}`}>▼</span>
+                                </button>
+
+                                {/* 상세 수정 패널: 면별 글자 크기 */}
+                                {detailOpenFields['title'] && (
+                                    <div className="absolute top-full left-0 z-50 pt-1 w-48">
+                                        <div className="p-2 bg-white border border-gray-200 rounded-lg shadow-xl space-y-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
+                                            <div className="text-[10px] text-gray-400 font-bold mb-1 border-b border-gray-50 pb-1">면별 글자 크기</div>
+                                            {([['front', '전면', labelData.titleFontSize], ['side', '측면', labelData.titleFontSizeSide], ['edge', '옆면', labelData.titleFontSizeEdge]] as const).map(([face, faceName, currentSize]) => (
+                                                <div key={face} className="flex items-center gap-2">
+                                                    <span className="text-[11px] text-gray-600 font-medium w-8">{faceName}</span>
+                                                    <div className="border rounded-md h-7 pr-1 flex items-center bg-white border-gray-200 flex-1">
+                                                        <select
+                                                            value={currentSize || 0}
+                                                            onChange={(e) => setFaceFontSize('title', face, Number(e.target.value), 'title')}
+                                                            className="text-xs bg-transparent focus:outline-none cursor-pointer border-none outline-none appearance-none pl-2 pr-6 h-full w-full text-gray-600"
+                                                        >
+                                                            {FONT_SIZE_OPTIONS.map(opt => (
+                                                                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
+                            <span className="text-[10px] text-gray-400 font-medium bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100 ml-auto">
+                                Shift + Enter로 줄바꿈
+                            </span>
                         </div>
+
                     </div>
                 </div>
 
@@ -322,17 +408,49 @@ export default function LabelForm() {
                             >
                                 B
                             </button>
-                            <div className={`border rounded-md h-7 pr-1 flex items-center transition-colors ${selectedFields['productionYear'] ? 'bg-white border-black ring-1 ring-black' : 'bg-gray-50/50 border-gray-200'}`}>
-                                <select
-                                    value={selectedFields['productionYear'] && selectionFontSizes['productionYear'] !== undefined ? selectionFontSizes['productionYear'] : (labelData.productionYearFontSize || 0)}
-                                    onChange={(e) => setFieldFontSize('productionYearFontSize', Number(e.target.value), 'productionYear')}
-                                    className={`text-xs bg-transparent focus:outline-none cursor-pointer border-none outline-none appearance-none pl-2 pr-6 h-full w-full ${selectedFields['productionYear'] ? 'text-black font-bold' : 'text-gray-400 font-normal'}`}
+                            {/* 상세 수정 토글 */}
+                            <div
+                                className="relative flex items-center"
+                                onMouseEnter={() => toggleDetailOpen('productionYear', true)}
+                                onMouseLeave={() => toggleDetailOpen('productionYear', false)}
+                            >
+                                <button
+                                    type="button"
+                                    className={`h-7 px-2 border rounded-md text-[11px] font-medium transition-colors shadow-sm flex items-center gap-1 ${detailOpenFields['productionYear']
+                                        ? 'bg-blue-50 text-blue-600 border-blue-200'
+                                        : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'
+                                        }`}
                                 >
-                                    {FONT_SIZE_OPTIONS.map(opt => (
-                                        <option key={opt.value} value={opt.value}>{opt.label}</option>
-                                    ))}
-                                </select>
+                                    상세 수정
+                                    <span className={`text-[10px] transition-transform ${detailOpenFields['productionYear'] ? 'rotate-180' : ''}`}>▼</span>
+                                </button>
+
+                                {/* 상세 수정 패널: 면별 글자 크기 */}
+                                {detailOpenFields['productionYear'] && (
+                                    <div className="absolute top-full left-0 z-50 pt-1 w-48">
+                                        <div className="p-2 bg-white border border-gray-200 rounded-lg shadow-xl space-y-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
+                                            <div className="text-[10px] text-gray-400 font-bold mb-1 border-b border-gray-50 pb-1">면별 글자 크기</div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-[11px] text-gray-600 font-medium w-8">전면</span>
+                                                <div className="border rounded-md h-7 pr-1 flex items-center bg-white border-gray-200 flex-1">
+                                                    <select
+                                                        value={labelData.productionYearFontSize || 0}
+                                                        onChange={(e) => setFaceFontSize('productionYear', 'front', Number(e.target.value), 'productionYear')}
+                                                        className="text-xs bg-transparent focus:outline-none cursor-pointer border-none outline-none appearance-none pl-2 pr-6 h-full w-full text-gray-600"
+                                                    >
+                                                        {FONT_SIZE_OPTIONS.map(opt => (
+                                                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
+                            <span className="text-[10px] text-gray-400 font-medium bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100 ml-auto">
+                                Shift + Enter로 줄바꿈
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -353,21 +471,22 @@ export default function LabelForm() {
                                 </span>
                             </label>
                         </div>
-                        <span className="text-[10px] text-gray-400 font-medium bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100">
-                            Shift + Enter로 줄바꿈 가능
-                        </span>
                     </div>
                     <div className="flex flex-col gap-2">
                         <RichTextInput
                             key={`dept-${labelData.id}`}
                             id="departmentName"
                             value={labelData.departmentName}
-                            onChange={(val) => updateLabelData({ departmentName: val })}
+                            onChange={(val) => {
+                                const updates: Record<string, any> = { departmentName: val };
+                                if (labelData.departmentNameEdge !== undefined) updates.departmentNameEdge = val;
+                                updateLabelData(updates);
+                            }}
                             onSelectionChange={handleSelectionChange('departmentName')}
                             placeholder="예: 대전광역시아동보호전문기관"
                             minHeight="80px"
                         />
-                        <div className="flex items-center gap-2 transition-all duration-200 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
+                        <div className="flex items-center gap-2 flex-wrap transition-all duration-200 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
                             <button
                                 type="button"
                                 onClick={() => toggleFieldBold('departmentNameIsBold', labelData.departmentNameIsBold, 'departmentName')}
@@ -375,18 +494,53 @@ export default function LabelForm() {
                             >
                                 B
                             </button>
-                            <div className={`border rounded-md h-7 pr-1 flex items-center transition-colors ${selectedFields['departmentName'] ? 'bg-white border-black ring-1 ring-black' : 'bg-gray-50/50 border-gray-200'}`}>
-                                <select
-                                    value={selectedFields['departmentName'] && selectionFontSizes['departmentName'] !== undefined ? selectionFontSizes['departmentName'] : (labelData.departmentNameFontSize || 0)}
-                                    onChange={(e) => setFieldFontSize('departmentNameFontSize', Number(e.target.value), 'departmentName')}
-                                    className={`text-xs bg-transparent focus:outline-none cursor-pointer border-none outline-none appearance-none pl-2 pr-6 h-full w-full ${selectedFields['departmentName'] ? 'text-black font-bold' : 'text-gray-400 font-normal'}`}
+                            {/* 상세 수정 토글 */}
+                            <div
+                                className="relative flex items-center"
+                                onMouseEnter={() => toggleDetailOpen('departmentName', true)}
+                                onMouseLeave={() => toggleDetailOpen('departmentName', false)}
+                            >
+                                <button
+                                    type="button"
+                                    className={`h-7 px-2 border rounded-md text-[11px] font-medium transition-colors shadow-sm flex items-center gap-1 ${detailOpenFields['departmentName']
+                                        ? 'bg-blue-50 text-blue-600 border-blue-200'
+                                        : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'
+                                        }`}
                                 >
-                                    {FONT_SIZE_OPTIONS.map(opt => (
-                                        <option key={opt.value} value={opt.value}>{opt.label}</option>
-                                    ))}
-                                </select>
+                                    상세 수정
+                                    <span className={`text-[10px] transition-transform ${detailOpenFields['departmentName'] ? 'rotate-180' : ''}`}>▼</span>
+                                </button>
+
+                                {/* 상세 수정 패널: 면별 글자 크기 */}
+                                {detailOpenFields['departmentName'] && (
+                                    <div className="absolute top-full left-0 z-50 pt-1 w-48">
+                                        <div className="p-2 bg-white border border-gray-200 rounded-lg shadow-xl space-y-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
+                                            <div className="text-[10px] text-gray-400 font-bold mb-1 border-b border-gray-50 pb-1">면별 글자 크기</div>
+                                            {([['front', '전면', labelData.departmentNameFontSize], ['edge', '옆면', labelData.departmentNameFontSizeEdge]] as const).map(([face, faceName, currentSize]) => (
+                                                <div key={face} className="flex items-center gap-2">
+                                                    <span className="text-[11px] text-gray-600 font-medium w-8">{faceName}</span>
+                                                    <div className="border rounded-md h-7 pr-1 flex items-center bg-white border-gray-200 flex-1">
+                                                        <select
+                                                            value={currentSize || 0}
+                                                            onChange={(e) => setFaceFontSize('departmentName', face as 'front' | 'edge', Number(e.target.value), 'departmentName')}
+                                                            className="text-xs bg-transparent focus:outline-none cursor-pointer border-none outline-none appearance-none pl-2 pr-6 h-full w-full text-gray-600"
+                                                        >
+                                                            {FONT_SIZE_OPTIONS.map(opt => (
+                                                                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
+                            <span className="text-[10px] text-gray-400 font-medium bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100 ml-auto">
+                                Shift + Enter로 줄바꿈
+                            </span>
                         </div>
+
 
                         {recentDepts.length > 0 && (
                             <div className="flex flex-wrap gap-1.5 mt-1 animate-in fade-in slide-in-from-top-1 duration-300">
@@ -430,6 +584,20 @@ export default function LabelForm() {
                                 className="px-4 py-1.5 bg-white text-gray-600 border border-gray-300 rounded-md text-xs font-bold hover:bg-gray-50 shadow-sm transition-all"
                             >
                                 회계
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => updateLabelData({ classificationCode: "회의" })}
+                                className="px-4 py-1.5 bg-white text-gray-600 border border-gray-300 rounded-md text-xs font-bold hover:bg-gray-50 shadow-sm transition-all"
+                            >
+                                회의
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => updateLabelData({ classificationCode: "사례" })}
+                                className="px-4 py-1.5 bg-white text-gray-600 border border-gray-300 rounded-md text-xs font-bold hover:bg-gray-50 shadow-sm transition-all"
+                            >
+                                사례
                             </button>
                         </div>
                     </div>

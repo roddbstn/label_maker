@@ -23,6 +23,20 @@ function htmlToPlainText(html: string): string {
 }
 
 /**
+ * HTML에서 구조 태그만 제거, font-size span은 유지 (측면 렌더링용)
+ */
+function htmlToPlainTextKeepSpans(html: string): string {
+    if (!html) return "";
+    return html
+        .replace(/<br\s*\/?>/gi, " ")
+        .replace(/<div[^>]*>/gi, " ")
+        .replace(/<\/div>/gi, "")
+        .replace(/<p[^>]*>/gi, " ")
+        .replace(/<\/p>/gi, "")
+        .trim();
+}
+
+/**
  * HTML을 미리보기용으로 정규화 및 스케일 조정
  * - pt 단위 스타일 추출 및 스케일 적용
  * - 36pt(중간), 24pt(작게)를 상대적 크기로 변환
@@ -322,6 +336,64 @@ function LabelBox({
 }
 
 /**
+ * pt 단위 사용자 폰트 크기를 스케일 팩터로 변환
+ * Auto(0/undefined) → 1.0, 중간(36) → 0.75, 작게(24) → 0.55
+ */
+function fontSizeScaleFactor(ptSize?: number): number {
+    if (!ptSize || ptSize === 0) return 1.0;
+    if (ptSize >= 36) return 0.75;
+    if (ptSize >= 24) return 0.55;
+    return 1.0;
+}
+
+/**
+ * HTML에서 글자별 폰트 크기 정보를 추출
+ * <span style="font-size:24pt">작은</span>큰글자 → [{char:'작',fontSizePt:24},{char:'은',fontSizePt:24},{char:'큰'},{char:'글'},{char:'자'}]
+ */
+function parseHtmlToCharsWithSize(html: string): { char: string; fontSizePt?: number }[] {
+    if (!html) return [];
+
+    // 임시 DOM으로 파싱
+    const div = document.createElement('div');
+    div.innerHTML = html;
+
+    const result: { char: string; fontSizePt?: number }[] = [];
+
+    function walk(node: Node, inheritedSize?: number) {
+        if (node.nodeType === Node.TEXT_NODE) {
+            const text = node.textContent || '';
+            for (const char of text) {
+                if (char === '\n') continue; // 줄바꿈 문자 스킵 (br로 처리)
+                result.push({ char, fontSizePt: inheritedSize });
+            }
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+            const el = node as HTMLElement;
+            const tagName = el.tagName.toLowerCase();
+
+            // <br> → 공백으로 처리 (옆면에서 세로 간격)
+            if (tagName === 'br') {
+                return;
+            }
+
+            // font-size 스타일 추출
+            let fontSize = inheritedSize;
+            const style = el.getAttribute('style');
+            if (style) {
+                const match = style.match(/font-size:\s*([\d.]+)pt/i);
+                if (match) fontSize = parseFloat(match[1]);
+            }
+
+            for (let i = 0; i < el.childNodes.length; i++) {
+                walk(el.childNodes[i], fontSize);
+            }
+        }
+    }
+
+    walk(div);
+    return result;
+}
+
+/**
  * 측면 분류번호 라벨 (93×28mm)
  */
 function SideClassLabel({
@@ -410,6 +482,7 @@ function SideClassLabel({
                                     textAlign: 'center',
                                     borderRight: i < 5 ? `${mmToPx(0.2, scale)}px solid #000000` : "none",
                                     borderBottom: `${mmToPx(0.2, scale)}px solid #000000`,
+                                    paddingTop: mmToPx(0.2, scale), // 텍스트 수직 정렬 정가운데 조정을 위해 미세하게 내림
                                 }}
                             >
                                 <span style={{
@@ -442,6 +515,7 @@ function SideClassLabel({
                             fontSize: mmToPx(4.0, scale), // 4.0mm로 통일
                             boxSizing: 'border-box',
                             borderRight: `${mmToPx(0.2, scale)}px solid #000000`,
+                            paddingTop: mmToPx(0.2, scale), // 텍스트 수직 정렬 미세 조정
                         }}
                     >
                         <div style={{
@@ -484,11 +558,12 @@ function SideClassLabel({
                             justifyContent: 'center',
                             flex: 1,
                             height: mmToPx(12.5, scale),
-                            fontSize: mmToPx(4.3, scale), // 4.7mm에서 4.3mm로 축소 (-1px)
+                            fontSize: mmToPx(4.3, scale) * fontSizeScaleFactor(titleFontSize),
                             fontFamily: "'HamchoromDotum', 'Malgun Gothic', sans-serif",
-                            fontWeight: 'black', // 900
+                            fontWeight: 'black',
                             boxSizing: 'border-box',
                             padding: `0 ${mmToPx(2, scale)}px`,
+                            paddingTop: mmToPx(0.2, scale), // 텍스트 수직 정렬 미세 조정
                             textAlign: 'center',
                         }}
                     >
@@ -498,7 +573,19 @@ function SideClassLabel({
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
                         }}>
-                            {htmlToPlainText(title) || "제목을 입력하세요"}
+                            {(() => {
+                                const baseFontPx = mmToPx(4.3, scale) * fontSizeScaleFactor(titleFontSize);
+                                const charsWithSize = parseHtmlToCharsWithSize(title);
+                                if (charsWithSize.length === 0) return "제목을 입력하세요";
+                                return charsWithSize.map((item, idx) => {
+                                    const charScale = item.fontSizePt ? fontSizeScaleFactor(item.fontSizePt) : 1.0;
+                                    return (
+                                        <span key={idx} style={{ fontSize: baseFontPx * charScale }}>
+                                            {item.char}
+                                        </span>
+                                    );
+                                });
+                            })()}
                         </div>
                     </div>
                 </div>
@@ -638,6 +725,14 @@ function EdgeClassLabel({
                     // 제목/부서명 영역은 더 큰 폰트와 굵게
                     const isTitleOrDept = i === titleIndex || i === deptIndex;
                     const fontSize = isLabel ? 2.75 : (isTitleOrDept ? 9 : 3.25);
+
+                    // 제목/부서명에 사용자 지정 폰트 크기 스케일 적용
+                    const userFontScale = (i === titleIndex)
+                        ? fontSizeScaleFactor(titleFontSize)
+                        : (i === deptIndex)
+                            ? fontSizeScaleFactor(departmentNameFontSize)
+                            : 1.0;
+
                     const rowHeightPx = mmToPx(row.height, scale);
                     const isLast = i === adjustedRows.length - 1;
 
@@ -663,6 +758,7 @@ function EdgeClassLabel({
                                 borderBottom: !isLast ? `${mmToPx(0.2, scale)}px solid #000000` : "none",
                                 fontFamily: "'HamchoromDotum', 'Malgun Gothic', sans-serif",
                                 boxSizing: 'border-box',
+                                paddingTop: mmToPx(0.2, scale), // 텍스트 수직 정렬 미세 조정
                             }}
                         >
                             {needsVertical ? (
@@ -691,8 +787,11 @@ function EdgeClassLabel({
                                         // 단, 가로 폭을 넘지 않도록 제한
                                         let fontSizePx = charHeightPx * 0.98;
                                         fontSizePx = Math.min(fontSizePx, availableWidthPx * 0.85);
-                                        fontSizePx = Math.min(fontSizePx, mmToPx(5.2, scale)); // 최대 4.5mm에서 5.2mm로 상향
+                                        fontSizePx = Math.min(fontSizePx, mmToPx(5.2, scale)); // 최대 5.2mm
                                         fontSizePx = Math.max(fontSizePx, mmToPx(1.5, scale)); // 최소 1.5mm
+
+                                        // 사용자 지정 폰트 크기 스케일 적용
+                                        fontSizePx *= userFontScale;
 
                                         return (
                                             <div
@@ -718,20 +817,30 @@ function EdgeClassLabel({
                                                         lineHeight: 1,
                                                     }}
                                                 >
-                                                    {displayText.split('').map((char, idx) => {
-                                                        const isParenthesis = char === '(' || char === ')';
-                                                        const isSpace = char === ' ';
+                                                    {(() => {
+                                                        // title/dept의 원본 HTML을 파싱하여 글자별 폰트 크기 추출
+                                                        const rawHtml = i === titleIndex ? title : departmentName;
+                                                        const charsWithSize = parseHtmlToCharsWithSize(rawHtml);
 
-                                                        if (isSpace) {
-                                                            return <span key={idx} style={{ display: "block", height: fontSizePx * 0.5 }}>&nbsp;</span>;
-                                                        }
+                                                        return charsWithSize.map((item, idx) => {
+                                                            const isParenthesis = item.char === '(' || item.char === ')';
+                                                            const isSpace = item.char === ' ';
 
-                                                        if (isParenthesis) {
-                                                            return <span key={idx} style={{ display: "inline-block", transform: "rotate(90deg)", lineHeight: 1 }}>{char}</span>;
-                                                        }
+                                                            // 글자별 폰트 크기 계산: pt 값이 있으면 스케일 팩터 적용
+                                                            const charScale = item.fontSizePt ? fontSizeScaleFactor(item.fontSizePt) : 1.0;
+                                                            const charFontSize = fontSizePx * charScale;
 
-                                                        return <span key={idx} style={{ lineHeight: 1 }}>{char}</span>;
-                                                    })}
+                                                            if (isSpace) {
+                                                                return <span key={idx} style={{ display: "block", height: charFontSize * 0.5 }}>&nbsp;</span>;
+                                                            }
+
+                                                            if (isParenthesis) {
+                                                                return <span key={idx} style={{ display: "inline-block", transform: "rotate(90deg)", lineHeight: 1, fontSize: charFontSize }}>{item.char}</span>;
+                                                            }
+
+                                                            return <span key={idx} style={{ lineHeight: 1, fontSize: charFontSize }}>{item.char}</span>;
+                                                        });
+                                                    })()}
                                                 </div>
                                             </div>
                                         );
@@ -939,11 +1048,11 @@ export default function Formtec3629Preview({ currentPage = 0 }: Formtec3629Previ
                             classificationCode={label1.classificationCode}
                             productionYear={label1.productionYear}
                             retentionPeriod={label1.retentionPeriod}
-                            title={label1.title}
+                            title={label1.titleSide ?? label1.title}
                             fontFamily={label1.fontFamily}
                             titleIsBold={label1.titleIsBold}
                             productionYearIsBold={label1.productionYearIsBold}
-                            titleFontSize={label1.titleFontSize}
+                            titleFontSize={label1.titleFontSizeSide}
                         />
 
                         {/* 옆면 분류번호 라벨 1 */}
@@ -956,12 +1065,12 @@ export default function Formtec3629Preview({ currentPage = 0 }: Formtec3629Previ
                             productionYear={label1.productionYear}
                             retentionPeriod={label1.retentionPeriod}
                             classificationCode={label1.classificationCode}
-                            title={label1.title}
-                            departmentName={label1.departmentName}
+                            title={label1.titleEdge ?? label1.title}
+                            departmentName={label1.departmentNameEdge ?? label1.departmentName}
                             fontFamily={label1.fontFamily}
                             isBold={label1.titleIsBold}
-                            titleFontSize={label1.titleFontSize}
-                            departmentNameFontSize={label1.departmentNameFontSize}
+                            titleFontSize={label1.titleFontSizeEdge}
+                            departmentNameFontSize={label1.departmentNameFontSizeEdge}
                             hideDepartmentOnEdge={label1.hideDepartmentOnEdge}
                         />
                     </>
@@ -1052,11 +1161,11 @@ export default function Formtec3629Preview({ currentPage = 0 }: Formtec3629Previ
                             classificationCode={label2.classificationCode}
                             productionYear={label2.productionYear}
                             retentionPeriod={label2.retentionPeriod}
-                            title={label2.title}
+                            title={label2.titleSide ?? label2.title}
                             fontFamily={label2.fontFamily}
                             titleIsBold={label2.titleIsBold}
                             productionYearIsBold={label2.productionYearIsBold}
-                            titleFontSize={label2.titleFontSize}
+                            titleFontSize={label2.titleFontSizeSide}
                         />
 
                         {/* 옆면 분류번호 라벨 2 */}
@@ -1069,12 +1178,12 @@ export default function Formtec3629Preview({ currentPage = 0 }: Formtec3629Previ
                             productionYear={label2.productionYear}
                             retentionPeriod={label2.retentionPeriod}
                             classificationCode={label2.classificationCode}
-                            title={label2.title}
-                            departmentName={label2.departmentName}
+                            title={label2.titleEdge ?? label2.title}
+                            departmentName={label2.departmentNameEdge ?? label2.departmentName}
                             fontFamily={label2.fontFamily}
                             isBold={label2.titleIsBold}
-                            titleFontSize={label2.titleFontSize}
-                            departmentNameFontSize={label2.departmentNameFontSize}
+                            titleFontSize={label2.titleFontSizeEdge}
+                            departmentNameFontSize={label2.departmentNameFontSizeEdge}
                             hideDepartmentOnEdge={label2.hideDepartmentOnEdge}
                         />
                     </>

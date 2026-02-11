@@ -1,315 +1,325 @@
 "use client";
 
-import LabelForm from "@/components/LabelForm";
-import PreviewSection from "@/components/PreviewSection";
-import GuideOverlay from "@/components/GuideOverlay";
-import PrintAllContainer from "@/components/PrintAllContainer";
-import { useState, useEffect } from "react";
-import { submitWaitlistAction, submitFeedbackAction } from '@/lib/actions';
-import * as gtag from "@/lib/gtag";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { getSession } from "@/lib/supabaseAuth";
 
-export default function Home() {
-    const [isGuideOpen, setIsGuideOpen] = useState(false);
+export default function LandingPage() {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    // 이탈(Exit) 트래킹
     useEffect(() => {
-        const handleExit = () => {
-            gtag.event({
-                action: "page_exit",
-                category: "engagement",
-                label: "User Left Page"
-            });
-        };
-
-        window.addEventListener("beforeunload", handleExit);
-        return () => {
-            window.removeEventListener("beforeunload", handleExit);
-        };
+        getSession().then(({ session }) => {
+            if (session) setIsLoggedIn(true);
+        });
     }, []);
 
     return (
-        <main className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-            {/* 헤더 */}
-            <header className="bg-white/80 backdrop-blur-sm border-b border-slate-200 sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                    <div className="flex items-center justify-between">
+        <main className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-white">
+            {/* 네비게이션 */}
+            <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex items-center justify-between h-16">
                         <div className="flex items-center gap-3">
                             <img
                                 src="/label_maker_logo.png"
-                                alt="라벨 메이커 - 정부문서화일 라벨 자동 생성기 로고"
-                                width={40}
-                                height={40}
-                                className="w-10 h-10 object-contain rounded-xl shadow-sm"
+                                alt="라벨 메이커 로고"
+                                width={36}
+                                height={36}
+                                className="w-9 h-9 object-contain rounded-xl"
                             />
-                            <div>
-                                <h1 className="text-xl font-bold text-gray-900">
-                                    라벨 메이커
-                                    <span className="sr-only">: 정부문서화일 라벨 자동 생성기</span>
-                                </h1>
-                                <p className="text-xs text-gray-500">정부문서화일 라벨 자동 생성</p>
-                            </div>
+                            <span className="text-lg font-bold text-gray-900">라벨 메이커</span>
                         </div>
-                        <nav className="flex items-center gap-4">
-                            <button
-                                onClick={() => {
-                                    gtag.event({
-                                        action: "guide_view",
-                                        category: "interaction",
-                                        label: "Header Guide Button"
-                                    });
-                                    setIsGuideOpen(true);
-                                }}
-                                className="text-sm text-gray-600 hover:text-primary-600 transition-colors"
+                        <div className="flex items-center gap-3">
+                            <Link
+                                href={isLoggedIn ? "/app" : "/login"}
+                                className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors px-4 py-2"
                             >
-                                사용 가이드
-                            </button>
-                            <button
-                                onClick={() => {
-                                    gtag.event({
-                                        action: "waitlist_cta_click",
-                                        category: "interaction",
-                                        label: "Header Waitlist Button"
-                                    });
-                                    document.getElementById('waitlist-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                }}
-                                className="text-sm bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg font-medium transition-all shadow-md shadow-primary-100 hover:scale-105 active:scale-95"
+                                로그인
+                            </Link>
+                            <Link
+                                href={isLoggedIn ? "/app" : "/signup"}
+                                className="text-sm font-bold text-white bg-primary-600 hover:bg-primary-700 px-5 py-2.5 rounded-xl transition-all shadow-md shadow-primary-200 hover:shadow-lg hover:shadow-primary-200 active:scale-95"
                             >
-                                🔔 정식 버전 알림받기
-                            </button>
-                        </nav>
+                                지금 시작하기
+                            </Link>
+                        </div>
                     </div>
                 </div>
-            </header>
+            </nav>
 
-            {/* 메인 콘텐츠 */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                {/* 라벨 생성 섹션 */}
-                <section className="grid lg:grid-cols-2 gap-8 items-start">
-                    {/* 입력 폼 */}
-                    <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 p-6 lg:p-8 flex flex-col h-full">
-                        <h3 id="guide-target-1" className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                            <span className="w-8 h-8 bg-primary-100 text-primary-600 rounded-lg flex items-center justify-center text-sm font-bold">
-                                1
-                            </span>
-                            라벨 정보 입력
-                        </h3>
-                        <div className="flex-1">
-                            <LabelForm />
-                        </div>
-                    </div>
+            {/* 히어로 섹션 */}
+            <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+                <div className="max-w-4xl mx-auto text-center">
 
-                    {/* 미리보기 */}
-                    <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 p-6 lg:px-8 lg:pt-8 lg:pb-4 flex flex-col h-full">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                            <span className="w-8 h-8 bg-primary-100 text-primary-600 rounded-lg flex items-center justify-center text-sm font-bold">
-                                2
-                            </span>
-                            실시간 미리보기
-                        </h3>
-                        <div className="flex-1">
-                            <PreviewSection />
-                        </div>
-                    </div>
-                </section>
-
-                {/* 히어로 섹션 - 콤팩트 버전 (하단 배치) */}
-                <section className="text-center py-16 md:py-24 relative border-t border-slate-100 mt-12">
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 tracking-tight leading-tight">
-                        정부문서화일 라벨, <br className="sm:hidden" />
+                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 tracking-tight leading-[1.15]">
+                        정부문서화일 라벨,{" "}
+                        <br className="hidden sm:block" />
                         <span className="text-primary-600">입력만 하면 자동으로 완성</span>
-                    </h2>
-                    <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-                        장평·자간 조절 노가다 없이, 긴 부서명도 알아서 예쁘게 맞춰드립니다. <br className="hidden sm:block" />
+                    </h1>
+                    <p className="text-lg sm:text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed mb-10">
+                        장평·자간 조절 노가다 없이, 긴 부서명도 알아서 예쁘게 맞춰드립니다.
+                        <br className="hidden sm:block" />
                         한글 파일 없이 바로 출력!
                     </p>
-                </section>
-
-                {/* 특징 섹션 - 가로형으로 더 콤팩트하게 */}
-                <section className="mt-12 grid sm:grid-cols-3 gap-4">
-                    <div className="bg-white/50 rounded-xl p-4 flex items-center gap-4">
-                        <div className="w-10 h-10 bg-green-100 rounded-lg flex-shrink-0 flex items-center justify-center">
-                            <span className="text-xl">✨</span>
-                        </div>
-                        <div>
-                            <h4 className="font-semibold text-gray-900 text-lg">자동 텍스트 피팅</h4>
-                            <p className="text-sm text-gray-500">긴 부서명도 자동 조절</p>
-                        </div>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <Link
+                            href={isLoggedIn ? "/app" : "/login"}
+                            className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-slate-50 text-slate-700 text-base font-medium rounded-2xl border border-slate-200 transition-all"
+                        >
+                            로그인
+                        </Link>
+                        <Link
+                            href={isLoggedIn ? "/app" : "/signup"}
+                            className="w-full sm:w-auto px-8 py-4 bg-primary-600 hover:bg-primary-700 text-white text-base font-bold rounded-2xl transition-all shadow-lg shadow-primary-200 hover:shadow-xl hover:shadow-primary-300 active:scale-95"
+                        >
+                            지금 시작하기
+                        </Link>
                     </div>
-                    <div className="bg-white/50 rounded-xl p-4 flex items-center gap-4">
-                        <div className="w-10 h-10 bg-blue-100 rounded-lg flex-shrink-0 flex items-center justify-center">
-                            <span className="text-xl">🖨️</span>
-                        </div>
-                        <div>
-                            <h4 className="font-semibold text-gray-900 text-lg">폼텍 3629 규격</h4>
-                            <p className="text-sm text-gray-500">바로 출력 가능한 정확한 규격</p>
-                        </div>
-                    </div>
-                    <div className="bg-white/50 rounded-xl p-4 flex items-center gap-4">
-                        <div className="w-10 h-10 bg-purple-100 rounded-lg flex-shrink-0 flex items-center justify-center">
-                            <span className="text-xl">💻</span>
-                        </div>
-                        <div>
-                            <h4 className="font-semibold text-gray-900 text-lg">설치 불필요</h4>
-                            <p className="text-sm text-gray-500">브라우저에서 바로 사용</p>
-                        </div>
-                    </div>
-                </section>
-
-                <div className="grid md:grid-cols-2 gap-8 items-start mt-24">
-                    {/* 정식 버전 알림받기 CTA (Eden 스타일 - 콤팩트 버전) */}
-                    <section id="waitlist-section" className="relative group h-full">
-                        <div className="absolute -inset-3 bg-gradient-to-r from-slate-100 to-blue-50/50 rounded-[3rem] blur-xl opacity-40 transition duration-1000 group-hover:opacity-60"></div>
-
-                        <div className="relative h-full bg-white/40 backdrop-blur-sm rounded-[2.5rem] p-8 sm:p-12 shadow-[0_24px_48px_-12px_rgba(0,0,0,0.06)] border border-slate-50 overflow-hidden text-center flex flex-col items-center justify-center">
-                            <div className="absolute top-0 right-0 w-48 h-48 bg-slate-50 rounded-full -mr-24 -mt-24 opacity-40"></div>
-                            <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-50/20 rounded-full -ml-24 -mb-24 opacity-40"></div>
-
-                            <div className="relative z-10 w-full">
-                                <div className="mx-auto w-12 h-12 bg-[#222222] rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-slate-100 transition-transform duration-500 group-hover:scale-110">
-                                    <span className="text-xl">⚡</span>
-                                </div>
-
-                                <div className="inline-block px-3 py-1 bg-slate-100/80 rounded-full text-[9px] font-black tracking-[0.2em] text-slate-500 mb-4 uppercase">
-                                    Join the waitlist
-                                </div>
-
-                                <h3 className="text-2xl sm:text-2xl font-bold text-slate-900 mb-4 leading-tight tracking-tight">
-                                    정식 버전 알림 받기
-                                </h3>
-
-                                <p className="text-slate-500 text-sm font-medium mb-8 leading-relaxed opacity-80 max-w-xs mx-auto">
-                                    베타 종료 후 출시될 정식 버전의<br /> 출시 알림과 혜택을 보내드립니다.
-                                </p>
-
-                                <form
-                                    onSubmit={async (e) => {
-                                        e.preventDefault();
-                                        const formData = new FormData(e.currentTarget);
-
-                                        gtag.event({
-                                            action: "waitlist_submit",
-                                            category: "conversion",
-                                            label: "Waitlist Form"
-                                        });
-
-                                        const result = await submitWaitlistAction(formData);
-                                        if (result.success) {
-                                            alert('반갑습니다! 정식 버전 출시 소식을 보내드릴게요.');
-                                            (e.target as HTMLFormElement).reset();
-                                        } else {
-                                            alert(result.error || '오류가 발생했습니다.');
-                                        }
-                                    }}
-                                    className="space-y-3 max-w-xs mx-auto"
-                                >
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        required
-                                        placeholder="이메일 주소"
-                                        className="w-full px-6 py-3 rounded-xl bg-slate-50/50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all shadow-inner"
-                                    />
-                                    <button
-                                        type="submit"
-                                        className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#222222] text-white text-sm font-black rounded-xl hover:bg-[#333333] transition-all shadow-lg shadow-slate-100 active:scale-[0.98] tracking-wide"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4 opacity-70">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
-                                        </svg>
-                                        소식 받기
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </section>
-
-                    {/* 피드백 섹션 (Eden 스타일 - 콤팩트 버전) */}
-                    <section className="relative group h-full">
-                        <div className="absolute -inset-3 bg-gradient-to-r from-slate-100 to-blue-50/30 rounded-[3rem] blur-xl opacity-30 transition duration-1000 group-hover:opacity-50"></div>
-
-                        <div className="relative h-full bg-white/40 backdrop-blur-sm rounded-[2.5rem] p-8 sm:p-12 shadow-[0_24px_48px_-12px_rgba(0,0,0,0.04)] border border-slate-50 overflow-hidden text-center flex flex-col items-center justify-center">
-                            <div className="absolute top-0 left-0 w-48 h-48 bg-slate-50 rounded-full -ml-24 -mt-24 opacity-40"></div>
-
-                            <div className="relative z-10 w-full">
-                                <div className="mx-auto w-12 h-12 bg-[#222222] rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-slate-100">
-                                    <span className="text-xl">💬</span>
-                                </div>
-
-                                <div className="inline-block px-3 py-1 bg-slate-100/80 rounded-full text-[9px] font-black tracking-[0.2em] text-slate-500 mb-4 uppercase">
-                                    Share your thoughts
-                                </div>
-
-                                <h3 className="text-2xl sm:text-2xl font-bold text-slate-900 mb-4 leading-tight tracking-tight">
-                                    불편한 점은 없었나요?
-                                </h3>
-                                <p className="text-slate-500 text-sm font-medium mb-8 leading-relaxed opacity-80 max-w-xs mx-auto">
-                                    기능 제안, 버그 제보 등 어떤 의견이라도<br /> 편하게 들려주세요.
-                                </p>
-
-                                <form
-                                    onSubmit={async (e) => {
-                                        e.preventDefault();
-                                        const formData = new FormData(e.currentTarget);
-
-                                        gtag.event({
-                                            action: "feedback_submit",
-                                            category: "engagement",
-                                            label: "Feedback Form"
-                                        });
-
-                                        const result = await submitFeedbackAction(formData);
-                                        if (result.success) {
-                                            alert('소중한 피드백 감사합니다! 개발에 적극 반영하겠습니다.');
-                                            (e.target as HTMLFormElement).reset();
-                                        } else {
-                                            alert(result.error || '오류가 발생했습니다.');
-                                        }
-                                    }}
-                                    className="space-y-3 max-w-xs mx-auto"
-                                >
-                                    <textarea
-                                        name="feedback"
-                                        required
-                                        placeholder="익명으로 의견 남기기"
-                                        rows={2}
-                                        className="w-full px-6 py-3 rounded-xl bg-slate-50/50 border border-slate-200 text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all resize-none shadow-inner"
-                                    />
-                                    <input
-                                        type="text"
-                                        name="organization"
-                                        required
-                                        placeholder="본인 기관명 (회사명)"
-                                        className="w-full px-6 py-3 rounded-xl bg-slate-50/50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all shadow-inner"
-                                    />
-                                    <button
-                                        type="submit"
-                                        className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#222222] text-white text-sm font-black rounded-xl hover:bg-[#333333] transition-all active:scale-[0.98] shadow-lg shadow-slate-100"
-                                    >
-                                        의견 보내기
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </section>
                 </div>
-            </div>
+            </section>
+
+            {/* 미리보기 모형 섹션 */}
+            <section className="pb-20 px-4 sm:px-6 lg:px-8">
+                <div className="max-w-6xl mx-auto">
+                    <div className="bg-white rounded-[32px] shadow-2xl shadow-blue-100/50 border border-slate-100 overflow-hidden pointer-events-none select-none">
+                        {/* 상단 윈도우 컨트롤 (주소창 제외) */}
+                        <div className="bg-slate-50 border-b border-slate-100 px-6 py-4 flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                                <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+                                <div className="w-3 h-3 rounded-full bg-green-400"></div>
+                            </div>
+                            <div className="flex items-center gap-4">
+                                <div className="w-20 h-2 bg-slate-200 rounded-full"></div>
+                                <div className="w-8 h-8 rounded-full bg-slate-200"></div>
+                            </div>
+                        </div>
+
+                        {/* 실제 서비스 UI 모형 */}
+                        <div className="p-4 sm:p-8 lg:p-12 bg-[#F8FAFC]">
+                            <div className="grid lg:grid-cols-[1fr_1.1fr] gap-8 max-w-5xl mx-auto">
+                                {/* 좌항: 입력 폼 */}
+                                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-6 flex flex-col">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <div className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">1</div>
+                                        <span className="text-sm font-bold text-slate-800">라벨 정보 입력</span>
+                                    </div>
+
+                                    <div className="flex items-center gap-2">
+                                        <div className="px-4 py-2 bg-blue-500 text-white rounded-lg text-xs font-bold shadow-md shadow-blue-100">라벨 1</div>
+                                        <div className="w-8 h-8 rounded-lg bg-green-500 text-white flex items-center justify-center font-bold text-lg">+</div>
+                                    </div>
+
+                                    <div className="p-3 bg-blue-50/50 border border-blue-100 rounded-xl flex items-center gap-2 text-[11px] text-blue-600 font-medium">
+                                        📝 라벨 1 편집 중
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        <div className="space-y-1.5">
+                                            <div className="text-[11px] font-bold text-slate-500">제목 <span className="text-red-500">*</span></div>
+                                            <div className="w-full h-16 bg-white border border-slate-200 rounded-lg p-3 text-xs text-slate-400">
+                                                예: 2024년도 아동복지 사업
+                                            </div>
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <div className="text-[11px] font-bold text-slate-500">생산연도 <span className="text-red-500">*</span></div>
+                                            <div className="w-full h-10 bg-white border border-slate-200 rounded-lg px-3 flex items-center text-xs text-slate-700">
+                                                2026년
+                                            </div>
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <div className="text-[11px] font-bold text-slate-500">부서명</div>
+                                            <div className="w-full h-12 bg-white border border-slate-200 rounded-lg px-3 flex items-center text-xs text-slate-700 font-medium">
+                                                대전광역시아동보호전문기관
+                                            </div>
+                                        </div>
+                                        {/* 최근 부서명 예시 버튼들 */}
+                                        <div className="flex gap-2">
+                                            <div className="flex-1 h-9 bg-slate-50 border border-slate-100 rounded-lg"></div>
+                                            <div className="flex-1 h-9 bg-slate-50 border border-slate-100 rounded-lg"></div>
+                                            <div className="flex-1 h-9 bg-slate-50 border border-slate-100 rounded-lg"></div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-2 pt-6 mt-auto">
+                                        <div className="flex-1 h-12 border border-slate-200 rounded-xl flex items-center justify-center text-[12px] font-bold text-slate-700 bg-white">초기화</div>
+                                        <div className="flex-1 h-12 border border-blue-200 rounded-xl flex items-center justify-center text-[12px] font-bold text-blue-600 bg-blue-50/30 gap-1.5">
+                                            <span className="text-base">📄</span> PDF 다운로드
+                                        </div>
+                                        <div className="flex-[1.2] h-12 bg-blue-600 rounded-xl shadow-xl shadow-blue-200 flex items-center justify-center text-[12px] font-bold text-white gap-1.5">
+                                            <span>🖨️</span> 바로 인쇄
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* 우항: 실시간 미리보기 */}
+                                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col items-center min-h-[500px]">
+                                    <div className="w-full flex items-center gap-2 mb-8">
+                                        <div className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">2</div>
+                                        <span className="text-sm font-bold text-slate-800">실시간 미리보기</span>
+                                    </div>
+
+                                    {/* 라벨 프리뷰 디자인 (A4 용지 위에 라벨 배치 느낌) */}
+                                    <div className="w-full max-w-[340px] aspect-[210/297] bg-white border border-slate-200 shadow-2xl rounded-sm p-3 relative overflow-hidden ring-1 ring-slate-200/50 flex gap-2">
+                                        <div className="flex-1 flex flex-col relative border border-slate-100 p-1.5">
+                                            {/* 상단 텍스트 영역 */}
+                                            <div className="flex-1 flex flex-col items-center justify-center pt-6 pb-10">
+                                                <div className="text-[28px] font-bold text-slate-900 mb-6 tracking-[0.2em]">제 목</div>
+                                                <div className="text-[20px] font-bold text-slate-800 mb-6">2026년</div>
+                                                <div className="text-[12px] font-bold text-slate-700 text-center leading-relaxed">
+                                                    대전광역시<br />아동보호전문기관
+                                                </div>
+                                            </div>
+
+                                            {/* 하단 옆면 라벨 (가로형) - SideClassLabel 양식 */}
+                                            <div className="w-full border-[0.5px] border-black mt-auto">
+                                                <div className="flex h-7">
+                                                    <div className="flex-1 border-r-[0.5px] border-black bg-slate-50 text-[4px] font-bold flex items-center justify-center">분류번호</div>
+                                                    <div className="flex-1 border-r-[0.5px] border-black"></div>
+                                                    <div className="flex-1 border-r-[0.5px] border-black bg-slate-50 text-[4px] font-bold flex items-center justify-center">생산연도</div>
+                                                    <div className="flex-1 border-r-[0.5px] border-black text-[5px] font-bold flex items-center justify-center">2026</div>
+                                                    <div className="flex-1 border-r-[0.5px] border-black bg-slate-50 text-[4px] font-bold flex items-center justify-center">보존기간</div>
+                                                    <div className="flex-1"></div>
+                                                </div>
+                                                <div className="flex h-8 border-t-[0.5px] border-black">
+                                                    <div className="w-10 border-r-[0.5px] border-black bg-slate-50 flex flex-col items-center justify-center leading-tight">
+                                                        <span className="text-[4px] font-bold">제 목</span>
+                                                        <span className="text-[3px] font-bold">(보존종료)</span>
+                                                    </div>
+                                                    <div className="flex-1 text-[6px] font-bold text-slate-400 flex items-center justify-center tracking-widest px-1">
+                                                        제목을 입력하세요
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* 우측 측면 라벨 (세로형) - EdgeClassLabel 양식 */}
+                                        <div className="w-8 border-[0.5px] border-black flex flex-col bg-white">
+                                            {/* 관리번호 */}
+                                            <div className="h-3 bg-slate-50 border-b-[0.5px] border-black text-[4px] font-bold flex items-center justify-center">관리번호</div>
+                                            <div className="h-4 border-b-[0.5px] border-black"></div>
+
+                                            {/* 생산연도 */}
+                                            <div className="h-3 bg-slate-50 border-b-[0.5px] border-black text-[4px] font-bold flex items-center justify-center">생산연도</div>
+                                            <div className="h-4 border-b-[0.5px] border-black text-[5px] font-bold flex items-center justify-center">2026</div>
+
+                                            {/* 보존기간 */}
+                                            <div className="h-3 bg-slate-50 border-b-[0.5px] border-black text-[4px] font-bold flex items-center justify-center">보존기간</div>
+                                            <div className="h-4 border-b-[0.5px] border-black"></div>
+
+                                            {/* 분류번호 */}
+                                            <div className="h-3 bg-slate-50 border-b-[0.5px] border-black text-[4px] font-bold flex items-center justify-center">분류번호</div>
+                                            <div className="h-4 border-b-[0.5px] border-black"></div>
+
+                                            {/* 제목 */}
+                                            <div className="h-3 bg-slate-50 border-b-[0.5px] border-black text-[4px] font-bold flex items-center justify-center">제 목</div>
+                                            <div className="flex-1 border-b-[0.5px] border-black"></div>
+
+                                            {/* 부서명 */}
+                                            <div className="h-3 bg-slate-50 border-b-[0.5px] border-black text-[4px] font-bold flex items-center justify-center">부 서 명</div>
+                                            <div className="h-28 flex items-center justify-center p-0.5">
+                                                <div className="text-[5px] font-bold text-slate-700 writing-vertical-rl text-center leading-tight">
+                                                    대전광역시아동보호전문기관
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* 배경에 깔리는 점선 가이드 */}
+                                        <div className="absolute inset-0 border border-dashed border-slate-100 pointer-events-none -z-10"></div>
+                                    </div>
+
+                                    <div className="mt-8 space-y-2 w-full max-w-[340px]">
+                                        <div className="p-3.5 bg-amber-50 rounded-xl border border-amber-100 text-[11px] text-amber-700 font-bold flex items-center gap-2">
+                                            <span className="text-base">📐</span> 폼텍 3629 규격 자동 적용
+                                        </div>
+                                        <div className="p-3.5 bg-blue-50 rounded-xl border border-blue-100 text-[11px] text-blue-600 font-bold flex items-center gap-2">
+                                            <span className="text-base">⭐</span> 글꼴 크기가 칸에 맞게 최적화돼요
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* 특징 섹션 */}
+            <section className="py-20 px-4 sm:px-6 lg:px-8 bg-slate-50/50">
+                <div className="max-w-5xl mx-auto">
+                    <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-12">
+                        왜 라벨 메이커인가요?
+                    </h2>
+                    <div className="grid sm:grid-cols-3 gap-6">
+                        <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                            <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-5">
+                                <span className="text-2xl">✨</span>
+                            </div>
+                            <h3 className="font-bold text-gray-900 text-lg mb-2">자동 텍스트 피팅</h3>
+                            <p className="text-sm text-gray-500 leading-relaxed">
+                                긴 부서명도 자동으로 폰트 크기와 자간을 조절하여 규격에 맞게 피팅합니다.
+                            </p>
+                        </div>
+                        <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                            <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-5">
+                                <span className="text-2xl">🖨️</span>
+                            </div>
+                            <h3 className="font-bold text-gray-900 text-lg mb-2">폼텍 3629 규격</h3>
+                            <p className="text-sm text-gray-500 leading-relaxed">
+                                바로 출력 가능한 정확한 규격으로 생성됩니다. A4 용지에 바로 인쇄하세요.
+                            </p>
+                        </div>
+                        <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                            <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-5">
+                                <span className="text-2xl">✏️</span>
+                            </div>
+                            <h3 className="font-bold text-gray-900 text-lg mb-2">글자 크기 상세 수정</h3>
+                            <p className="text-sm text-gray-500 leading-relaxed">
+                                특정 글자를 선택해서 일부 글자 크기도 간편하게 수정할 수 있습니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* CTA 섹션 */}
+            <section className="py-20 px-4 sm:px-6 lg:px-8">
+                <div className="max-w-2xl mx-auto text-center">
+                    <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
+                        지금 바로 시작하세요
+                    </h2>
+                    <p className="text-gray-500 mb-8">
+                        무료로 라벨을 생성하고 출력할 수 있습니다.
+                    </p>
+                    <Link
+                        href={isLoggedIn ? "/app" : "/signup"}
+                        className="inline-block px-8 py-4 bg-primary-600 hover:bg-primary-700 text-white text-base font-bold rounded-2xl transition-all shadow-lg shadow-primary-200 hover:shadow-xl hover:shadow-primary-300 active:scale-95"
+                    >
+                        지금 시작하기
+                    </Link>
+                </div>
+            </section>
 
             {/* 푸터 */}
-            <footer className="mt-20 border-t border-slate-200 bg-white">
+            <footer className="border-t border-slate-200 bg-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     <div className="text-center text-sm text-gray-500">
                         <p className="mb-2">
                             © 2026 라벨 메이커. 무료로 사용하실 수 있습니다.
                         </p>
                         <p>
-                            문의: <a href="https://open.kakao.com/o/sVRBnSdi" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:underline">카카오톡 오픈채팅</a>
+                            문의:{" "}
+                            <a
+                                href="https://open.kakao.com/o/sVRBnSdi"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary-600 hover:underline"
+                            >
+                                카카오톡 오픈채팅
+                            </a>
                         </p>
                     </div>
                 </div>
             </footer>
-
-            <GuideOverlay isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
-            <PrintAllContainer />
         </main>
     );
 }

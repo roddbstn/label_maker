@@ -33,6 +33,21 @@ export interface LabelData {
     departmentNameFontSize?: number;
     departmentNameIsBold?: boolean;
 
+    // ===== 면별 오버라이드 (없으면 기본값 사용) =====
+    /** 측면용 제목 HTML 오버라이드 */
+    titleSide?: string;
+    /** 옆면용 제목 HTML 오버라이드 */
+    titleEdge?: string;
+    /** 옆면용 부서명 HTML 오버라이드 */
+    departmentNameEdge?: string;
+
+    /** 측면용 제목 글자 크기 오버라이드 */
+    titleFontSizeSide?: number;
+    /** 옆면용 제목 글자 크기 오버라이드 */
+    titleFontSizeEdge?: number;
+    /** 옆면용 부서명 글자 크기 오버라이드 */
+    departmentNameFontSizeEdge?: number;
+
     /** 옆면 분류번호에서 부서명 칸 숨기기 */
     hideDepartmentOnEdge?: boolean;
 }

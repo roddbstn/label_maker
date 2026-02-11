@@ -17,5 +17,12 @@
     "organization": "테스트 기관",
     "id": "1770621412483",
     "createdAt": "2026-02-09T07:16:52.483Z"
+  },
+  {
+    "type": "feedback",
+    "feedback": "ㅁㅇ",
+    "organization": "ㅁㅇ",
+    "id": "1770622318637",
+    "createdAt": "2026-02-09T07:31:58.637Z"
   }
 ]

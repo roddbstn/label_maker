@@ -91,6 +91,7 @@ function AutoFitSingleLine({
     autoFit,
     baseSize,
     minSize = 6,
+    fontSize, // pt 단위 (0=Auto, 36=중간, 24=작게)
 }: {
     html: string;
     fallback: string;
@@ -99,6 +100,7 @@ function AutoFitSingleLine({
     autoFit: boolean;
     baseSize: number;
     minSize?: number;
+    fontSize?: number;
 }) {
     const measureRef = useRef<HTMLDivElement>(null);
     const [scale, setScale] = useState(1);
@@ -115,7 +117,8 @@ function AutoFitSingleLine({
         }
 
         const el = measureRef.current;
-        // 리셋
+
+        // 리셋 (항상 baseSize를 기준으로 측정하여 'Auto' 상태의 핏을 계산함)
         el.style.transform = 'scale(1)';
         el.style.fontSize = `${baseSize}px`;
 
@@ -151,10 +154,16 @@ function AutoFitSingleLine({
             setScale(newScale);
             setReady(true);
         });
-    }, [html, normalizedHtml, containerWidth, containerHeight, autoFit, baseSize, minSize, userLineBreaks]);
+    }, [html, normalizedHtml, containerWidth, containerHeight, autoFit, baseSize, minSize, userLineBreaks, fontSize]);
 
     if (!html) {
         return <span className="text-gray-300 italic" style={{ fontSize: baseSize }}>{fallback}</span>;
+    }
+
+    let sizeFactor = 1.0;
+    if (fontSize && fontSize > 0) {
+        if (fontSize >= 36) sizeFactor = 0.75;
+        else if (fontSize >= 24) sizeFactor = 0.55;
     }
 
     return (
@@ -163,7 +172,7 @@ function AutoFitSingleLine({
                 ref={measureRef}
                 style={{
                     fontSize: `${baseSize}px`,
-                    transform: `scale(${scale})`,
+                    transform: `scale(${scale * sizeFactor})`,
                     transformOrigin: 'center center',
                     whiteSpace: userLineBreaks === 0 ? 'nowrap' : 'pre-wrap',
                     lineHeight: 1.3,
@@ -332,6 +341,7 @@ export default function LabelPreview({ autoFitText = true }: LabelPreviewProps) 
                                 autoFit={autoFitText}
                                 baseSize={14}
                                 minSize={6}
+                                fontSize={labelData.titleFontSize}
                             />
                         </div>
 
@@ -353,6 +363,7 @@ export default function LabelPreview({ autoFitText = true }: LabelPreviewProps) 
                                 autoFit={autoFitText}
                                 baseSize={11}
                                 minSize={5}
+                                fontSize={labelData.productionYearFontSize}
                             />
                         </div>
 
@@ -374,6 +385,7 @@ export default function LabelPreview({ autoFitText = true }: LabelPreviewProps) 
                                 autoFit={autoFitText}
                                 baseSize={11}
                                 minSize={5}
+                                fontSize={labelData.departmentNameFontSize}
                             />
                         </div>
 
