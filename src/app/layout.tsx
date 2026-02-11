@@ -33,9 +33,9 @@ export const metadata: Metadata = {
         locale: "ko_KR",
         images: [
             {
-                url: "/label_maker_logo.png",
-                width: 800,
-                height: 800,
+                url: "/og-image.png",
+                width: 1200,
+                height: 630,
                 alt: "라벨 메이커 - 정부문서화일 라벨 자동 생성",
             },
         ],
