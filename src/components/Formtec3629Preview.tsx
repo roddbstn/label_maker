@@ -457,152 +457,131 @@ function SideClassLabel({
                 boxSizing: 'border-box'
             }}
         >
-            {/* 내부 테이블 컨테이너 */}
-            <div className="w-full h-full flex flex-col">
-                <div
-                    style={{
-                        display: 'flex',
-                        width: '100%',
-                        flex: 1, // 높이를 유연하게 조절
-                        boxSizing: 'border-box'
-                    }}
-                >
-                    {[
-                        { text: "분류\n번호", isLabel: true },
-                        { text: classificationCode || "", isLabel: false },
-                        { text: "생산\n연도", isLabel: true },
-                        { text: (productionYear || "").replace(/[^0-9]/g, ""), isLabel: false },
-                        { text: "보존\n기간", isLabel: true },
-                        { text: retentionPeriod || "", isLabel: false }
-                    ].map((item, i) => {
-                        const cellHeightPx = mmToPx(12.5, scale);
-                        const fontSizePx = mmToPx(4.0, scale); // 4.0mm로 통일
-
-                        return (
-                            <div
+            <table
+                style={{
+                    width: '100%',
+                    height: '100%',
+                    borderCollapse: 'collapse',
+                    borderSpacing: 0,
+                    tableLayout: 'fixed'
+                }}
+            >
+                <tbody>
+                    <tr style={{ height: '50%' }}>
+                        {[
+                            { text: "분류\n번호", isLabel: true },
+                            { text: classificationCode || "", isLabel: false },
+                            { text: "생산\n연도", isLabel: true },
+                            { text: (productionYear || "").replace(/[^0-9]/g, ""), isLabel: false },
+                            { text: "보존\n기간", isLabel: true },
+                            { text: retentionPeriod || "", isLabel: false }
+                        ].map((item, i) => (
+                            <td
                                 key={i}
-                                className="bg-white text-gray-800"
                                 style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    flex: 1, // 너비를 비율로 설정하여 전체 폭에 완벽히 맞춤
-                                    height: '100%',
-                                    fontSize: item.isLabel ? mmToPx(3.2, scale) : mmToPx(3.6, scale), // 1px씩 줄임 (3.6->3.2, 4.0->3.6)
-                                    fontFamily: "'HamchoromDotum', 'Malgun Gothic', sans-serif",
-                                    fontWeight: 'bold', // 항상 볼드
-                                    boxSizing: 'border-box',
-                                    textAlign: 'center',
                                     borderRight: i < 5 ? `${mmToPx(0.1, scale)}px solid #000000` : "none",
                                     borderBottom: `${mmToPx(0.1, scale)}px solid #000000`,
-                                    paddingTop: mmToPx(0.2, scale), // 텍스트 수직 정렬 정가운데 조정을 위해 미세하게 내림
+                                    padding: 0,
+                                    width: '16.666%',
+                                    textAlign: 'center',
+                                    verticalAlign: 'middle',
+                                    fontSize: item.isLabel ? mmToPx(3.2, scale) : mmToPx(3.6, scale),
+                                    fontFamily: "'HamchoromDotum', 'Malgun Gothic', sans-serif",
+                                    fontWeight: 'bold',
+                                    color: '#1f2937',
+                                    boxSizing: 'border-box'
                                 }}
                             >
-                                <span style={{
+                                <div style={{
                                     whiteSpace: item.isLabel ? 'pre-line' : 'nowrap',
                                     lineHeight: 1.1,
+                                    marginTop: mmToPx(0.2, scale) // 수직 미세 조정
                                 }}>
                                     {item.text}
-                                </span>
-                            </div>
-                        );
-                    })}
-                </div>
-                {/* 하단 행: 2칸 */}
-                <div
-                    style={{
-                        display: 'flex',
-                        width: '100%',
-                        flex: 1, // 상단 행과 동일한 비율
-                        boxSizing: 'border-box'
-                    }}
-                >
-                    <div
-                        className="bg-white text-gray-800"
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            width: mmToPx(20.5, scale), // 21 -> 20.5 (라벨 폭 축소분 반영)
-                            height: '100%',
-                            fontSize: mmToPx(4.0, scale),
-                            boxSizing: 'border-box',
-                            borderRight: `${mmToPx(0.1, scale)}px solid #000000`,
-                            paddingTop: mmToPx(0.2, scale),
-                        }}
-                    >
-                        <div style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            height: '100%',
-                            minWidth: mmToPx(10, scale),
-                        }}>
+                                </div>
+                            </td>
+                        ))}
+                    </tr>
+                    <tr style={{ height: '50%' }}>
+                        <td
+                            style={{
+                                width: mmToPx(20.5, scale), // 대략적인 제목 라벨 폭
+                                borderRight: `${mmToPx(0.1, scale)}px solid #000000`,
+                                padding: 0,
+                                textAlign: 'center',
+                                verticalAlign: 'middle',
+                                color: '#1f2937',
+                                boxSizing: 'border-box'
+                            }}
+                        >
                             <div style={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
+                                display: 'inline-flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                marginTop: mmToPx(0.2, scale)
+                            }}>
+                                <div style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    width: mmToPx(10, scale),
+                                    lineHeight: 1.1,
+                                    fontSize: mmToPx(3.2, scale),
+                                    fontWeight: 'bold',
+                                    fontFamily: "'HamchoromDotum', 'Malgun Gothic', sans-serif",
+                                }}>
+                                    <span>제</span>
+                                    <span>목</span>
+                                </div>
+                                <div style={{
+                                    fontSize: mmToPx(3.0, scale),
+                                    lineHeight: 1.1,
+                                    fontWeight: 'bold',
+                                    fontFamily: "'HamchoromDotum', 'Malgun Gothic', sans-serif",
+                                    whiteSpace: 'nowrap',
+                                }}>
+                                    (보존종료)
+                                </div>
+                            </div>
+                        </td>
+                        <td
+                            colSpan={5}
+                            style={{
+                                padding: `0 ${mmToPx(2, scale)}px`,
+                                textAlign: 'center',
+                                verticalAlign: 'middle',
+                                color: '#1f2937',
+                                boxSizing: 'border-box'
+                            }}
+                        >
+                            <div style={{
                                 width: '100%',
-                                lineHeight: 1.1,
-                                fontSize: mmToPx(3.2, scale), // 3.6mm에서 3.2mm로 축소 (-1px)
-                                fontWeight: 'bold', // 볼드 처리
-                                fontFamily: "'HamchoromDotum', 'Malgun Gothic', sans-serif",
-                            }}>
-                                <span>제</span>
-                                <span>목</span>
-                            </div>
-                            <div style={{
-                                fontSize: mmToPx(3.0, scale), // 3.3mm에서 3.0mm로 축소
-                                lineHeight: 1.1,
-                                fontWeight: 'bold', // 볼드 처리
-                                fontFamily: "'HamchoromDotum', 'Malgun Gothic', sans-serif",
                                 whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                fontSize: mmToPx(4.3, scale) * fontSizeScaleFactor(titleFontSize),
+                                fontFamily: "'Pretendard Variable', sans-serif",
+                                fontWeight: 900,
+                                marginTop: mmToPx(0.2, scale)
                             }}>
-                                (보존종료)
+                                {(() => {
+                                    const baseFontPx = mmToPx(4.3, scale) * fontSizeScaleFactor(titleFontSize);
+                                    const charsWithSize = parseHtmlToCharsWithSize(title);
+                                    if (charsWithSize.length === 0) return "제목을 입력하세요";
+                                    return charsWithSize.map((item, idx) => {
+                                        const charScale = item.fontSizePt ? fontSizeScaleFactor(item.fontSizePt) : 1.0;
+                                        return (
+                                            <span key={idx} style={{ fontSize: baseFontPx * charScale }}>
+                                                {item.char}
+                                            </span>
+                                        );
+                                    });
+                                })()}
                             </div>
-                        </div>
-                    </div>
-                    {/* 제목 값 셀 */}
-                    <div
-                        className="font-medium bg-white text-gray-800"
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            flex: 1,
-                            height: mmToPx(12.5, scale),
-                            fontSize: mmToPx(4.3, scale) * fontSizeScaleFactor(titleFontSize),
-                            fontFamily: "'Pretendard Variable', sans-serif",
-                            fontWeight: 900,
-                            boxSizing: 'border-box',
-                            padding: `0 ${mmToPx(2, scale)}px`,
-                            paddingTop: mmToPx(0.2, scale), // 텍스트 수직 정렬 미세 조정
-                            textAlign: 'center',
-                        }}
-                    >
-                        <div style={{
-                            width: '100%',
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                        }}>
-                            {(() => {
-                                const baseFontPx = mmToPx(4.3, scale) * fontSizeScaleFactor(titleFontSize);
-                                const charsWithSize = parseHtmlToCharsWithSize(title);
-                                if (charsWithSize.length === 0) return "제목을 입력하세요";
-                                return charsWithSize.map((item, idx) => {
-                                    const charScale = item.fontSizePt ? fontSizeScaleFactor(item.fontSizePt) : 1.0;
-                                    return (
-                                        <span key={idx} style={{ fontSize: baseFontPx * charScale }}>
-                                            {item.char}
-                                        </span>
-                                    );
-                                });
-                            })()}
-                        </div>
-                    </div>
-                </div>
-            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     );
 }
@@ -709,234 +688,127 @@ function EdgeClassLabel({
                 boxSizing: 'border-box'
             }}
         >
-            {/* 내부 테이블 컨테이너 */}
-            <div
-                className="w-full h-full overflow-hidden flex flex-col"
+            <table
+                style={{
+                    width: '100%',
+                    height: '100%',
+                    borderCollapse: 'collapse',
+                    borderSpacing: 0,
+                    tableLayout: 'fixed'
+                }}
             >
-                {adjustedRows.map((row, i) => {
-                    const isLabel = row.label !== "value";
-                    let displayText = isLabel ? row.label : values[i] || "";
+                <tbody>
+                    {adjustedRows.map((row, i) => {
+                        const isLabel = row.label !== "value";
+                        let displayText = isLabel ? row.label : values[i] || "";
 
-                    // 라벨에 줄바꿈 추가
-                    if (isLabel && displayText) {
-                        switch (displayText) {
-                            case "관리번호":
-                                displayText = "관리번호";
-                                break;
-                            case "생산연도":
-                                displayText = "생산연도";
-                                break;
-                            case "보존기간":
-                                displayText = "보존기간";
-                                break;
-                            case "분류번호":
-                                displayText = "분류번호";
-                                break;
-                            case "제목":
-                                displayText = "제   목";
-                                break;
-                            case "부 서 명":
-                                displayText = "부 서 명";
-                                break;
+                        // 라벨에 줄바꿈 추가
+                        if (isLabel && displayText) {
+                            switch (displayText) {
+                                case "관리번호":
+                                    displayText = "관리번호";
+                                    break;
+                                case "생산연도":
+                                    displayText = "생산연도";
+                                    break;
+                                case "보존기간":
+                                    displayText = "보존기간";
+                                    break;
+                                case "분류번호":
+                                    displayText = "분류번호";
+                                    break;
+                                case "제목":
+                                    displayText = "제   목";
+                                    break;
+                                case "부 서 명":
+                                    displayText = "부 서 명";
+                                    break;
+                            }
                         }
-                    }
 
-                    const cellY = currentY;
-                    currentY += row.height;
+                        // 세로 텍스트가 필요한 영역 (높이가 20mm 이상)
+                        const needsVertical = row.height > 20;
+                        const isTitleOrDept = i === titleIndex || i === deptIndex;
+                        const rowHeightPx = mmToPx(row.height, scale);
+                        const isLast = i === adjustedRows.length - 1;
 
-                    // 세로 텍스트가 필요한 영역 (높이가 20mm 이상)
-                    const needsVertical = row.height > 20;
+                        const currentFontSizePx = isLabel ? mmToPx(2.45, scale) : (
+                            isTitleOrDept
+                                ? mmToPx(9.5, scale)
+                                : mmToPx(effectiveFontSize - 0.35, scale)
+                        );
 
-                    // 제목/부서명 영역은 더 큰 폰트와 굵게
-                    const isTitleOrDept = i === titleIndex || i === deptIndex;
-                    const fontSize = isLabel ? 2.75 : (isTitleOrDept ? 9 : 3.25);
+                        // 사용자 지정 폰트 크기 스케일 적용
+                        const userFontScale = (i === titleIndex)
+                            ? fontSizeScaleFactor(titleFontSize)
+                            : (i === deptIndex)
+                                ? fontSizeScaleFactor(departmentNameFontSize)
+                                : 1.0;
 
-                    // 제목/부서명에 사용자 지정 폰트 크기 스케일 적용
-                    const userFontScale = (i === titleIndex)
-                        ? fontSizeScaleFactor(titleFontSize)
-                        : (i === deptIndex)
-                            ? fontSizeScaleFactor(departmentNameFontSize)
-                            : 1.0;
-
-                    const rowHeightPx = mmToPx(row.height, scale);
-                    const isLast = i === adjustedRows.length - 1;
-
-                    // html2canvas 호환을 위해 absolute positioning 사용
-                    const currentFontSizePx = isLabel ? mmToPx(2.45, scale) : (
-                        i === titleIndex || i === deptIndex
-                            ? mmToPx(9.5, scale) // 제목/부서명도 0.5mm(약 1.5px) 축소 및 볼드
-                            : mmToPx(effectiveFontSize - 0.35, scale) // 기타 값들도 살짝 상향에서 하향으로 변경
-                    );
-
-                    return (
-                        <div
-                            key={i}
-                            className={`overflow-hidden bg-white text-gray-800 font-bold`}
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                width: "100%",
-                                height: rowHeightPx,
-                                fontSize: currentFontSizePx,
-                                // 칸 사이 선만 그림 (마지막 칸 제외)
-                                borderBottom: !isLast ? `${mmToPx(0.1, scale)}px solid #000000` : "none",
-                                fontFamily: "'HamchoromDotum', 'Malgun Gothic', sans-serif",
-                                boxSizing: 'border-box',
-                                paddingTop: mmToPx(0.2, scale), // 텍스트 수직 정렬 미세 조정
-                            }}
-                        >
-                            {needsVertical ? (
-                                isTitleOrDept ? (
-                                    (() => {
-                                        // 셀 크기 (픽셀)
-                                        const cellHeightPx = rowHeightPx;
-                                        const cellWidthPx = mmToPx(labelWidth, scale);
-
-                                        // 패딩 (상하좌우)
-                                        const verticalPadding = mmToPx(3, scale);
-                                        const horizontalPadding = mmToPx(2, scale);
-
-                                        // 사용 가능한 영역
-                                        const availableHeightPx = cellHeightPx - verticalPadding;
-                                        const availableWidthPx = cellWidthPx - horizontalPadding;
-
-                                        // 텍스트 길이
-                                        const textLength = displayText.length;
-
-                                        // 세로쓰기에서 각 글자는 가로 폭을 차지함
-                                        // 글자당 할당 가능한 높이 계산
-                                        const charHeightPx = availableHeightPx / Math.max(textLength, 1);
-
-                                        // 폰트 크기 = 글자당 높이의 98% (여백 최소화)
-                                        // 단, 가로 폭을 넘지 않도록 제한
-                                        let fontSizePx = charHeightPx * 0.98;
-                                        fontSizePx = Math.min(fontSizePx, availableWidthPx * 0.85);
-                                        fontSizePx = Math.min(fontSizePx, mmToPx(5.2, scale)); // 최대 5.2mm
-                                        fontSizePx = Math.max(fontSizePx, mmToPx(1.5, scale)); // 최소 1.5mm
-
-                                        // 사용자 지정 폰트 크기 스케일 적용
-                                        fontSizePx *= userFontScale;
-
-                                        return (
-                                            <div
-                                                style={{
-                                                    display: "flex",
-                                                    flexDirection: "column",
-                                                    justifyContent: "center",
-                                                    alignItems: "center",
-                                                    width: "100%",
-                                                    height: "100%",
-                                                    padding: `${verticalPadding / 2}px ${horizontalPadding / 2}px`,
-                                                    boxSizing: "border-box",
-                                                    overflow: "hidden",
-                                                }}
-                                            >
-                                                <div
-                                                    style={{
-                                                        display: "flex",
-                                                        flexDirection: "column",
-                                                        alignItems: "center",
-                                                        justifyContent: "center",
-                                                        fontSize: fontSizePx,
-                                                        lineHeight: 1,
-                                                    }}
-                                                >
-                                                    {(() => {
-                                                        // title/dept의 원본 HTML을 파싱하여 글자별 폰트 크기 추출
-                                                        const rawHtml = i === titleIndex ? title : departmentName;
-                                                        const charsWithSize = parseHtmlToCharsWithSize(rawHtml);
-
-                                                        return charsWithSize.map((item, idx) => {
-                                                            const isParenthesis = item.char === '(' || item.char === ')';
-                                                            const isSpace = item.char === ' ';
-
-                                                            // 글자별 폰트 크기 계산: pt 값이 있으면 스케일 팩터 적용
-                                                            const charScale = item.fontSizePt ? fontSizeScaleFactor(item.fontSizePt) : 1.0;
-                                                            const charFontSize = fontSizePx * charScale;
-
-                                                            if (isSpace) {
-                                                                return <span key={idx} style={{ display: "block", height: charFontSize * 0.5 }}>&nbsp;</span>;
-                                                            }
-
-                                                            if (isParenthesis) {
-                                                                return <span key={idx} style={{ display: "inline-block", transform: "rotate(90deg)", lineHeight: 1, fontSize: charFontSize }}>{item.char}</span>;
-                                                            }
-
-                                                            return <span key={idx} style={{ lineHeight: 1, fontSize: charFontSize }}>{item.char}</span>;
-                                                        });
-                                                    })()}
-                                                </div>
-                                            </div>
-                                        );
-                                    })()
-                                ) : (
-                                    <span
+                        return (
+                            <tr key={i} style={{ height: rowHeightPx }}>
+                                <td
+                                    style={{
+                                        borderBottom: !isLast ? `${mmToPx(0.1, scale)}px solid #000000` : "none",
+                                        padding: 0,
+                                        textAlign: 'center',
+                                        verticalAlign: 'middle',
+                                        fontSize: currentFontSizePx,
+                                        fontFamily: "'HamchoromDotum', 'Malgun Gothic', sans-serif",
+                                        fontWeight: 'bold',
+                                        color: '#1f2937',
+                                        boxSizing: 'border-box',
+                                        height: rowHeightPx
+                                    }}
+                                >
+                                    <div
                                         style={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent: (displayText === "제   목" || displayText === "부 서 명") ? "space-between" : "center",
-                                            // 짧은 칸(라벨 등)은 가로 방향이 더 시인성이 좋음
-                                            whiteSpace: displayText.includes('\n') ? "pre-line" : "nowrap",
-                                            maxHeight: "100%",
-                                            width: "100%",
-                                            height: "100%",
-                                            overflow: "hidden",
-                                            textOverflow: "ellipsis",
-                                            lineHeight: 1.2,
-                                            padding: displayText === "제   목" ? `0 ${mmToPx(1.5, scale)}px` : 0,
-                                            boxSizing: "border-box",
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            height: '100%',
+                                            width: '100%',
+                                            marginTop: mmToPx(0.2, scale)
                                         }}
                                     >
-                                        {displayText === "제   목" ? (
-                                            <>
-                                                <span>제</span>
-                                                <span>목</span>
-                                            </>
-                                        ) : displayText === "부 서 명" ? (
-                                            <>
-                                                <span>부</span>
-                                                <span>서</span>
-                                                <span>명</span>
-                                            </>
+                                        {needsVertical ? (
+                                            isTitleOrDept ? (
+                                                <div style={{
+                                                    writingMode: 'vertical-rl',
+                                                    textOrientation: 'upright',
+                                                    fontSize: Math.min(rowHeightPx / Math.max(displayText.length, 1), mmToPx(9.5, scale)) * 1.05 * userFontScale,
+                                                    lineHeight: 1.1,
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    letterSpacing: mmToPx(0.5, scale),
+                                                }}>
+                                                    {displayText}
+                                                </div>
+                                            ) : (
+                                                <div style={{
+                                                    writingMode: 'vertical-rl',
+                                                    textOrientation: 'upright',
+                                                    lineHeight: 1.1,
+                                                    letterSpacing: mmToPx(1.5, scale)
+                                                }}>
+                                                    {displayText}
+                                                </div>
+                                            )
                                         ) : (
-                                            displayText
+                                            <span style={{ whiteSpace: 'nowrap' }}>
+                                                {displayText}
+                                            </span>
                                         )}
-                                    </span>
-                                )
-                            ) : (
-                                // flex박스로 중앙 정렬
-                                <span style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: (row.label === "제목" || row.label === "부 서 명") ? "space-between" : "center",
-                                    whiteSpace: displayText.includes('\n') ? "pre-line" : "nowrap",
-                                    width: (row.label === "제목" || row.label === "부 서 명") ? `calc(100% - ${mmToPx(4, scale)}px)` : "100%",
-                                    lineHeight: 1,
-                                    textAlign: 'center',
-                                    paddingBottom: isLabel ? mmToPx(0.4, scale) : 0, // 라벨 텍스트를 위로 살짝 올림
-                                }}>
-                                    {row.label === "제목" ? (
-                                        <>
-                                            <span>제</span>
-                                            <span>목</span>
-                                        </>
-                                    ) : row.label === "부 서 명" ? (
-                                        <>
-                                            <span>부</span>
-                                            <span>서</span>
-                                            <span>명</span>
-                                        </>
-                                    ) : (
-                                        displayText
-                                    )}
-                                </span>
-                            )}
-                        </div>
-                    );
-                })}
-            </div>
-        </div >
+                                    </div>
+                                </td>
+                            </tr>
+                        );
+                    })}
+                </tbody>
+            </table>
+        </div>
     );
 }
 
