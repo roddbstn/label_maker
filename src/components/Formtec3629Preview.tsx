@@ -495,7 +495,6 @@ function SideClassLabel({
                                 <div style={{
                                     whiteSpace: item.isLabel ? 'pre-line' : 'nowrap',
                                     lineHeight: 1.1,
-                                    marginTop: mmToPx(0.2, scale) // 수직 미세 조정
                                 }}>
                                     {item.text}
                                 </div>
@@ -505,7 +504,7 @@ function SideClassLabel({
                     <tr style={{ height: '50%' }}>
                         <td
                             style={{
-                                width: mmToPx(20.5, scale), // 대략적인 제목 라벨 폭
+                                width: mmToPx(20.5, scale),
                                 borderRight: `${mmToPx(0.1, scale)}px solid #000000`,
                                 padding: 0,
                                 textAlign: 'center',
@@ -519,7 +518,6 @@ function SideClassLabel({
                                 flexDirection: 'column',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                marginTop: mmToPx(0.2, scale)
                             }}>
                                 <div style={{
                                     display: 'flex',
@@ -562,7 +560,6 @@ function SideClassLabel({
                                 fontSize: mmToPx(4.3, scale) * fontSizeScaleFactor(titleFontSize),
                                 fontFamily: "'Pretendard Variable', sans-serif",
                                 fontWeight: 900,
-                                marginTop: mmToPx(0.2, scale)
                             }}>
                                 {(() => {
                                     const baseFontPx = mmToPx(4.3, scale) * fontSizeScaleFactor(titleFontSize);
@@ -768,24 +765,75 @@ function EdgeClassLabel({
                                             justifyContent: 'center',
                                             height: '100%',
                                             width: '100%',
-                                            marginTop: mmToPx(0.2, scale)
                                         }}
                                     >
                                         {needsVertical ? (
                                             isTitleOrDept ? (
-                                                <div style={{
-                                                    writingMode: 'vertical-rl',
-                                                    textOrientation: 'upright',
-                                                    fontSize: Math.min(rowHeightPx / Math.max(displayText.length, 1), mmToPx(9.5, scale)) * 1.05 * userFontScale,
-                                                    lineHeight: 1.1,
-                                                    display: 'flex',
-                                                    flexDirection: 'column',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    letterSpacing: mmToPx(0.5, scale),
-                                                }}>
-                                                    {displayText}
-                                                </div>
+                                                (() => {
+                                                    const cellHeightPx = rowHeightPx;
+                                                    const cellWidthPx = mmToPx(labelWidth, scale);
+                                                    const verticalPadding = mmToPx(3, scale);
+                                                    const horizontalPadding = mmToPx(2, scale);
+                                                    const availableHeightPx = cellHeightPx - verticalPadding;
+                                                    const availableWidthPx = cellWidthPx - horizontalPadding;
+                                                    const textLength = displayText.length;
+                                                    const charHeightPx = availableHeightPx / Math.max(textLength, 1);
+
+                                                    let fontSizePx = charHeightPx * 0.98;
+                                                    fontSizePx = Math.min(fontSizePx, availableWidthPx * 0.85);
+                                                    fontSizePx = Math.min(fontSizePx, mmToPx(5.2, scale));
+                                                    fontSizePx = Math.max(fontSizePx, mmToPx(1.5, scale));
+                                                    fontSizePx *= userFontScale;
+
+                                                    return (
+                                                        <div
+                                                            style={{
+                                                                display: "flex",
+                                                                flexDirection: "column",
+                                                                justifyContent: "center",
+                                                                alignItems: "center",
+                                                                width: "100%",
+                                                                height: "100%",
+                                                                padding: `${verticalPadding / 2}px ${horizontalPadding / 2}px`,
+                                                                boxSizing: "border-box",
+                                                                overflow: "hidden",
+                                                            }}
+                                                        >
+                                                            <div
+                                                                style={{
+                                                                    display: "flex",
+                                                                    flexDirection: "column",
+                                                                    alignItems: "center",
+                                                                    justifyContent: "center",
+                                                                    fontSize: fontSizePx,
+                                                                    lineHeight: 1,
+                                                                }}
+                                                            >
+                                                                {(() => {
+                                                                    const rawHtml = i === titleIndex ? title : departmentName;
+                                                                    const charsWithSize = parseHtmlToCharsWithSize(rawHtml);
+
+                                                                    return charsWithSize.map((item, idx) => {
+                                                                        const isParenthesis = item.char === '(' || item.char === ')';
+                                                                        const isSpace = item.char === ' ';
+                                                                        const charScale = item.fontSizePt ? fontSizeScaleFactor(item.fontSizePt) : 1.0;
+                                                                        const charFontSize = fontSizePx * charScale;
+
+                                                                        if (isSpace) {
+                                                                            return <span key={idx} style={{ display: "block", height: charFontSize * 0.5 }}>&nbsp;</span>;
+                                                                        }
+
+                                                                        if (isParenthesis) {
+                                                                            return <span key={idx} style={{ display: "inline-block", transform: "rotate(90deg)", lineHeight: 1, fontSize: charFontSize }}>{item.char}</span>;
+                                                                        }
+
+                                                                        return <span key={idx} style={{ lineHeight: 1, fontSize: charFontSize }}>{item.char}</span>;
+                                                                    });
+                                                                })()}
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })()
                                             ) : (
                                                 <div style={{
                                                     writingMode: 'vertical-rl',
