@@ -191,10 +191,24 @@ export default function Home() {
                                         name="email"
                                         required
                                         placeholder="이메일 주소"
+                                        onFocus={() => {
+                                            gtag.event({
+                                                action: "waitlist_input_click",
+                                                category: "interaction",
+                                                label: "Waitlist Email Input"
+                                            });
+                                        }}
                                         className="w-full px-6 py-3 rounded-xl bg-slate-50/50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all shadow-inner"
                                     />
                                     <button
                                         type="submit"
+                                        onClick={() => {
+                                            gtag.event({
+                                                action: "waitlist_button_click",
+                                                category: "interaction",
+                                                label: "Waitlist Submit Button"
+                                            });
+                                        }}
                                         className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#222222] text-white text-sm font-black rounded-xl hover:bg-[#333333] transition-all shadow-lg shadow-slate-100 active:scale-[0.98] tracking-wide"
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4 opacity-70">
@@ -256,6 +270,13 @@ export default function Home() {
                                         required
                                         placeholder="익명으로 의견 남기기"
                                         rows={2}
+                                        onFocus={() => {
+                                            gtag.event({
+                                                action: "feedback_input_click",
+                                                category: "interaction",
+                                                label: "Feedback Textfield"
+                                            });
+                                        }}
                                         className="w-full px-6 py-3 rounded-xl bg-slate-50/50 border border-slate-200 text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all resize-none shadow-inner"
                                     />
                                     <input
@@ -263,10 +284,24 @@ export default function Home() {
                                         name="organization"
                                         required
                                         placeholder="본인 기관명 (회사명)"
+                                        onFocus={() => {
+                                            gtag.event({
+                                                action: "feedback_input_click",
+                                                category: "interaction",
+                                                label: "Feedback Textfield"
+                                            });
+                                        }}
                                         className="w-full px-6 py-3 rounded-xl bg-slate-50/50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all shadow-inner"
                                     />
                                     <button
                                         type="submit"
+                                        onClick={() => {
+                                            gtag.event({
+                                                action: "feedback_button_click",
+                                                category: "interaction",
+                                                label: "Feedback Submit Button"
+                                            });
+                                        }}
                                         className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#222222] text-white text-sm font-black rounded-xl hover:bg-[#333333] transition-all active:scale-[0.98] shadow-lg shadow-slate-100"
                                     >
                                         의견 보내기

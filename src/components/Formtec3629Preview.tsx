@@ -284,6 +284,8 @@ interface LabelBoxProps {
     y: number;
     width: number;
     height: number;
+    paddingX?: number;
+    paddingY?: number;
     scale: number;
     pageHeight: number;
     children?: React.ReactNode;
@@ -293,13 +295,15 @@ interface LabelBoxProps {
 
 /**
  * 라벨 박스 컴포넌트
- * A4 좌하단 원점 좌표를 CSS top/left로 변환
+ * '스티커 칸' 내부에 '라벨 칸'을 패딩만큼 띄워서 배치
  */
 function LabelBox({
     x,
     y,
     width,
     height,
+    paddingX = 0,
+    paddingY = 0,
     scale,
     pageHeight,
     children,
@@ -311,22 +315,22 @@ function LabelBox({
 
     return (
         <div
-            className={`absolute bg-white rounded-sm overflow-hidden ${className}`}
+            className={`absolute overflow-hidden ${className}`}
             style={{
                 left: mmToPx(x, scale),
                 top: mmToPx(topY, scale),
                 width: mmToPx(width, scale),
                 height: mmToPx(height, scale),
-                border: "none",
                 boxSizing: 'border-box'
             }}
         >
+            {/* 실제 라벨 영역 (패딩 적용) */}
             <div
-                className={`w-full h-full flex items-center justify-center text-xs text-gray-800 ${isVertical ? "writing-mode-vertical" : ""
-                    }`}
+                className="w-full h-full bg-white flex items-center justify-center text-xs text-gray-800"
                 style={{
+                    padding: `${mmToPx(paddingY, scale)}px ${mmToPx(paddingX, scale)}px`,
+                    boxSizing: 'border-box',
                     writingMode: isVertical ? "vertical-rl" : "horizontal-tb",
-                    textOrientation: isVertical ? "mixed" : "mixed",
                 }}
             >
                 {children}
@@ -399,6 +403,10 @@ function parseHtmlToCharsWithSize(html: string): { char: string; fontSizePt?: nu
 function SideClassLabel({
     x,
     y,
+    width,
+    height,
+    paddingX = 0,
+    paddingY = 0,
     scale,
     pageHeight,
     classificationCode,
@@ -412,6 +420,10 @@ function SideClassLabel({
 }: {
     x: number;
     y: number;
+    width: number;
+    height: number;
+    paddingX?: number;
+    paddingY?: number;
     scale: number;
     pageHeight: number;
     classificationCode: string;
@@ -423,24 +435,25 @@ function SideClassLabel({
     productionYearIsBold?: boolean;
     titleFontSize?: number; // pt 단위
 }) {
-    const { padding, topRow, bottomRow } = FORMTEC_3629_COORDS.sideClassInternal;
-    // 라벨 크기는 FORMTEC_3629_COORDS에서 가져옴 (91x26mm)
-    const labelWidth = 91;
-    const labelHeight = 26;
-    const innerWidth = labelWidth - padding * 2;
-    const innerHeight = labelHeight - padding * 2;
+    // 라벨 크기는 스티커 크기에서 패딩을 뺀 크기
+    const labelWidth = width - paddingX * 2;
+    const labelHeight = height - paddingY * 2;
 
-    const topY = pageHeight - y - labelHeight;
+    // 스티커 기준 topY 계산
+    const stickerTopY = pageHeight - y - height;
+    // 라벨 기준 topY 계산 (스티커 내부에서 paddingY만큼 내려옴)
+    const labelTopY = stickerTopY + paddingY;
+    const labelLeft = x + paddingX;
 
     return (
         <div
             className="absolute bg-white overflow-hidden"
             style={{
-                left: mmToPx(x, scale),
-                top: mmToPx(topY, scale),
+                left: mmToPx(labelLeft, scale),
+                top: mmToPx(labelTopY, scale),
                 width: mmToPx(labelWidth, scale),
                 height: mmToPx(labelHeight, scale),
-                border: `${mmToPx(0.2, scale)}px solid #000000`,
+                border: `${mmToPx(0.1, scale)}px solid #000000`,
                 boxSizing: 'border-box'
             }}
         >
@@ -480,8 +493,8 @@ function SideClassLabel({
                                     fontWeight: 'bold', // 항상 볼드
                                     boxSizing: 'border-box',
                                     textAlign: 'center',
-                                    borderRight: i < 5 ? `${mmToPx(0.2, scale)}px solid #000000` : "none",
-                                    borderBottom: `${mmToPx(0.2, scale)}px solid #000000`,
+                                    borderRight: i < 5 ? `${mmToPx(0.1, scale)}px solid #000000` : "none",
+                                    borderBottom: `${mmToPx(0.1, scale)}px solid #000000`,
                                     paddingTop: mmToPx(0.2, scale), // 텍스트 수직 정렬 정가운데 조정을 위해 미세하게 내림
                                 }}
                             >
@@ -510,12 +523,12 @@ function SideClassLabel({
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            width: mmToPx(21, scale),
+                            width: mmToPx(20.5, scale), // 21 -> 20.5 (라벨 폭 축소분 반영)
                             height: '100%',
-                            fontSize: mmToPx(4.0, scale), // 4.0mm로 통일
+                            fontSize: mmToPx(4.0, scale),
                             boxSizing: 'border-box',
-                            borderRight: `${mmToPx(0.2, scale)}px solid #000000`,
-                            paddingTop: mmToPx(0.2, scale), // 텍스트 수직 정렬 미세 조정
+                            borderRight: `${mmToPx(0.1, scale)}px solid #000000`,
+                            paddingTop: mmToPx(0.2, scale),
                         }}
                     >
                         <div style={{
@@ -559,8 +572,8 @@ function SideClassLabel({
                             flex: 1,
                             height: mmToPx(12.5, scale),
                             fontSize: mmToPx(4.3, scale) * fontSizeScaleFactor(titleFontSize),
-                            fontFamily: "'HamchoromDotum', 'Malgun Gothic', sans-serif",
-                            fontWeight: 'black',
+                            fontFamily: "'Pretendard Variable', sans-serif",
+                            fontWeight: 900,
                             boxSizing: 'border-box',
                             padding: `0 ${mmToPx(2, scale)}px`,
                             paddingTop: mmToPx(0.2, scale), // 텍스트 수직 정렬 미세 조정
@@ -600,6 +613,10 @@ function SideClassLabel({
 function EdgeClassLabel({
     x,
     y,
+    width,
+    height,
+    paddingX = 0,
+    paddingY = 0,
     scale,
     pageHeight,
     managementNumber,
@@ -617,6 +634,10 @@ function EdgeClassLabel({
 }: {
     x: number;
     y: number;
+    width: number;
+    height: number;
+    paddingX?: number;
+    paddingY?: number;
     scale: number;
     pageHeight: number;
     managementNumber: string;
@@ -632,10 +653,14 @@ function EdgeClassLabel({
     departmentNameFontSize?: number;
     hideDepartmentOnEdge?: boolean;
 }) {
-    const { paddingX, paddingY, innerWidth, rows } = FORMTEC_3629_COORDS.edgeInternal;
-    const labelWidth = 14;  // 16mm에서 2mm 축소
-    const labelHeight = 254; // 256mm에서 2mm 축소
-    const topY = pageHeight - y - labelHeight;
+    const labelWidth = width - paddingX * 2;
+    const labelHeight = height - paddingY * 2;
+
+    // 스티커 기준 topY 계산
+    const stickerTopY = pageHeight - y - height;
+    // 라벨 기준 topY 계산
+    const labelTopY = stickerTopY + paddingY;
+    const labelLeft = x + paddingX;
 
     // 기본 폰트 크기 상향 (3.2 -> 3.6)
     const effectiveFontSize = fontSize || 3.6;
@@ -676,11 +701,11 @@ function EdgeClassLabel({
         <div
             className="absolute bg-white overflow-hidden"
             style={{
-                left: mmToPx(x, scale),
-                top: mmToPx(topY, scale),
+                left: mmToPx(labelLeft, scale),
+                top: mmToPx(labelTopY, scale),
                 width: mmToPx(labelWidth, scale),
                 height: mmToPx(labelHeight, scale),
-                border: `${mmToPx(0.2, scale)}px solid #000000`,
+                border: `${mmToPx(0.1, scale)}px solid #000000`,
                 boxSizing: 'border-box'
             }}
         >
@@ -755,7 +780,7 @@ function EdgeClassLabel({
                                 height: rowHeightPx,
                                 fontSize: currentFontSizePx,
                                 // 칸 사이 선만 그림 (마지막 칸 제외)
-                                borderBottom: !isLast ? `${mmToPx(0.2, scale)}px solid #000000` : "none",
+                                borderBottom: !isLast ? `${mmToPx(0.1, scale)}px solid #000000` : "none",
                                 fontFamily: "'HamchoromDotum', 'Malgun Gothic', sans-serif",
                                 boxSizing: 'border-box',
                                 paddingTop: mmToPx(0.2, scale), // 텍스트 수직 정렬 미세 조정
@@ -972,14 +997,16 @@ export default function Formtec3629Preview({ currentPage = 0 }: Formtec3629Previ
                             y={coords.set1.title.y}
                             width={coords.set1.title.width}
                             height={coords.set1.title.height}
+                            paddingX={coords.set1.title.paddingX}
+                            paddingY={coords.set1.title.paddingY}
                             scale={scale}
                             pageHeight={coords.page.height}
                             className="font-bold text-center"
                         >
                             <AutoFitText
                                 text={label1.title}
-                                containerWidth={mmToPx(coords.set1.title.width, scale)}
-                                containerHeight={mmToPx(coords.set1.title.height, scale)}
+                                containerWidth={mmToPx(coords.set1.title.width - (coords.set1.title.paddingX || 0) * 2, scale)}
+                                containerHeight={mmToPx(coords.set1.title.height - (coords.set1.title.paddingY || 0) * 2, scale)}
                                 baseSize={mmToPx(10, scale)}
                                 minSize={mmToPx(3, scale)}
                                 isHtml={true}
@@ -996,14 +1023,16 @@ export default function Formtec3629Preview({ currentPage = 0 }: Formtec3629Previ
                             y={coords.set1.year.y}
                             width={coords.set1.year.width}
                             height={coords.set1.year.height}
+                            paddingX={coords.set1.year.paddingX}
+                            paddingY={coords.set1.year.paddingY}
                             scale={scale}
                             pageHeight={coords.page.height}
                             className="font-bold"
                         >
                             <AutoFitText
                                 text={label1.productionYear}
-                                containerWidth={mmToPx(coords.set1.year.width, scale)}
-                                containerHeight={mmToPx(coords.set1.year.height, scale)}
+                                containerWidth={mmToPx(coords.set1.year.width - (coords.set1.year.paddingX || 0) * 2, scale)}
+                                containerHeight={mmToPx(coords.set1.year.height - (coords.set1.year.paddingY || 0) * 2, scale)}
                                 baseSize={mmToPx(8, scale)}
                                 minSize={mmToPx(2.5, scale)}
                                 isHtml={true}
@@ -1020,14 +1049,16 @@ export default function Formtec3629Preview({ currentPage = 0 }: Formtec3629Previ
                             y={coords.set1.department.y}
                             width={coords.set1.department.width}
                             height={coords.set1.department.height}
+                            paddingX={coords.set1.department.paddingX}
+                            paddingY={coords.set1.department.paddingY}
                             scale={scale}
                             pageHeight={coords.page.height}
                             className="font-bold"
                         >
                             <AutoFitText
                                 text={label1.departmentName}
-                                containerWidth={mmToPx(coords.set1.department.width, scale)}
-                                containerHeight={mmToPx(coords.set1.department.height, scale)}
+                                containerWidth={mmToPx(coords.set1.department.width - (coords.set1.department.paddingX || 0) * 2, scale)}
+                                containerHeight={mmToPx(coords.set1.department.height - (coords.set1.department.paddingY || 0) * 2, scale)}
                                 baseSize={mmToPx(6, scale)}
                                 minSize={mmToPx(2, scale)}
                                 isHtml={true}
@@ -1043,6 +1074,10 @@ export default function Formtec3629Preview({ currentPage = 0 }: Formtec3629Previ
                         <SideClassLabel
                             x={coords.set1.sideClass.x}
                             y={coords.set1.sideClass.y}
+                            width={coords.set1.sideClass.width}
+                            height={coords.set1.sideClass.height}
+                            paddingX={coords.set1.sideClass.paddingX}
+                            paddingY={coords.set1.sideClass.paddingY}
                             scale={scale}
                             pageHeight={coords.page.height}
                             classificationCode={label1.classificationCode}
@@ -1059,6 +1094,10 @@ export default function Formtec3629Preview({ currentPage = 0 }: Formtec3629Previ
                         <EdgeClassLabel
                             x={coords.edge1.x}
                             y={coords.edge1.y}
+                            width={coords.edge1.width}
+                            height={coords.edge1.height}
+                            paddingX={coords.edge1.paddingX}
+                            paddingY={coords.edge1.paddingY}
                             scale={scale}
                             pageHeight={coords.page.height}
                             managementNumber={label1.managementNumber}
@@ -1085,14 +1124,16 @@ export default function Formtec3629Preview({ currentPage = 0 }: Formtec3629Previ
                             y={coords.set2.title.y}
                             width={coords.set2.title.width}
                             height={coords.set2.title.height}
+                            paddingX={coords.set2.title.paddingX}
+                            paddingY={coords.set2.title.paddingY}
                             scale={scale}
                             pageHeight={coords.page.height}
                             className="font-bold text-center"
                         >
                             <AutoFitText
                                 text={label2.title}
-                                containerWidth={mmToPx(coords.set2.title.width, scale)}
-                                containerHeight={mmToPx(coords.set2.title.height, scale)}
+                                containerWidth={mmToPx(coords.set2.title.width - (coords.set2.title.paddingX || 0) * 2, scale)}
+                                containerHeight={mmToPx(coords.set2.title.height - (coords.set2.title.paddingY || 0) * 2, scale)}
                                 baseSize={mmToPx(10, scale)}
                                 minSize={mmToPx(3, scale)}
                                 isHtml={true}
@@ -1109,14 +1150,16 @@ export default function Formtec3629Preview({ currentPage = 0 }: Formtec3629Previ
                             y={coords.set2.year.y}
                             width={coords.set2.year.width}
                             height={coords.set2.year.height}
+                            paddingX={coords.set2.year.paddingX}
+                            paddingY={coords.set2.year.paddingY}
                             scale={scale}
                             pageHeight={coords.page.height}
                             className="font-bold"
                         >
                             <AutoFitText
                                 text={label2.productionYear}
-                                containerWidth={mmToPx(coords.set2.year.width, scale)}
-                                containerHeight={mmToPx(coords.set2.year.height, scale)}
+                                containerWidth={mmToPx(coords.set2.year.width - (coords.set2.year.paddingX || 0) * 2, scale)}
+                                containerHeight={mmToPx(coords.set2.year.height - (coords.set2.year.paddingY || 0) * 2, scale)}
                                 baseSize={mmToPx(8, scale)}
                                 minSize={mmToPx(2.5, scale)}
                                 isHtml={true}
@@ -1133,14 +1176,16 @@ export default function Formtec3629Preview({ currentPage = 0 }: Formtec3629Previ
                             y={coords.set2.department.y}
                             width={coords.set2.department.width}
                             height={coords.set2.department.height}
+                            paddingX={coords.set2.department.paddingX}
+                            paddingY={coords.set2.department.paddingY}
                             scale={scale}
                             pageHeight={coords.page.height}
                             className="font-bold"
                         >
                             <AutoFitText
                                 text={label2.departmentName}
-                                containerWidth={mmToPx(coords.set2.department.width, scale)}
-                                containerHeight={mmToPx(coords.set2.department.height, scale)}
+                                containerWidth={mmToPx(coords.set2.department.width - (coords.set2.department.paddingX || 0) * 2, scale)}
+                                containerHeight={mmToPx(coords.set2.department.height - (coords.set2.department.paddingY || 0) * 2, scale)}
                                 baseSize={mmToPx(6, scale)}
                                 minSize={mmToPx(2, scale)}
                                 isHtml={true}
@@ -1156,6 +1201,10 @@ export default function Formtec3629Preview({ currentPage = 0 }: Formtec3629Previ
                         <SideClassLabel
                             x={coords.set2.sideClass.x}
                             y={coords.set2.sideClass.y}
+                            width={coords.set2.sideClass.width}
+                            height={coords.set2.sideClass.height}
+                            paddingX={coords.set2.sideClass.paddingX}
+                            paddingY={coords.set2.sideClass.paddingY}
                             scale={scale}
                             pageHeight={coords.page.height}
                             classificationCode={label2.classificationCode}
@@ -1172,6 +1221,10 @@ export default function Formtec3629Preview({ currentPage = 0 }: Formtec3629Previ
                         <EdgeClassLabel
                             x={coords.edge2.x}
                             y={coords.edge2.y}
+                            width={coords.edge2.width}
+                            height={coords.edge2.height}
+                            paddingX={coords.edge2.paddingX}
+                            paddingY={coords.edge2.paddingY}
                             scale={scale}
                             pageHeight={coords.page.height}
                             managementNumber={label2.managementNumber}

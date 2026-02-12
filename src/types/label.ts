@@ -137,51 +137,51 @@ export const FORMTEC_3629_COORDS = {
     /** A4 용지 크기 */
     page: { width: 210, height: 297 },
 
-    /** 라벨 세트 1 (상단) */
+    /** 라벨 세트 1 (상단) - '스티커 칸' 기준 좌표 */
     set1: {
-        title: { x: 20.6, y: 239.5, width: 123, height: 36.5 },       // 240.0 -> 239.5 (-0.5mm)
-        year: { x: 21.35, y: 215.5, width: 63.5, height: 23.5 },      // 216.0 -> 215.5 (-0.5mm)
-        department: { x: 21.35, y: 186.0, width: 84.5, height: 30 },  // 186.5 -> 186.0 (-0.5mm)
-        sideClass: { x: 22.1, y: 154.5, width: 91, height: 26 },      // 155.0 -> 154.5 (-0.5mm)
+        title: { x: 18.6, y: 237.5, width: 123, height: 36.5, paddingX: 0, paddingY: 0 },
+        year: { x: 18.6, y: 214, width: 63.5, height: 23.5, paddingX: 0, paddingY: 0 },
+        department: { x: 18.6, y: 184, width: 84.5, height: 30, paddingX: 0, paddingY: 0 },
+        sideClass: { x: 18.6, y: 151, width: 93, height: 28, paddingX: 2.25, paddingY: 1.75 },
     },
 
-    /** 라벨 세트 2 (하단) */
+    /** 라벨 세트 2 (하단) - '스티커 칸' 기준 좌표 */
     set2: {
-        title: { x: 20.6, y: 107.0, width: 123, height: 36.5 },       // 107.5 -> 107.0 (-0.5mm)
-        year: { x: 21.35, y: 83.0, width: 63.5, height: 23.5 },       // 83.5 -> 83.0 (-0.5mm)
-        department: { x: 21.35, y: 53.5, width: 84.5, height: 30 },   // 54.0 -> 53.5 (-0.5mm)
-        sideClass: { x: 22.1, y: 21.5, width: 91, height: 26 },       // 22.0 -> 21.5 (-0.5mm)
+        title: { x: 18.6, y: 104.5, width: 123, height: 36.5, paddingX: 0, paddingY: 0 },
+        year: { x: 18.6, y: 81, width: 63.5, height: 23.5, paddingX: 0, paddingY: 0 },
+        department: { x: 18.6, y: 51, width: 84.5, height: 30, paddingX: 0, paddingY: 0 },
+        sideClass: { x: 18.6, y: 18, width: 93, height: 28, paddingX: 2.25, paddingY: 1.75 },
     },
 
-    /** 옆면 분류번호 라벨 (세로) - A4 여백 보정 (Right 17.7mm) */
-    edge1: { x: 156.1, y: 21.5, width: 14, height: 254 },             // x+3
-    edge2: { x: 178.3, y: 21.5, width: 14, height: 254 },             // No change per request
+    /** 옆면 분류번호 라벨 (세로) - '스티커 칸' 기준 좌표 */
+    edge1: { x: 153.6, y: 18, width: 16, height: 256, paddingX: 1.75, paddingY: 1.5 },
+    edge2: { x: 175.6, y: 18, width: 16, height: 256, paddingX: 1.75, paddingY: 1.5 },
 
     /** 측면 분류번호 내부 구조 */
     sideClassInternal: {
         padding: 0,
-        topRow: { height: 13.5, cellWidth: 15.5 },
-        bottomRow: { height: 13.5, titleWidth: 22.5, valueWidth: 66.5 },
+        topRow: { height: 12.25, cellWidth: 14.75 }, // (24.5/2)
+        bottomRow: { height: 12.25, titleWidth: 22.5, valueWidth: 66.0 },
     },
 
     /** 옆면 분류번호 내부 구조 */
     edgeInternal: {
-        paddingX: 1,  // 2mm에서 1mm로 축소
+        paddingX: 0,
         paddingY: 0,
-        innerWidth: 12, // 14mm - 2mm 패딩 = 12mm
+        innerWidth: 12.5,
         rows: [
-            { label: "관리번호", height: 6.0 },  // 7.5 -> 6.0
-            { label: "value", height: 11.0 },   // 14.0 -> 11.0
-            { label: "생산연도", height: 6.0 },  // 7.5 -> 6.0
-            { label: "value", height: 11.0 },   // 14.0 -> 11.0
-            { label: "보존기간", height: 6.0 },  // 7.5 -> 6.0
-            { label: "value", height: 11.0 },   // 14.0 -> 11.0
-            { label: "분류번호", height: 6.0 },  // 7.5 -> 6.0
-            { label: "value", height: 11.0 },   // 14.0 -> 11.0
-            { label: "제목", height: 6.0 },      // 7.5 -> 6.0
-            { label: "value", height: 104.0 },  // 90 -> 104.0 (축소분 반영)
+            { label: "관리번호", height: 6.0 },
+            { label: "value", height: 11.0 },
+            { label: "생산연도", height: 6.0 },
+            { label: "value", height: 11.0 },
+            { label: "보존기간", height: 6.0 },
+            { label: "value", height: 11.0 },
+            { label: "분류번호", height: 6.0 },
+            { label: "value", height: 11.0 },
+            { label: "제목", height: 6.0 },
+            { label: "value", height: 102.0 }, // 253 - 151 = 102
             { label: "부 서 명", height: 6.0 },
-            { label: "value", height: 74.0 },   // 62 -> 74.0 (축소분 반영)
+            { label: "value", height: 71.0 },  // 253 - (17*4 + 108 + 6) = 71
         ],
     },
 } as const;
