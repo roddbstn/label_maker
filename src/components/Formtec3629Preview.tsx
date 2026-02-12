@@ -791,7 +791,7 @@ function EdgeClassLabel({
                                     (() => {
                                         // 셀 크기 (픽셀)
                                         const cellHeightPx = rowHeightPx;
-                                        const cellWidthPx = mmToPx(innerWidth, scale);
+                                        const cellWidthPx = mmToPx(labelWidth, scale);
 
                                         // 패딩 (상하좌우)
                                         const verticalPadding = mmToPx(3, scale);
