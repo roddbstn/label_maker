@@ -8,6 +8,14 @@ export default function LandingPage() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
+        // URL에서 code 파라미터 확인 (소셜 로그인 리다이렉트가 루트로 왔을 경우 처리)
+        const searchParams = new URLSearchParams(window.location.search);
+        const code = searchParams.get('code');
+        if (code) {
+            window.location.href = `/auth/callback?code=${code}`;
+            return;
+        }
+
         getSession().then(({ session }) => {
             if (session) setIsLoggedIn(true);
         });
