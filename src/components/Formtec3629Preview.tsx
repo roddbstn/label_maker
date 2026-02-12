@@ -514,16 +514,18 @@ function SideClassLabel({
                             }}
                         >
                             <div style={{
-                                display: 'inline-flex',
+                                display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
                                 justifyContent: 'center',
+                                height: '100%',
+                                width: '100%',
                             }}>
                                 <div style={{
                                     display: 'flex',
                                     justifyContent: 'space-between',
                                     width: mmToPx(10, scale),
-                                    lineHeight: 1.1,
+                                    lineHeight: 1,
                                     fontSize: mmToPx(3.2, scale),
                                     fontWeight: 'bold',
                                     fontFamily: "'HamchoromDotum', 'Malgun Gothic', sans-serif",
@@ -533,10 +535,11 @@ function SideClassLabel({
                                 </div>
                                 <div style={{
                                     fontSize: mmToPx(3.0, scale),
-                                    lineHeight: 1.1,
+                                    lineHeight: 1,
                                     fontWeight: 'bold',
                                     fontFamily: "'HamchoromDotum', 'Malgun Gothic', sans-serif",
                                     whiteSpace: 'nowrap',
+                                    marginTop: mmToPx(0.5, scale), // 두 줄 사이 간격
                                 }}>
                                     (보존종료)
                                 </div>
@@ -810,7 +813,10 @@ function EdgeClassLabel({
                                                                 }}
                                                             >
                                                                 {(() => {
-                                                                    const rawHtml = i === titleIndex ? title : departmentName;
+                                                                    // 부서명은 줄바꿈을 공백으로 대체
+                                                                    const rawHtml = i === titleIndex
+                                                                        ? title
+                                                                        : departmentName.replace(/<br\s*\/?>/gi, ' ').replace(/\n/g, ' ');
                                                                     const charsWithSize = parseHtmlToCharsWithSize(rawHtml);
 
                                                                     return charsWithSize.map((item, idx) => {
