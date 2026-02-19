@@ -898,7 +898,7 @@ export default function Formtec3629Preview({ currentPage = 0 }: Formtec3629Previ
                 📄 폼텍 3629 양식 미리보기
                 {totalPages > 1 && (
                     <span className="ml-2 text-gray-400">
-                        (페이지 {currentPage + 1}/{totalPages})
+                        (<span className="text-gray-900 font-bold">페이지 {currentPage + 1}</span>/{totalPages})
                     </span>
                 )}
             </p>

@@ -293,8 +293,8 @@ export default function LabelPreview({ autoFitText = true }: LabelPreviewProps) 
                             >
                                 ◀ 이전
                             </button>
-                            <span className="text-sm text-gray-600">
-                                {currentPage + 1} / {totalPages}
+                            <span className="text-sm text-gray-500">
+                                (<span className="text-gray-900 font-bold">페이지 {currentPage + 1}</span> / {totalPages})
                             </span>
                             <button
                                 type="button"
