@@ -307,6 +307,13 @@ export default function LabelForm() {
                 )}
             </div>
 
+            <div className="px-3 py-1">
+                <p className="text-[12px] text-blue-500 font-medium flex items-center gap-1.5 px-1">
+                    <span className="text-[14px]">💡</span>
+                    드래그를 통해 글자 일부를 수정할 수 있어요
+                </p>
+            </div>
+
             <form className="space-y-2 mt-2" onSubmit={(e) => e.preventDefault()}>
                 <div className="space-y-1 group">
                     <label className="block text-sm font-bold text-gray-700">
