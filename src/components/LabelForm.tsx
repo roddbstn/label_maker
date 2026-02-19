@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useCallback, useRef, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useLabelStore } from "@/store/labelStore";
 import RichTextInput from "./RichTextInput";
 import StyleToolbar from "./StyleToolbar";
-import { useState } from "react";
 import * as gtag from "@/lib/gtag";
+import { createAuthClient } from "@/lib/supabaseAuth";
+import type { User } from "@supabase/supabase-js";
 
 // 폰트 크기 옵션 (단계별 선택)
 const FONT_SIZE_OPTIONS = [
@@ -31,6 +32,22 @@ export default function LabelForm() {
 
     // 현재 라벨 데이터
     const labelData = labels[currentLabelIndex];
+
+    // 유저 정보 가져오기
+    const [user, setUser] = useState<User | null>(null);
+    useEffect(() => {
+        const supabase = createAuthClient();
+        const fetchUser = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            setUser(user);
+        };
+        fetchUser();
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setUser(session?.user ?? null);
+        });
+        return () => subscription.unsubscribe();
+    }, []);
 
     // 스크롤 컨테이너 ref
     const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -183,6 +200,7 @@ export default function LabelForm() {
     }, [labels, history]);
 
     const recentDepts = getRecentDepartments();
+    const companyName = user?.user_metadata?.company_name || "";
 
     if (!labelData) return null;
 
@@ -292,7 +310,7 @@ export default function LabelForm() {
                             category: "interaction",
                             label: "Green Plus Button"
                         });
-                        addLabel();
+                        addLabel(companyName ? { departmentName: companyName } : {});
                     }}
                     className="flex items-center justify-center w-10 h-10 rounded-lg bg-green-500 text-white hover:bg-green-600 transition-colors shadow-md"
                 >
@@ -662,7 +680,7 @@ export default function LabelForm() {
                         type="button"
                         onClick={() => {
                             gtag.event({ action: "label_reset", category: "interaction", label: "Reset Button" });
-                            resetLabelData();
+                            resetLabelData(companyName ? { departmentName: companyName } : {});
                         }}
                         className="flex-1 py-3.5 px-4 border border-gray-200 rounded-xl text-gray-700 font-bold hover:bg-gray-50 transition-all active:scale-95 shadow-sm"
                     >

@@ -68,12 +68,13 @@ export const useLabelStore = create<LabelStoreState>()(
                     return { labels: updatedLabels };
                 }),
 
-            resetLabelData: () =>
+            resetLabelData: (initialData) =>
                 set((state) => {
                     const updatedLabels = [...state.labels];
                     const currentLabel = updatedLabels[state.currentLabelIndex];
                     updatedLabels[state.currentLabelIndex] = {
                         ...createNewLabel(currentLabel.labelNumber),
+                        ...initialData,
                         id: currentLabel.id,
                     };
                     return { labels: updatedLabels };
@@ -86,12 +87,18 @@ export const useLabelStore = create<LabelStoreState>()(
                     nextLabelNumber: 2,
                 }),
 
-            addLabel: () =>
-                set((state) => ({
-                    labels: [...state.labels, createNewLabel(state.nextLabelNumber)],
-                    currentLabelIndex: state.labels.length,
-                    nextLabelNumber: state.nextLabelNumber + 1,
-                })),
+            addLabel: (initialData) =>
+                set((state) => {
+                    const newLabel = {
+                        ...createNewLabel(state.nextLabelNumber),
+                        ...initialData
+                    };
+                    return {
+                        labels: [...state.labels, newLabel],
+                        currentLabelIndex: state.labels.length,
+                        nextLabelNumber: state.nextLabelNumber + 1,
+                    };
+                }),
 
             removeLabel: (id: string) =>
                 set((state) => {

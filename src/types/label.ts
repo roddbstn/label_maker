@@ -111,11 +111,11 @@ export interface LabelStoreState {
     /** 라벨 데이터 업데이트 */
     updateLabelData: (data: Partial<LabelData>) => void;
     /** 현재 라벨 초기화 */
-    resetLabelData: () => void;
+    resetLabelData: (initialData?: Partial<LabelData>) => void;
     /** 모든 라벨 초기화 */
     resetAllLabels: () => void;
     /** 라벨 추가 */
-    addLabel: () => void;
+    addLabel: (initialData?: Partial<LabelData>) => void;
     /** 라벨 삭제 */
     removeLabel: (id: string) => void;
     /** 라벨 선택 */
