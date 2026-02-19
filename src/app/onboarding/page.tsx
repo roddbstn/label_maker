@@ -45,7 +45,7 @@ export default function OnboardingPage() {
                 setError("저장 중 오류가 발생했습니다. 다시 시도해 주세요.");
                 console.error("Auth metadata update error:", JSON.stringify(updateError));
             } else {
-                router.push("/app");
+                router.push("/");
             }
         } catch {
             setError("오류가 발생했습니다. 다시 시도해 주세요.");
@@ -101,8 +101,8 @@ export default function OnboardingPage() {
                     onClick={handleSubmit}
                     disabled={!companyName.trim() || loading}
                     className={`w-full px-6 py-4 text-base font-bold rounded-2xl transition-all ${companyName.trim()
-                            ? "bg-primary-600 hover:bg-primary-700 text-white shadow-lg shadow-primary-200 hover:shadow-xl active:scale-95"
-                            : "bg-slate-200 text-slate-400 cursor-not-allowed"
+                        ? "bg-primary-600 hover:bg-primary-700 text-white shadow-lg shadow-primary-200 hover:shadow-xl active:scale-95"
+                        : "bg-slate-200 text-slate-400 cursor-not-allowed"
                         }`}
                 >
                     {loading ? "저장 중..." : "다음"}

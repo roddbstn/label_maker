@@ -36,7 +36,7 @@ export async function GET(request: Request) {
                     return NextResponse.redirect(`${origin}/onboarding`);
                 }
             }
-            return NextResponse.redirect(`${origin}/app`);
+            return NextResponse.redirect(`${origin}/`);
         }
     }
 

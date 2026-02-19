@@ -48,7 +48,7 @@ export default function SignupPage() {
                 setError("회원가입 중 오류가 발생했습니다: " + error.message);
             }
         } else {
-            router.push("/app");
+            router.push("/");
         }
         setLoading(false);
     };
