@@ -34,6 +34,9 @@ export default function ProfileDropdown() {
     const handleLogout = async () => {
         const supabase = createAuthClient();
         await supabase.auth.signOut();
+        setUser(null);
+        setIsOpen(false);
+        router.refresh(); // 최신 상태 반영을 위해 라우터 새로고침
         router.push("/");
     };
 

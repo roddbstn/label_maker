@@ -21,9 +21,10 @@ export default function Home() {
 
     // 현재 유저 정보 가져오기 및 기관명 자동 채움
     useEffect(() => {
+        const supabase = createAuthClient();
+
         const initAuth = async () => {
             try {
-                const supabase = createAuthClient();
                 const { data: { user } } = await supabase.auth.getUser();
                 setUser(user);
 
@@ -38,7 +39,20 @@ export default function Home() {
                 console.error("Failed to fetch user or prefill department name:", error);
             }
         };
+
         initAuth();
+
+        // 인증 상태 변화 감지
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+            setUser(session?.user ?? null);
+            if (event === 'SIGNED_OUT') {
+                // 로그아웃 시 필요한 추가 로직 (예: 스토어 초기화 등)이 있다면 여기에 추가
+            }
+        });
+
+        return () => {
+            subscription.unsubscribe();
+        };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
