@@ -51,20 +51,33 @@ export default function LabelForm() {
         setSelectionFontSizes(prev => ({ ...prev, [fieldId]: fontSize }));
     };
 
-    // 새 라벨 추가 시 자동 스크롤
+    // 라벨 추가 또는 선택 시 해당 탭으로 자동 스크롤
     useEffect(() => {
+        if (!scrollContainerRef.current) return;
+
+        // 신규 라벨 추가 시 (마지막 라벨로 이동)
         if (labels.length > prevLabelsLengthRef.current) {
-            if (scrollContainerRef.current) {
-                setTimeout(() => {
-                    scrollContainerRef.current?.scrollTo({
-                        left: scrollContainerRef.current.scrollWidth,
-                        behavior: "smooth"
-                    });
-                }, 50);
+            setTimeout(() => {
+                scrollContainerRef.current?.scrollTo({
+                    left: scrollContainerRef.current.scrollWidth,
+                    behavior: "smooth"
+                });
+            }, 50);
+        }
+        // 라벨 선택 변경 시 (해당 탭이 보이도록 스크롤)
+        else {
+            const activeTab = scrollContainerRef.current.querySelector(`[data-label-index="${currentLabelIndex}"]`);
+            if (activeTab) {
+                activeTab.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest",
+                    inline: "center"
+                });
             }
         }
+
         prevLabelsLengthRef.current = labels.length;
-    }, [labels.length]);
+    }, [labels.length, currentLabelIndex]);
 
     // 일반 입력 핸들러
     const handleInputChange = (field: string) => (
@@ -211,6 +224,8 @@ export default function LabelForm() {
                                         return (
                                             <div
                                                 key={label.id}
+                                                data-label-index={labelIndex}
+                                                data-active={isActive}
                                                 className={`
                                                     flex items-center gap-2 px-4 py-2.5 rounded-xl cursor-pointer
                                                     transition-all duration-200
