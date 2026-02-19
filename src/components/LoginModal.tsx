@@ -46,16 +46,9 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         </button>
                     </div>
 
-                    <div className="bg-primary-50 rounded-2xl p-4 mb-8 border border-primary-100">
-                        <p className="text-primary-700 text-sm font-medium flex items-center gap-2">
-                            <span className="text-lg">💡</span>
-                            가입 시 다음 접속 시에도 부서명이 자동입력됩니다
-                        </p>
-                    </div>
-
                     <button
                         onClick={handleGoogleLogin}
-                        className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-white border-2 border-slate-200 rounded-2xl text-base font-bold text-gray-700 hover:bg-slate-50 hover:border-slate-300 transition-all active:scale-[0.98] shadow-sm"
+                        className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-white border-2 border-slate-200 rounded-2xl text-base font-bold text-gray-700 hover:bg-slate-50 hover:border-slate-300 transition-all active:scale-[0.98] shadow-sm mb-6"
                     >
                         <svg className="w-6 h-6" viewBox="0 0 24 24">
                             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" />
@@ -65,6 +58,13 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         </svg>
                         Google 계정으로 계속하기
                     </button>
+
+                    <div className="bg-primary-50 rounded-2xl p-4 border border-primary-100">
+                        <p className="text-primary-700 text-sm font-medium flex items-center gap-2">
+                            <span className="text-lg">💡</span>
+                            다음 접속 시에도 부서명이 자동입력돼요
+                        </p>
+                    </div>
 
                     <div className="mt-8 pt-8 border-t border-slate-100 text-center text-xs text-gray-400">
                         <p>© 2026 라벨 메이커. 데이터는 암호화되어 안전하게 보관됩니다.</p>
