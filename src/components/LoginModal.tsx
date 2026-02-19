@@ -62,7 +62,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                     <div className="bg-primary-50 rounded-2xl p-4 border border-primary-100">
                         <p className="text-primary-700 text-sm font-medium flex items-center gap-2">
                             <span className="text-lg">💡</span>
-                            다음 접속 시에도 부서명이 자동입력돼요
+                            다음 접속 시 부서명이 자동입력 됩니다
                         </p>
                     </div>
                 </div>
