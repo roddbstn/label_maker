@@ -33,10 +33,9 @@ export async function middleware(request: NextRequest) {
         data: { user },
     } = await supabase.auth.getUser();
 
-    // /app, /onboarding 접근 시 로그인 필요
+    // /onboarding, /settings 접근 시 로그인 필요
     if (
-        (request.nextUrl.pathname.startsWith('/app') ||
-            request.nextUrl.pathname === '/onboarding' ||
+        (request.nextUrl.pathname === '/onboarding' ||
             request.nextUrl.pathname === '/settings') &&
         !user
     ) {
@@ -45,14 +44,14 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(url);
     }
 
-    // 로그인/회원가입 페이지: 이미 로그인된 사용자는 /app으로 리다이렉트
+    // 로그인/회원가입 페이지: 이미 로그인된 사용자는 / 루트로 리다이렉트
     if (
         (request.nextUrl.pathname === '/login' ||
             request.nextUrl.pathname === '/signup') &&
         user
     ) {
         const url = request.nextUrl.clone();
-        url.pathname = '/app';
+        url.pathname = '/';
         return NextResponse.redirect(url);
     }
 
@@ -60,5 +59,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/app/:path*', '/login', '/signup', '/onboarding', '/settings'],
+    matcher: ['/login', '/signup', '/onboarding', '/settings'],
 };
