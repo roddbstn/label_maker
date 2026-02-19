@@ -33,7 +33,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         <div>
                             <h2 className="text-2xl font-bold text-gray-900 mb-2">회원가입 ✨</h2>
                             <p className="text-gray-500 text-sm">
-                                본인 인증 및 데이터 보호를 위해 로그인이 필요합니다.
+                                더 간편한 사용을 위해 로그인이 필요해요
                             </p>
                         </div>
                         <button
@@ -64,10 +64,6 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                             <span className="text-lg">💡</span>
                             다음 접속 시에도 부서명이 자동입력돼요
                         </p>
-                    </div>
-
-                    <div className="mt-8 pt-8 border-t border-slate-100 text-center text-xs text-gray-400">
-                        <p>© 2026 라벨 메이커. 데이터는 암호화되어 안전하게 보관됩니다.</p>
                     </div>
                 </div>
             </div>
